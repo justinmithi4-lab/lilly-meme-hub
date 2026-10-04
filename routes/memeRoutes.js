@@ -11,6 +11,7 @@ const {
     getMeme,
     getHomepageMemes,
     createMeme,
+    getAdminMemes,
     updateMeme,
     deleteMeme,
     toggleLike,
@@ -101,6 +102,18 @@ router.get(
 router.get(
     "/categories",
     getCategories
+);
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN MEMES
+|--------------------------------------------------------------------------
+*/
+
+router.get(
+    "/admin",
+    requireAdmin,
+    getAdminMemes
 );
 
 
