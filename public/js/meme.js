@@ -50,6 +50,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const reportMessage = document.getElementById("reportMessage");
     const closeReportModal = document.getElementById("closeReportModal");
 
+    function handleSubscriptionError(data, response) {
+        if (
+            response.status === 403 &&
+            data.code === "SUBSCRIPTION_REQUIRED"
+        ) {
+            window.location.href = "/subscribe.html";
+            return true;
+        }
+
+        return false;
+    }
+
     // =========================================
     // LOAD CURRENT USER
     // =========================================
@@ -93,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (memeImage) {
                 memeImage.src =
-                    `/uploads/memes/${encodeURIComponent(meme.image)}`;
+                    getUploadedMediaUrl(meme.image, "memes");
 
                 memeImage.alt = meme.title || "Meme";
             }
@@ -251,6 +263,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const data = await response.json();
 
+            if (handleSubscriptionError(data, response)) {
+                return;
+            }
+
             if (!response.ok || !data.success) {
                 return;
             }
@@ -304,6 +320,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const data = await response.json();
 
+            if (handleSubscriptionError(data, response)) {
+                return;
+            }
+
             if (!response.ok || !data.success) {
                 return;
             }
@@ -321,8 +341,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function downloadMeme() {
         try {
-            window.location.href =
-                `/api/memes/${memeId}/download`;
+            const response =
+                await fetch(
+                    `/api/memes/${memeId}/download`
+                );
+
+            if (!response.ok) {
+                const data =
+                    await response.json();
+
+                if (handleSubscriptionError(data, response)) {
+                    return;
+                }
+
+                throw new Error(
+                    data.message ||
+                    "Unable to download meme."
+                );
+            }
+
+            const blob =
+                await response.blob();
+
+            const downloadUrl =
+                URL.createObjectURL(blob);
+
+            const link =
+                document.createElement("a");
+
+            const disposition =
+                response.headers.get("Content-Disposition") || "";
+
+            const filenameMatch =
+                disposition.match(/filename="?([^";]+)"?/i);
+
+            link.href = downloadUrl;
+            link.download =
+                filenameMatch
+                    ? filenameMatch[1]
+                    : `meme-${memeId}`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.setTimeout(
+                () => URL.revokeObjectURL(downloadUrl),
+                1000
+            );
+
         } catch (error) {
             console.error("Download error:", error);
         }
@@ -380,6 +445,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 await fetch(`/api/memes/${memeId}/comments`);
 
             const data = await response.json();
+
+            if (handleSubscriptionError(data, response)) {
+                return;
+            }
 
             if (!response.ok || !data.success) {
                 throw new Error(
@@ -496,9 +565,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.createElement("img");
 
             image.src =
-                `/uploads/profiles/${encodeURIComponent(
-                    comment.profile_image
-                )}`;
+                getUploadedMediaUrl(comment.profile_image, "profiles");
 
             image.alt =
                 comment.username || "User";
@@ -860,6 +927,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const data =
                 await response.json();
 
+            if (handleSubscriptionError(data, response)) {
+                return;
+            }
+
             if (
                 !response.ok ||
                 !data.success
@@ -957,6 +1028,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const data =
                 await response.json();
+
+            if (handleSubscriptionError(data, response)) {
+                return;
+            }
 
             if (
                 !response.ok ||
@@ -1231,6 +1306,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const data =
                 await response.json();
 
+            if (handleSubscriptionError(data, response)) {
+                return;
+            }
+
             if (
                 !response.ok ||
                 !data.success
@@ -1368,6 +1447,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const data =
                 await response.json();
+
+            if (handleSubscriptionError(data, response)) {
+                return;
+            }
 
             if (
                 !response.ok ||

@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -10,177 +8,906 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Admin Dashboard - Lilly Memes</title>
+    <title>Lilly Memes - Admin Dashboard</title>
 
     <link
         rel="stylesheet"
-        href="/css/admin.css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
+    <link rel="stylesheet" href="/css/admin.css?v=member-messages">
+    <link rel="stylesheet" href="/css/brand.css">
 </head>
 
 <body>
 
-    <header class="admin-header">
+    <div class="admin-layout">
 
-        <div class="brand">
-            😂 Lilly Memes
-        </div>
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar" id="adminSidebar">
 
-        <div class="admin-user">
+            <div class="admin-brand">
+                <div class="brand-icon">
+                    <img src="/images/lilly-memes-logo.jpg" class="brand-logo-image" alt="">
+                </div>
 
-            <span id="adminName">
-                Administrator
-            </span>
-
-            <button id="logoutButton">
-                Logout
-            </button>
-
-        </div>
-
-    </header>
-
-
-    <main class="admin-container">
-
-        <section class="welcome-section">
-
-            <h1>
-                Admin Dashboard
-            </h1>
-
-            <p>
-                Manage Lilly Memes from one place.
-            </p>
-
-        </section>
-
-
-        <section class="dashboard-grid">
-
-            <div class="dashboard-card">
-
-                <span class="card-icon">
-                    👥
-                </span>
-
-                <h3>
-                    Members
-                </h3>
-
-                <strong id="memberCount">
-                    0
-                </strong>
-
+                <div>
+                    <strong>Lilly Memes</strong>
+                    <span>Admin Panel</span>
+                </div>
             </div>
 
 
-            <div class="dashboard-card">
+            <nav class="admin-navigation">
 
-                <span class="card-icon">
-                    💳
-                </span>
-
-                <h3>
-                    Payments
-                </h3>
-
-                <strong id="paymentCount">
-                    0
-                </strong>
-
-            </div>
-
-
-            <div class="dashboard-card">
-
-                <span class="card-icon">
-                    😂
-                </span>
-
-                <h3>
-                    Memes
-                </h3>
-
-                <strong id="memeCount">
-                    0
-                </strong>
-
-            </div>
-
-
-            <div class="dashboard-card">
-
-                <span class="card-icon">
-                    📖
-                </span>
-
-                <h3>
-                    Stories
-                </h3>
-
-                <strong id="storyCount">
-                    0
-                </strong>
-
-            </div>
-
-        </section>
-
-
-        <section class="admin-actions">
-
-            <h2>
-                Management
-            </h2>
-
-            <div class="action-grid">
-
-                <button>
-                    
-                    👥 Manage Members
-                </button>
-
-                <button>
-                    💳 Manage Payments
+                <button
+                    class="admin-nav-item active"
+                    data-section="dashboard"
+                >
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Dashboard</span>
                 </button>
 
                 <button
-                type="button"
-                 onclick="window.location.href='/admin-memes.html'">
-                    😂 Manage Memes
+                    class="admin-nav-item"
+                    data-section="payments"
+                >
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+                    <span>Payments</span>
+
+                    <span
+                        class="nav-badge hidden"
+                        id="pendingPaymentsBadge"
+                    >
+                        0
+                    </span>
                 </button>
 
-                <button>
-                    📂 Manage Categories
+                <button
+                    class="admin-nav-item"
+                    data-section="members"
+                >
+                    <i class="fa-solid fa-users"></i>
+                    <span>Members</span>
                 </button>
 
-                <button>
-                    📖 Manage Stories
+                <button
+                    class="admin-nav-item"
+                    data-section="memes"
+                >
+                    <i class="fa-solid fa-images"></i>
+                    <span>Memes</span>
                 </button>
 
-                <button>
-                    💬 Manage Comments
+                <button
+                    class="admin-nav-item"
+                    data-section="stories"
+                >
+                    <i class="fa-solid fa-circle-play"></i>
+                    <span>Stories</span>
                 </button>
 
-                <button>
-                    🚩 Reports
+                <button
+                    class="admin-nav-item"
+                    data-section="messages"
+                >
+                    <i class="fa-solid fa-envelope"></i>
+                    <span>Member Messages</span>
                 </button>
 
-                <button>
-                    ⚙️ Site Settings
+            </nav>
+
+
+            <div class="sidebar-bottom">
+
+                <a href="/" class="sidebar-link">
+                    <i class="fa-solid fa-globe"></i>
+                    View Website
+                </a>
+
+                <button
+                    type="button"
+                    class="sidebar-link logout-button"
+                    id="logoutButton"
+                >
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Logout
                 </button>
 
             </div>
 
-        </section>
-
-    </main>
+        </aside>
 
 
-    <script src="/js/admin.js"></script>
+        <!-- MAIN -->
+        <main class="admin-main">
+
+            <!-- TOP BAR -->
+            <header class="admin-topbar">
+
+                <button
+                    type="button"
+                    class="mobile-menu-button"
+                    id="mobileMenuButton"
+                    aria-label="Open menu"
+                >
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+
+                <div class="topbar-title">
+
+                    <h1 id="pageTitle">
+                        Dashboard
+                    </h1>
+
+                    <p id="pageDescription">
+                        Overview of your Lilly Memes platform.
+                    </p>
+
+                </div>
+
+
+                <div class="admin-user">
+
+                    <div class="admin-avatar">
+                        A
+                    </div>
+
+                    <div class="admin-user-info">
+
+                        <strong id="adminUsername">
+                            Admin
+                        </strong>
+
+                        <span>
+                            Administrator
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- CONTENT -->
+            <div class="admin-content">
+
+
+                <!-- =========================
+                     DASHBOARD
+                ========================== -->
+
+                <section
+                    class="admin-section active"
+                    id="dashboardSection"
+                >
+
+                    <div class="stats-grid">
+
+
+                        <div class="stat-card">
+
+                            <div class="stat-icon members">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+
+                            <div class="stat-info">
+
+                                <span>
+                                    Total Members
+                                </span>
+
+                                <strong id="totalMembers">
+                                    0
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-card">
+
+                            <div class="stat-icon active">
+                                <i class="fa-solid fa-user-check"></i>
+                            </div>
+
+                            <div class="stat-info">
+
+                                <span>
+                                    Active Members
+                                </span>
+
+                                <strong id="activeMembers">
+                                    0
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-card">
+
+                            <div class="stat-icon pending">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+
+                            <div class="stat-info">
+
+                                <span>
+                                    Pending Payments
+                                </span>
+
+                                <strong id="pendingPayments">
+                                    0
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-card">
+
+                            <div class="stat-icon revenue">
+                                <i class="fa-solid fa-money-bill-wave"></i>
+                            </div>
+
+                            <div class="stat-info">
+
+                                <span>
+                                    Total Revenue
+                                </span>
+
+                                <strong id="totalRevenue">
+                                    MK 0
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-card">
+
+                            <div class="stat-icon subscriptions">
+                                <i class="fa-solid fa-id-card"></i>
+                            </div>
+
+                            <div class="stat-info">
+
+                                <span>
+                                    Active Subscriptions
+                                </span>
+
+                                <strong id="activeSubscriptions">
+                                    0
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-card">
+
+                            <div class="stat-icon memes">
+                                <i class="fa-solid fa-images"></i>
+                            </div>
+
+                            <div class="stat-info">
+
+                                <span>
+                                    Total Memes
+                                </span>
+
+                                <strong id="totalMemes">
+                                    0
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RECENT PAYMENTS -->
+
+                    <div class="admin-card">
+
+                        <div class="card-header">
+
+                            <div>
+                                <h2>Recent Payments</h2>
+
+                                <p>
+                                    Latest subscription payment activity.
+                                </p>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="view-all-button"
+                                data-section="payments"
+                            >
+                                View all
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+
+                        </div>
+
+
+                        <div class="table-wrapper">
+
+                            <table class="admin-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Member</th>
+                                        <th>Plan</th>
+                                        <th>Amount</th>
+                                        <th>Method</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="recentPaymentsTable">
+
+                                    <tr>
+                                        <td
+                                            colspan="6"
+                                            class="table-loading"
+                                        >
+                                            Loading payments...
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =========================
+                     PAYMENTS
+                ========================== -->
+
+                <section
+                    class="admin-section"
+                    id="paymentsSection"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+                            <h2>Payments</h2>
+
+                            <p>
+                                Review and verify member payments.
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="refresh-button"
+                            id="refreshPayments"
+                        >
+                            <i class="fa-solid fa-rotate"></i>
+                            Refresh
+                        </button>
+
+                    </div>
+
+
+                    <div class="filter-bar">
+
+                        <div class="filter-search">
+
+                            <i class="fa-solid fa-magnifying-glass"></i>
+
+                            <input
+                                type="search"
+                                id="paymentSearch"
+                                placeholder="Search member or reference..."
+                            >
+
+                        </div>
+
+
+                        <select id="paymentStatusFilter">
+
+                            <option value="all">
+                                All payments
+                            </option>
+
+                            <option value="pending">
+                                Pending
+                            </option>
+
+                            <option value="successful">
+                                Successful
+                            </option>
+
+                            <option value="rejected">
+                                Rejected
+                            </option>
+
+                            <option value="failed">
+                                Failed
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="admin-card">
+
+                        <div class="table-wrapper">
+
+                            <table class="admin-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Member</th>
+                                        <th>Plan</th>
+                                        <th>Amount</th>
+                                        <th>Payment</th>
+                                        <th>Reference</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="paymentsTable">
+
+                                    <tr>
+                                        <td
+                                            colspan="7"
+                                            class="table-loading"
+                                        >
+                                            Loading payments...
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =========================
+                     MEMBERS
+                ========================== -->
+
+                <section
+                    class="admin-section"
+                    id="membersSection"
+                >
+
+                    <div class="section-header">
+                        <div>
+                            <h2>Members</h2>
+                            <p>Manage member accounts and verification.</p>
+                        </div>
+
+                        <button class="refresh-btn" id="refreshMembersBtn" type="button">
+                            <i class="fa-solid fa-rotate"></i>
+                            Refresh
+                        </button>
+                    </div>
+
+                    <div class="member-filters">
+                        <div class="search-box">
+                            <i class="fa-solid fa-search"></i>
+                            <input
+                                type="text"
+                                id="memberSearchInput"
+                                placeholder="Search members..."
+                            >
+                        </div>
+
+                        <select id="memberStatusFilter">
+                            <option value="all">All Members</option>
+                            <option value="pending">Pending Verification</option>
+                            <option value="active">Active</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
+                    </div>
+
+                    <div class="members-table-wrapper">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Member</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Subscription</th>
+                                    <th>Expiry</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="membersTableBody">
+                                <tr>
+                                    <td colspan="7" class="loading-cell">
+                                        Loading members...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+
+                <!-- =========================
+                     MEMES
+                ========================== -->
+
+                <section
+                    class="admin-section"
+                    id="memesSection"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+                            <h2>Memes</h2>
+
+                            <p>
+                                Manage memes published on Lilly Memes.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="admin-card placeholder-card">
+
+                        <div class="placeholder-icon">
+                            <i class="fa-solid fa-images"></i>
+                        </div>
+
+                        <h3>Meme management</h3>
+
+                        <p>
+                            Upload new memes, assign categories and manage
+                            published content.
+                        </p>
+
+                        <a class="memes-uploader-link" href="/admin-memes.html">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            Open Meme Uploader
+                        </a>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =========================
+                     STORIES
+                ========================== -->
+
+                <section
+                    class="admin-section"
+                    id="storiesSection"
+                >
+
+                    <div class="section-header">
+                        <div>
+                            <h2>Stories</h2>
+                            <p>Publish image or video stories for members.</p>
+                        </div>
+
+                        <button class="refresh-btn" type="button" id="refreshStoriesBtn">
+                            <i class="fa-solid fa-rotate"></i>
+                            Refresh
+                        </button>
+                    </div>
+
+                    <div class="admin-card story-admin-card">
+                        <form id="storyForm" class="story-form">
+                            <label class="story-field">
+                                <span>Image or video <small>(maximum 50 MB)</small></span>
+                                <input
+                                    type="file"
+                                    id="storyMediaInput"
+                                    name="media"
+                                    accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime"
+                                    required
+                                >
+                            </label>
+
+                            <label class="story-field">
+                                <span>Caption <small>(optional, up to 500 characters)</small></span>
+                                <textarea
+                                    id="storyCaptionInput"
+                                    name="caption"
+                                    maxlength="500"
+                                    rows="3"
+                                    placeholder="Write a caption..."
+                                ></textarea>
+                            </label>
+
+                            <label class="story-field">
+                                <span>Story duration</span>
+                                <select id="storyDurationInput" name="durationHours">
+                                    <option value="24">24 hours</option>
+                                    <option value="48">48 hours</option>
+                                    <option value="72">3 days</option>
+                                    <option value="168">7 days</option>
+                                </select>
+                            </label>
+
+                            <button class="btn btn-primary" type="submit" id="publishStoryBtn">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                Publish Story
+                            </button>
+                        </form>
+
+                        <div id="storyFormMessage" class="story-form-message hidden" role="status"></div>
+                    </div>
+
+                    <div class="admin-card story-admin-card">
+                        <h3>Published Stories</h3>
+                        <div class="members-table-wrapper">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Media</th>
+                                        <th>Caption</th>
+                                        <th>Published by</th>
+                                        <th>Expires</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="storiesTableBody">
+                                    <tr>
+                                        <td colspan="5" class="loading-cell">Loading stories...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =========================
+                     MEMBER MESSAGES
+                ========================== -->
+
+                <section
+                    class="admin-section"
+                    id="messagesSection"
+                >
+                    <div class="section-header">
+                        <div>
+                            <h2>Member Messages</h2>
+                            <p>Messages sent directly by members.</p>
+                        </div>
+                        <button class="refresh-btn" type="button" id="refreshMessagesBtn">
+                            <i class="fa-solid fa-rotate"></i>
+                            Refresh
+                        </button>
+                    </div>
+
+                    <div class="members-table-wrapper">
+                        <table class="admin-table messages-table">
+                            <thead>
+                                <tr>
+                                    <th>Member</th>
+                                    <th>Subject</th>
+                                    <th>Message</th>
+                                    <th>Received</th>
+                                </tr>
+                            </thead>
+                            <tbody id="memberMessagesTableBody">
+                                <tr>
+                                    <td colspan="4" class="loading-cell">
+                                        Select Member Messages to load the inbox.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <!-- PAYMENT DETAILS MODAL -->
+
+    <div
+        class="modal-overlay hidden"
+        id="paymentModal"
+    >
+
+        <div class="payment-modal">
+
+            <button
+                type="button"
+                class="modal-close"
+                id="closePaymentModal"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+
+            <div class="modal-header">
+
+                <span class="modal-icon">
+                    <i class="fa-solid fa-money-check-dollar"></i>
+                </span>
+
+                <div>
+                    <h2>Payment Details</h2>
+                    <p>Review this payment before verification.</p>
+                </div>
+
+            </div>
+
+
+            <div
+                class="payment-details"
+                id="paymentDetails"
+            ></div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="reject-button"
+                    id="rejectPaymentButton"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                    Reject
+                </button>
+
+                <button
+                    type="button"
+                    class="approve-button"
+                    id="approvePaymentButton"
+                >
+                    <i class="fa-solid fa-check"></i>
+                    Approve Payment
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="admin-modal" id="memberModal" aria-hidden="true">
+        <div class="modal-content member-modal-content" role="dialog" aria-modal="true" aria-labelledby="memberModalName">
+            <button type="button" class="modal-close" id="closeMemberModal" aria-label="Close member details">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="member-modal-header">
+                <div class="member-avatar-large" id="memberModalAvatar">?</div>
+
+                <div>
+                    <h2 id="memberModalName">Member</h2>
+                    <p id="memberModalUsername">@username</p>
+                </div>
+            </div>
+
+            <div class="member-details-grid">
+                <div class="member-detail">
+                    <span>Email</span>
+                    <strong id="memberModalEmail">-</strong>
+                </div>
+
+                <div class="member-detail">
+                    <span>Account Status</span>
+                    <strong id="memberModalStatus">-</strong>
+                </div>
+
+                <div class="member-detail">
+                    <span>Subscription</span>
+                    <strong id="memberModalPlan">-</strong>
+                </div>
+
+                <div class="member-detail">
+                    <span>Subscription Status</span>
+                    <strong id="memberModalSubscriptionStatus">-</strong>
+                </div>
+
+                <div class="member-detail">
+                    <span>Subscription Expiry</span>
+                    <strong id="memberModalExpiry">-</strong>
+                </div>
+
+                <div class="member-detail">
+                    <span>Joined</span>
+                    <strong id="memberModalJoined">-</strong>
+                </div>
+            </div>
+
+            <div class="member-modal-actions">
+                <button type="button" class="btn btn-success" id="verifyMemberBtn">
+                    <i class="fa-solid fa-check"></i>
+                    Verify Member
+                </button>
+
+                <button type="button" class="btn btn-danger" id="rejectMemberBtn">
+                    <i class="fa-solid fa-xmark"></i>
+                    Reject
+                </button>
+            </div>
+
+            <section class="member-subscription-actions hidden" id="memberSubscriptionActions" aria-label="Manage subscription">
+                <h3>Subscription actions</h3>
+                <div class="subscription-action-row">
+                    <label for="extendSubscriptionDays">Extend by</label>
+                    <input
+                        type="number"
+                        id="extendSubscriptionDays"
+                        min="1"
+                        max="3650"
+                        step="1"
+                        value="30"
+                        aria-label="Number of days to extend subscription"
+                    >
+                    <span>days</span>
+                    <button type="button" class="btn btn-subscription" id="extendMemberSubscriptionBtn">
+                        <i class="fa-solid fa-calendar-plus"></i>
+                        Extend
+                    </button>
+                </div>
+                <div class="member-modal-actions subscription-status-actions">
+                    <button type="button" class="btn btn-reactivate hidden" id="reactivateMemberSubscriptionBtn">
+                        <i class="fa-solid fa-rotate"></i>
+                        Reactivate
+                    </button>
+                    <button type="button" class="btn btn-danger hidden" id="cancelMemberSubscriptionBtn">
+                        <i class="fa-solid fa-ban"></i>
+                        Cancel Subscription
+                    </button>
+                </div>
+                <p class="subscription-action-note">
+                    Reactivation is available only until the original expiry date.
+                    Cancellation ends access immediately.
+                </p>
+            </section>
+        </div>
+    </div>
+
+    <div
+        class="toast hidden"
+        id="adminToast"
+    ></div>
+
+
+    <script src="/js/media.js?v=cloudinary"></script>
+    <script src="/js/admin.js?v=cloudinary"></script>
 
 </body>
-
 </html>

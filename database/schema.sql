@@ -189,7 +189,9 @@ CREATE TABLE memes (
 
     caption VARCHAR(500),
 
-    image VARCHAR(255) NOT NULL,
+    image VARCHAR(2048) NOT NULL,
+
+    cloudinary_public_id VARCHAR(255),
 
     view_count INT UNSIGNED NOT NULL DEFAULT 0,
 
@@ -390,7 +392,9 @@ CREATE TABLE stories (
 
     media_type ENUM('image', 'video') NOT NULL DEFAULT 'image',
 
-    media VARCHAR(255) NOT NULL,
+    media VARCHAR(2048) NOT NULL,
+
+    cloudinary_public_id VARCHAR(255),
 
     caption VARCHAR(500),
 
@@ -508,7 +512,31 @@ CREATE TABLE reports (
 
 
 -- ============================================================
--- 17. ADMIN ACTIVITY LOG
+-- 17. MEMBER MESSAGES TO ADMIN
+-- ============================================================
+
+CREATE TABLE member_messages (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    user_id INT UNSIGNED NOT NULL,
+
+    subject VARCHAR(120) NOT NULL,
+
+    message TEXT NOT NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    INDEX idx_member_messages_created_at (created_at),
+
+    CONSTRAINT fk_member_message_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+);
+
+
+-- ============================================================
+-- 18. ADMIN ACTIVITY LOG
 -- ============================================================
 
 CREATE TABLE admin_logs (
@@ -532,7 +560,7 @@ CREATE TABLE admin_logs (
 
 
 -- ============================================================
--- 18. SITE SETTINGS
+-- 19. SITE SETTINGS
 -- ============================================================
 
 CREATE TABLE site_settings (

@@ -9,6 +9,7 @@
     <title>Lilly Memes - Membership Plans</title>
 
     <link rel="stylesheet" href="/css/plans.css">
+    <link rel="stylesheet" href="/css/brand.css">
 </head>
 
 <body>
@@ -17,7 +18,8 @@
     <header class="top-header">
 
         <a href="/" class="logo">
-            😂 Lilly Memes
+            <img src="/images/lilly-memes-logo.jpg" class="brand-logo-image" alt="">
+            <span>Lilly Memes</span>
         </a>
 
         <a href="/member.html" class="back-link">
@@ -63,6 +65,13 @@
                 <p id="subscriptionText">
                     Loading...
                 </p>
+                <a
+                    id="resumePendingPayment"
+                    class="plan-button hidden"
+                    href="#"
+                >
+                    Continue to payment
+                </a>
             </div>
         </section>
 
@@ -133,7 +142,7 @@
     </footer>
 
 
-    <script src="/js/plans.js"></script>
+    <script src="/js/plans.js?v=pending-payment-resume"></script>
 
 </body>
 

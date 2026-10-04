@@ -35,6 +35,19 @@ const formMessage =
 
 
 let subscription = null;
+let paymentStatusInterval = null;
+let checkingPaymentStatus = false;
+
+const paymentRecipients = {
+    airtel_money: {
+        number: "0990999983",
+        label: "Airtel Money"
+    },
+    tnm_mpamba: {
+        number: "0882875937",
+        label: "TNM Mpamba"
+    }
+};
 
 
 /*
@@ -43,6 +56,7 @@ let subscription = null;
 document.addEventListener(
     "DOMContentLoaded",
     async function () {
+        setupPaymentMethodSelection();
 
         if (!subscriptionId) {
 
@@ -61,6 +75,29 @@ document.addEventListener(
 
     }
 );
+
+function setupPaymentMethodSelection() {
+    const recipient = document.getElementById("paymentRecipient");
+    const recipientNumber = document.getElementById("paymentRecipientNumber");
+    const recipientMethod = document.getElementById("paymentRecipientMethod");
+
+    document
+        .querySelectorAll('input[name="payment_method"]')
+        .forEach((input) => {
+            input.addEventListener("change", () => {
+                const paymentDetails = paymentRecipients[input.value];
+                if (!paymentDetails) {
+                    recipient.hidden = true;
+                    return;
+                }
+
+                recipientNumber.textContent = paymentDetails.number;
+                recipientMethod.textContent =
+                    `Send the subscription payment using ${paymentDetails.label}.`;
+                recipient.hidden = false;
+            });
+        });
+}
 
 
 /*
@@ -98,6 +135,7 @@ async function loadSubscription() {
             data.subscription;
 
         renderSubscription();
+        void checkPaymentStatus();
 
     } catch (error) {
         console.error(
@@ -214,17 +252,14 @@ paymentForm.addEventListener(
 
 
         /*
-            Mobile money and Malipo normally
-            need a transaction reference.
+            Mobile money payments need a transaction reference.
         */
         if (
             (
                 selectedMethod.value ===
                     "airtel_money" ||
                 selectedMethod.value ===
-                    "tnm_mpamba" ||
-                selectedMethod.value ===
-                    "malipo"
+                    "tnm_mpamba"
             ) &&
             !transactionReference
         ) {
@@ -303,33 +338,8 @@ paymentForm.addEventListener(
             }
 
 
-            showMessage(
-                "Payment submitted successfully. Your payment is now awaiting verification.",
-                "success"
-            );
-
-
-            submitButton.textContent =
-                "Payment Submitted";
-
-
-            submitButton.disabled = true;
-
-
-            /*
-                Give the user time to read
-                the confirmation before returning
-                to the member area.
-            */
-            setTimeout(
-                function () {
-
-                    window.location.href =
-                        "/member.html";
-
-                },
-                2500
-            );
+            showPendingMessage();
+            startPaymentStatusChecking();
 
 
         } catch (error) {
@@ -353,9 +363,126 @@ paymentForm.addEventListener(
             submitButton.textContent =
                 "Submit Payment";
         }
-
     }
 );
+
+function showPendingMessage() {
+    showMessage(
+        "Payment submitted successfully. Waiting for administrator approval...",
+        "success"
+    );
+
+    paymentForm.classList.add("payment-awaiting-approval");
+
+    paymentForm.querySelectorAll(
+        "input, select, textarea, button"
+    ).forEach((field) => {
+        field.disabled = true;
+    });
+
+    submitButton.textContent = "Waiting for Verification";
+}
+
+
+function startPaymentStatusChecking() {
+    stopPaymentStatusChecking();
+    void checkPaymentStatus();
+    paymentStatusInterval = window.setInterval(
+        checkPaymentStatus,
+        5000
+    );
+}
+
+
+function stopPaymentStatusChecking() {
+    if (paymentStatusInterval !== null) {
+        window.clearInterval(paymentStatusInterval);
+        paymentStatusInterval = null;
+    }
+}
+
+
+async function checkPaymentStatus() {
+    if (checkingPaymentStatus || !subscriptionId) {
+        return;
+    }
+
+    checkingPaymentStatus = true;
+
+    try {
+        const response = await fetch(
+            `/api/payments/subscription/${encodeURIComponent(subscriptionId)}/status`,
+            { cache: "no-store" }
+        );
+
+        if (response.status === 401) {
+            stopPaymentStatusChecking();
+            window.location.href = "/login.html";
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message || "Unable to check payment status."
+            );
+        }
+
+        const paymentStatus =
+            String(data.payment?.status || "").toLowerCase();
+        const subscriptionStatus =
+            String(data.subscription_status || "").toLowerCase();
+
+        if (
+            paymentStatus === "successful" ||
+            paymentStatus === "approved" ||
+            subscriptionStatus === "active"
+        ) {
+            stopPaymentStatusChecking();
+            showMessage(
+                "Payment approved. Redirecting to your member page...",
+                "success"
+            );
+            window.setTimeout(() => {
+                window.location.replace("/member.html");
+            }, 1200);
+            return;
+        }
+
+        if (paymentStatus === "pending") {
+            showPendingMessage();
+
+            if (paymentStatusInterval === null) {
+                paymentStatusInterval = window.setInterval(
+                    checkPaymentStatus,
+                    5000
+                );
+            }
+
+            return;
+        }
+
+        if (
+            paymentStatus === "rejected" ||
+            subscriptionStatus === "rejected"
+        ) {
+            stopPaymentStatusChecking();
+            showMessage(
+                "Your payment was not approved. Please contact the administrator.",
+                "error"
+            );
+            submitButton.textContent = "Payment Not Approved";
+        }
+    } catch (error) {
+        console.error("Check payment status error:", error);
+    } finally {
+        checkingPaymentStatus = false;
+    }
+}
+
+
+window.addEventListener("beforeunload", stopPaymentStatusChecking);
 
 
 /*

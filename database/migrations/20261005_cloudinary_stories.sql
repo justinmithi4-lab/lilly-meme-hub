@@ -1,0 +1,3 @@
+ALTER TABLE stories
+    ADD COLUMN cloudinary_public_id VARCHAR(255) NULL AFTER media,
+    MODIFY COLUMN media VARCHAR(2048) NOT NULL;

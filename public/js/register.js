@@ -56,14 +56,14 @@ registerForm.addEventListener("submit", async (event) => {
 
 
         message.textContent =
-            "Account created successfully! Redirecting to login...";
+            "Account created! Redirecting to membership plans...";
 
 
         setTimeout(() => {
 
-            window.location.href = "/login.html";
+            window.location.href = "/plans.html";
 
-        }, 1200);
+        }, 700);
 
 
     } catch (error) {

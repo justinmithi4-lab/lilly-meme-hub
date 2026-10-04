@@ -1,84 +1,43 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
-const crypto = require("crypto");
 
-const requireAdmin =
-    require("../middleware/requireAdmin");
-
-const requireLogin =
-    require("../middleware/requireLogin");
+const requireLogin = require("../middleware/requireLogin");
+const requireMember = require("../middleware/requireMember");
+const requireActiveSubscription = require("../middleware/requireActiveSubscription");
+const requireAdmin = require("../middleware/requireAdmin");
 
 const {
-    getCategories,
-    createMeme,
-    getAdminMemes,
     getMeme,
+    getHomepageMemes,
+    createMeme,
     updateMeme,
     deleteMeme,
-    getHomepageMemes,
     toggleLike,
     recordMemeView,
-    toggleSaveMeme,
     downloadMeme,
-    getComments,
+    toggleSaveMeme,
     createComment,
+    getComments,
+    toggleCommentLike,
     reportMeme,
-    toggleCommentLike
+    getCategories
 } = require("../controllers/memeController");
 
 const router = express.Router();
 
-// ==================================================
-// MULTER CONFIGURATION
-// ==================================================
+/*
+|--------------------------------------------------------------------------
+| Multer
+|--------------------------------------------------------------------------
+| Store uploaded images temporarily in memory.
+| The controller will upload them directly to Cloudinary.
+|--------------------------------------------------------------------------
+*/
 
-const storage = multer.diskStorage({
-
-    destination: function (req, file, cb) {
-
-        cb(
-            null,
-            path.join(
-                __dirname,
-                "..",
-                "uploads",
-                "memes"
-            )
-        );
-
-    },
-
-    filename: function (req, file, cb) {
-
-        const extension =
-            path.extname(
-                file.originalname
-            ).toLowerCase();
-
-        const randomName =
-            Date.now() +
-            "-" +
-            crypto
-                .randomBytes(8)
-                .toString("hex") +
-            extension;
-
-        cb(
-            null,
-            randomName
-        );
-
-    }
-
-});
-
-// ==================================================
-// UPLOAD FILTER
-// ==================================================
+const storage = multer.memoryStorage();
 
 const upload = multer({
-
     storage,
 
     limits: {
@@ -94,242 +53,126 @@ const upload = multer({
             "image/gif"
         ];
 
-        if (
-            !allowedTypes.includes(
-                file.mimetype
-            )
-        ) {
+        if (!allowedTypes.includes(file.mimetype)) {
 
             return cb(
                 new Error(
                     "Only JPG, PNG, WEBP and GIF images are allowed."
                 )
             );
+        }
 
+        const extension = path.extname(file.originalname).toLowerCase();
+        const allowedExtensions = new Set([
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".webp",
+            ".gif"
+        ]);
+
+        if (!allowedExtensions.has(extension)) {
+            return cb(new Error("The meme image must use a JPG, PNG, WEBP or GIF file extension."));
         }
 
         cb(null, true);
-
     }
-
 });
 
-// ==================================================
-// PUBLIC HOMEPAGE FEED
-// ==================================================
+
+/*
+|--------------------------------------------------------------------------
+| PUBLIC HOMEPAGE
+|--------------------------------------------------------------------------
+*/
 
 router.get(
     "/homepage",
     getHomepageMemes
 );
 
-// ==================================================
-// ADMIN CATEGORIES
-// ==================================================
+
+/*
+|--------------------------------------------------------------------------
+| CATEGORIES
+|--------------------------------------------------------------------------
+*/
 
 router.get(
     "/categories",
-    requireAdmin,
     getCategories
 );
 
-// ==================================================
-// ADMIN MEME LIST
-// ==================================================
+
+/*
+|--------------------------------------------------------------------------
+| MEMBER MEMES
+|--------------------------------------------------------------------------
+*/
 
 router.get(
-    "/admin",
-    requireAdmin,
-    getAdminMemes
+    "/",
+    requireLogin,
+    requireMember,
+    requireActiveSubscription,
+    getHomepageMemes
 );
 
-// ==================================================
-// VIEW A SINGLE MEME
-// IMPORTANT:
-// This must NOT use requireAdmin.
-// Members/guests need to be able to open memes.
-// ==================================================
+
+/*
+|--------------------------------------------------------------------------
+| SINGLE MEME
+|--------------------------------------------------------------------------
+*/
 
 router.get(
     "/:id",
+    requireLogin,
+    requireMember,
+    requireActiveSubscription,
     getMeme
 );
 
-// ==================================================
-// RECORD MEME VIEW
-// ==================================================
 
-router.post(
-    "/:id/view",
-    requireLogin,
-    recordMemeView
-);
-
-// ==================================================
-// LIKE / UNLIKE
-// ==================================================
-
-router.post(
-    "/:id/like",
-    toggleLike
-);
-
-// ==================================================
-// SAVE / UNSAVE
-// ==================================================
-
-router.post(
-    "/:id/save",
-    toggleSaveMeme
-);
-
-// ==================================================
-// DOWNLOAD MEME
-// ==================================================
-
-router.get(
-    "/:id/download",
-    downloadMeme
-);
-
-// ==================================================
-// GET COMMENTS
-// ==================================================
-
-router.get(
-    "/:id/comments",
-    getComments
-);
-
-// ==================================================
-// CREATE COMMENT / REPLY
-// ==================================================
-
-router.post(
-    "/:id/comments",
-    createComment
-);
-
-router.post(
-    "/comments/:commentId/like",
-    requireLogin,
-    toggleCommentLike
-);
-
-// ==================================================
-// REPORT MEME
-// ==================================================
-
-router.post(
-    "/:id/report",
-    reportMeme
-);
-
-// ==================================================
-// ADMIN CREATE MEME
-// ==================================================
+/*
+|--------------------------------------------------------------------------
+| CREATE MEME
+|--------------------------------------------------------------------------
+| Admin only
+|--------------------------------------------------------------------------
+*/
 
 router.post(
     "/",
     requireAdmin,
-
-    function (req, res, next) {
-
-        upload.single("image")(
-            req,
-            res,
-
-            function (error) {
-
-                if (error) {
-
-                    console.error(
-                        "Upload error:",
-                        error
-                    );
-
-                    // ----------------------------------
-                    // Multer errors
-                    // ----------------------------------
-
-                    if (
-                        error instanceof
-                        multer.MulterError
-                    ) {
-
-                        if (
-                            error.code ===
-                            "LIMIT_FILE_SIZE"
-                        ) {
-
-                            return res
-                                .status(400)
-                                .json({
-
-                                    success: false,
-
-                                    message:
-                                        "Image is too large. Maximum size is 10 MB."
-
-                                });
-
-                        }
-
-                        return res
-                            .status(400)
-                            .json({
-
-                                success: false,
-
-                                message:
-                                    "Image upload failed: " +
-                                    error.message
-
-                            });
-
-                    }
-
-                    // ----------------------------------
-                    // Custom file filter error
-                    // ----------------------------------
-
-                    return res
-                        .status(400)
-                        .json({
-
-                            success: false,
-
-                            message:
-                                error.message ||
-                                "Image upload failed."
-
-                        });
-
-                }
-
-                next();
-
-            }
-        );
-
-    },
-
+    upload.single("image"),
     createMeme
 );
 
-// ==================================================
-// ADMIN UPDATE MEME
-// ==================================================
+
+/*
+|--------------------------------------------------------------------------
+| UPDATE MEME
+|--------------------------------------------------------------------------
+| Admin only
+|--------------------------------------------------------------------------
+*/
 
 router.put(
     "/:id",
     requireAdmin,
+    upload.single("image"),
     updateMeme
 );
 
-// ==================================================
-// ADMIN DELETE MEME
-// ==================================================
+
+/*
+|--------------------------------------------------------------------------
+| DELETE MEME
+|--------------------------------------------------------------------------
+| Admin only
+|--------------------------------------------------------------------------
+*/
 
 router.delete(
     "/:id",
@@ -337,8 +180,133 @@ router.delete(
     deleteMeme
 );
 
-// ==================================================
-// EXPORT
-// ==================================================
+
+/*
+|--------------------------------------------------------------------------
+| LIKES
+|--------------------------------------------------------------------------
+*/
+
+router.post(
+    "/:id/like",
+    requireLogin,
+    requireMember,
+    requireActiveSubscription,
+    toggleLike
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| VIEWS
+|--------------------------------------------------------------------------
+*/
+
+router.post(
+    "/:id/view",
+    requireLogin,
+    requireMember,
+    requireActiveSubscription,
+    recordMemeView
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| DOWNLOAD
+|--------------------------------------------------------------------------
+*/
+
+router.get(
+    "/:id/download",
+    requireLogin,
+    requireMember,
+    requireActiveSubscription,
+    downloadMeme
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| SAVED MEMES
+|--------------------------------------------------------------------------
+*/
+
+router.post(
+    "/:id/save",
+    requireLogin,
+    requireMember,
+    requireActiveSubscription,
+    toggleSaveMeme
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| COMMENTS
+|--------------------------------------------------------------------------
+*/
+
+router.get(
+    "/:id/comments",
+    requireLogin,
+    requireMember,
+    requireActiveSubscription,
+    getComments
+);
+
+router.post(
+    "/:id/comments",
+    requireLogin,
+    requireMember,
+    requireActiveSubscription,
+    createComment
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| COMMENT LIKE
+|--------------------------------------------------------------------------
+*/
+
+router.post(
+    "/comments/:commentId/like",
+    requireLogin,
+    requireMember,
+    requireActiveSubscription,
+    toggleCommentLike
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| REPLIES
+|--------------------------------------------------------------------------
+*/
+
+router.post(
+    "/comments/:commentId/reply",
+    requireLogin,
+    requireMember,
+    requireActiveSubscription,
+    createComment
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| REPORT
+|--------------------------------------------------------------------------
+*/
+
+router.post(
+    "/:id/report",
+    requireLogin,
+    requireMember,
+    requireActiveSubscription,
+    reportMeme
+);
+
 
 module.exports = router;

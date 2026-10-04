@@ -60,6 +60,11 @@ loginForm.addEventListener("submit", async (event) => {
             window.location.href =
                 "/admin.html";
 
+        } else if (data.user.status === "pending") {
+
+            window.location.href =
+                "/plans.html";
+
         } else {
 
             window.location.href =

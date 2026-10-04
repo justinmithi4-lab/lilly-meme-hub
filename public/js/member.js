@@ -7,6 +7,12 @@ const latestContainer =
 const discussedContainer =
     document.getElementById("discussedMemes");
 
+const storiesContainer =
+    document.getElementById("storiesContainer");
+
+const viewStoriesButton =
+    document.getElementById("viewStoriesButton");
+
 /* =========================================
    MEMBER SEARCH
 ========================================= */
@@ -186,36 +192,236 @@ document.addEventListener(
     "DOMContentLoaded",
     async () => {
 
-        setupNavigation();
-
-        setupExtraNavigation();
-
-        setupMembershipNavigation();
-
-        setupNotificationControls();
-
         await loadCurrentUser();
 
-        if (currentUser) {
-
-            await refreshUnreadNotificationCount();
-
-            window.addEventListener(
-                "focus",
-                refreshUnreadNotificationCount
-            );
-
-            window.setInterval(
-                refreshUnreadNotificationCount,
-                30000
-            );
-
+        if (!currentUser) {
+            return;
         }
 
-        await loadHomepageMemes();
+        const hasSubscription =
+            await checkSubscription();
+
+        if (!hasSubscription) {
+            return;
+        }
+
+        setupNavigation();
+
+        await startMemberExperience();
 
     }
 );
+
+
+async function startMemberExperience() {
+    setupExtraNavigation();
+    setupMembershipNavigation();
+    setupMemberMessaging();
+    setupNotificationControls();
+
+    await refreshUnreadNotificationCount();
+
+    window.addEventListener(
+        "focus",
+        refreshUnreadNotificationCount
+    );
+
+    window.setInterval(
+        refreshUnreadNotificationCount,
+        30000
+    );
+
+    await loadHomepageMemes();
+    await loadStories();
+
+    if (viewStoriesButton) {
+        viewStoriesButton.addEventListener("click", loadStories);
+    }
+}
+
+function setupMemberMessaging() {
+    const openButton = document.getElementById("contactAdminButton");
+    const modal = document.getElementById("contactAdminModal");
+    const form = document.getElementById("contactAdminForm");
+    const subjectInput = document.getElementById("contactAdminSubject");
+    const messageInput = document.getElementById("contactAdminMessage");
+    const feedback = document.getElementById("contactAdminFeedback");
+    const sendButton = document.getElementById("sendContactAdminMessage");
+
+    if (!openButton || !modal || !form || !sendButton) {
+        return;
+    }
+
+    const closeModal = () => {
+        modal.hidden = true;
+        openButton.focus();
+    };
+
+    openButton.addEventListener("click", () => {
+        modal.hidden = false;
+        feedback.hidden = true;
+        subjectInput.focus();
+    });
+
+    document.getElementById("closeContactAdmin").addEventListener(
+        "click",
+        closeModal
+    );
+    document.getElementById("cancelContactAdmin").addEventListener(
+        "click",
+        closeModal
+    );
+
+    modal.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !modal.hidden) {
+            closeModal();
+        }
+    });
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        feedback.hidden = true;
+        sendButton.disabled = true;
+
+        try {
+            const response = await fetch("/api/member-messages", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    subject: subjectInput.value.trim(),
+                    message: messageInput.value.trim()
+                })
+            });
+            const data = await response.json();
+
+            if (response.status === 401) {
+                window.location.href = "/login.html";
+                return;
+            }
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "Unable to send your message.");
+            }
+
+            form.reset();
+            feedback.textContent = "Your message was sent to the admin.";
+            feedback.className = "contact-admin-feedback success";
+            feedback.hidden = false;
+        } catch (error) {
+            console.error("Failed to send admin message:", error);
+            feedback.textContent =
+                error.message || "Unable to send your message. Please try again.";
+            feedback.className = "contact-admin-feedback error";
+            feedback.hidden = false;
+        } finally {
+            sendButton.disabled = false;
+        }
+    });
+}
+
+
+async function checkSubscription() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/subscriptions/current",
+                { cache: "no-store" }
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            window.location.href =
+                "/plans.html";
+
+            return false;
+
+        }
+
+        if (
+            data.subscription &&
+            data.subscription.status === "pending"
+        ) {
+            const pendingSubscriptionId =
+                Number(data.subscription.id);
+
+            if (!Number.isInteger(pendingSubscriptionId) || pendingSubscriptionId <= 0) {
+                console.error("Pending subscription did not include a valid ID.");
+                window.location.href = "/subscribe.html";
+                return false;
+            }
+
+            window.location.replace(
+                `/subscribe.html?subscription_id=${encodeURIComponent(
+                    pendingSubscriptionId
+                )}`
+            );
+            return false;
+        }
+
+        if (
+            !data.subscription ||
+            data.subscription.status !== "active"
+        ) {
+
+            window.location.href =
+                "/plans.html";
+
+            return false;
+
+        }
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "Subscription check failed:",
+            error
+        );
+
+        window.location.href =
+            "/subscribe.html";
+
+        return false;
+
+    }
+
+}
+
+
+function handleSubscriptionError(data, response) {
+
+    if (
+        response.status === 403 &&
+        data.code === "SUBSCRIPTION_REQUIRED"
+    ) {
+
+        window.location.href =
+            "/subscribe.html";
+
+        return true;
+
+    }
+
+    return false;
+
+}
 
 
 /*
@@ -343,9 +549,7 @@ function updateUserInterface() {
             ) {
 
                 image.src =
-                    `/uploads/profiles/${encodeURIComponent(
-                        currentUser.profile_image
-                    )}`;
+                    getUploadedMediaUrl(currentUser.profile_image, "profiles");
 
             }
 
@@ -371,9 +575,7 @@ function updateUserInterface() {
 
         profileAvatar.innerHTML = `
             <img
-                src="/uploads/profiles/${encodeURIComponent(
-                    currentUser.profile_image
-                )}"
+                src="${getUploadedMediaUrl(currentUser.profile_image, "profiles")}"
                 alt="Profile"
             >
         `;
@@ -414,7 +616,6 @@ async function loadHomepageMemes() {
 
         const data =
             await response.json();
-
 
         if (
             !response.ok ||
@@ -469,6 +670,104 @@ async function loadHomepageMemes() {
 
     }
 
+}
+
+
+async function loadStories() {
+    if (!storiesContainer) {
+        return;
+    }
+
+    const renderEmptyStories = () => {
+        storiesContainer.innerHTML = `
+            <div class="story-placeholder">
+                <div class="story-avatar">
+                    <i class="fa-solid fa-circle-play"></i>
+                </div>
+                <span>No active stories</span>
+            </div>
+        `;
+    };
+
+    storiesContainer.innerHTML = `
+        <div class="story-placeholder">
+            <span>Loading stories...</span>
+        </div>
+    `;
+
+    try {
+        const response = await fetch("/api/stories");
+
+        let data = {};
+        try {
+            data = await response.json();
+        } catch (parseError) {
+            console.warn("Story API returned non-JSON response:", parseError);
+        }
+
+        if (!response.ok) {
+            if (response.status === 401 || response.status === 403) {
+                renderEmptyStories();
+                return;
+            }
+
+            throw new Error(data.message || "Failed to load stories.");
+        }
+
+        if (!data.success) {
+            if (/(no active stories|no stories|not found)/i.test(data.message || "")) {
+                renderEmptyStories();
+                return;
+            }
+
+            throw new Error(data.message || "Failed to load stories.");
+        }
+
+        const stories = Array.isArray(data.stories) ? data.stories : [];
+
+        if (stories.length === 0) {
+            renderEmptyStories();
+            return;
+        }
+
+        storiesContainer.innerHTML = stories.map((story) => {
+            const mediaUrl =
+                getUploadedMediaUrl(story.media, "stories");
+            const preview = story.media_type === "video"
+                ? `<video src="${mediaUrl}" muted autoplay loop playsinline></video>`
+                : `<img src="${mediaUrl}" alt="">`;
+
+            return `
+                <a
+                    class="member-story-card"
+                    href="${mediaUrl}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Open story by ${escapeHtml(story.username || "member") }"
+                >
+                    ${preview}
+                    <span class="member-story-overlay">
+                        <strong>${escapeHtml(story.username || "Member")}</strong>
+                        ${
+                            story.caption
+                                ? `<small>${escapeHtml(story.caption)}</small>`
+                                : ""
+                        }
+                    </span>
+                </a>
+            `;
+        }).join("");
+    } catch (error) {
+        console.error("Failed to load stories:", error);
+        storiesContainer.innerHTML = `
+            <div class="story-placeholder">
+                <div class="story-avatar">
+                    <i class="fa-solid fa-circle-play"></i>
+                </div>
+                <span>No active stories</span>
+            </div>
+        `;
+    }
 }
 
 
@@ -532,9 +831,7 @@ function renderMemes(
 function createMemeCard(meme) {
 
     const imageUrl =
-        `/uploads/memes/${encodeURIComponent(
-            meme.image
-        )}`;
+        getUploadedMediaUrl(meme.image, "memes");
 
 
     const liked =
@@ -698,6 +995,10 @@ async function likeMeme(
 
         const data =
             await response.json();
+
+        if (handleSubscriptionError(data, response)) {
+            return;
+        }
 
 
         if (
@@ -1922,33 +2223,6 @@ function setupMembershipNavigation() {
 
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Create button
-    |--------------------------------------------------------------------------
-    */
-
-    const mobileCreateButton =
-        document.getElementById(
-            "mobileCreateButton"
-        );
-
-
-    if (mobileCreateButton) {
-
-        mobileCreateButton.addEventListener(
-            "click",
-            function () {
-
-                console.log(
-                    "Create button clicked."
-                );
-
-            }
-        );
-
-    }
 
 }
 

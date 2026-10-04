@@ -89,10 +89,11 @@ async function register(req, res) {
                     username,
                     email,
                     password_hash,
-                    full_name
+                    full_name,
+                    status
                 )
             VALUES
-                (?, ?, ?, ?)
+                (?, ?, ?, ?, 'pending')
             `,
             [
                 username,
@@ -102,10 +103,22 @@ async function register(req, res) {
             ]
         );
 
+        const user = {
+            id: result.insertId,
+            username,
+            email,
+            full_name: full_name || null,
+            profile_image: null,
+            role: "member",
+            status: "pending"
+        };
+
+        req.session.user = user;
+
         res.status(201).json({
             success: true,
-            message: "Account created successfully.",
-            userId: result.insertId
+            message: "Account created. Choose a membership plan to continue.",
+            user
         });
 
     } catch (error) {
@@ -262,7 +275,7 @@ function logout(req, res) {
 // CURRENT USER
 // ============================================================
 
-function currentUser(req, res) {
+async function currentUser(req, res) {
 
     if (!req.session.user) {
         return res.json({
@@ -271,11 +284,46 @@ function currentUser(req, res) {
         });
     }
 
-    res.json({
-        success: true,
-        loggedIn: true,
-        user: req.session.user
-    });
+    try {
+        const [users] = await pool.execute(
+            `
+            SELECT
+                id,
+                username,
+                email,
+                full_name,
+                profile_image,
+                role,
+                status
+            FROM users
+            WHERE id = ?
+            LIMIT 1
+            `,
+            [req.session.user.id]
+        );
+
+        if (users.length === 0) {
+            return res.json({
+                success: true,
+                loggedIn: false
+            });
+        }
+
+        req.session.user = users[0];
+
+        return res.json({
+            success: true,
+            loggedIn: true,
+            user: req.session.user
+        });
+    } catch (error) {
+        console.error("Load current user error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to load your account."
+        });
+    }
 }
 
 

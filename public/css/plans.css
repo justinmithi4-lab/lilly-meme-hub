@@ -336,6 +336,10 @@ body {
         transform 0.1s ease;
 }
 
+.plan-button.hidden {
+    display: none;
+}
+
 .plan-button:hover {
     background: var(--primary-hover);
 }

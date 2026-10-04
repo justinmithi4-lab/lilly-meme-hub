@@ -42,6 +42,8 @@ async function getPlans(req, res) {
 |--------------------------------------------------------------------------
 */
 async function getCurrentSubscription(req, res) {
+    res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
+
     try {
         const userId = req.session.user.id;
 
@@ -61,7 +63,20 @@ async function getCurrentSubscription(req, res) {
             INNER JOIN plans p
                 ON s.plan_id = p.id
             WHERE s.user_id = ?
-            ORDER BY s.created_at DESC
+            ORDER BY
+                CASE
+                    WHEN s.status = 'active'
+                     AND s.start_date <= NOW()
+                     AND s.end_date > NOW()
+                    THEN 0
+                    WHEN s.status = 'pending'
+                    THEN 1
+                    WHEN s.status = 'active'
+                     AND s.start_date > NOW()
+                    THEN 2
+                    ELSE 3
+                END,
+                s.created_at DESC
             LIMIT 1
         `, [userId]);
 

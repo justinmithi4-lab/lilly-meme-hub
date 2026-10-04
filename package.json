@@ -1,18 +1,26 @@
 {
   "name": "lilly_memes",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Lilly Memes membership platform",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
-},
-  "keywords": [],
-  "author": "",
+    "dev": "nodemon server.js",
+    "migrate": "node database/migrate.js"
+  },
+  "keywords": [
+    "lilly",
+    "memes",
+    "membership",
+    "express",
+    "mysql"
+  ],
+  "author": "JVM Blackscreeen media",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cloudinary": "^2.11.0",
     "dotenv": "^18.0.5",
     "express": "^5.2.1",
     "express-session": "^1.19.0",

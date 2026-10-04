@@ -340,9 +340,7 @@ function createMemeCard(meme) {
         "homepage-meme-image";
 
     image.src =
-        `/uploads/memes/${encodeURIComponent(
-            meme.image
-        )}`;
+        getUploadedMediaUrl(meme.image, "memes");
 
     image.alt =
         meme.title || "Lilly Memes";

@@ -17,6 +17,7 @@
         rel="stylesheet"
         href="/css/subscribe.css"
     >
+    <link rel="stylesheet" href="/css/brand.css">
 
 </head>
 
@@ -29,7 +30,8 @@
             href="/"
             class="logo"
         >
-            😂 Lilly Memes
+            <img src="/images/lilly-memes-logo.jpg" class="brand-logo-image" alt="">
+            <span>Lilly Memes</span>
         </a>
 
         <a
@@ -142,7 +144,7 @@
                                         </strong>
 
                                         <small>
-                                            Pay using Airtel Money
+                                            Send using Airtel Money
                                         </small>
                                     </span>
 
@@ -171,7 +173,7 @@
                                         </strong>
 
                                         <small>
-                                            Pay using TNM Mpamba
+                                            Send using TNM Mpamba
                                         </small>
                                     </span>
 
@@ -180,94 +182,17 @@
                             </label>
 
 
-                            <label class="payment-option">
+                        </div>
 
-                                <input
-                                    type="radio"
-                                    name="payment_method"
-                                    value="malipo"
-                                >
-
-                                <span class="payment-option-content">
-
-                                    <span class="payment-icon">
-                                        💳
-                                    </span>
-
-                                    <span>
-                                        <strong>
-                                            Malipo
-                                        </strong>
-
-                                        <small>
-                                            Pay using Malipo
-                                        </small>
-                                    </span>
-
-                                </span>
-
-                            </label>
-
-
-                            <label class="payment-option">
-
-                                <input
-                                    type="radio"
-                                    name="payment_method"
-                                    value="bank"
-                                >
-
-                                <span class="payment-option-content">
-
-                                    <span class="payment-icon">
-                                        🏦
-                                    </span>
-
-                                    <span>
-                                        <strong>
-                                            Bank Transfer
-                                        </strong>
-
-                                        <small>
-                                            Pay by bank transfer
-                                        </small>
-
-                                    </span>
-
-                                </span>
-
-                            </label>
-
-
-                            <label class="payment-option">
-
-                                <input
-                                    type="radio"
-                                    name="payment_method"
-                                    value="manual"
-                                >
-
-                                <span class="payment-option-content">
-
-                                    <span class="payment-icon">
-                                        🧾
-                                    </span>
-
-                                    <span>
-                                        <strong>
-                                            Manual Payment
-                                        </strong>
-
-                                        <small>
-                                            Other payment arrangement
-                                        </small>
-
-                                    </span>
-
-                                </span>
-
-                            </label>
-
+                        <div
+                            class="payment-recipient"
+                            id="paymentRecipient"
+                            aria-live="polite"
+                            hidden
+                        >
+                            <span class="recipient-label">Send payment to</span>
+                            <strong id="paymentRecipientNumber"></strong>
+                            <small id="paymentRecipientMethod"></small>
                         </div>
 
                     </div>
@@ -362,7 +287,7 @@
     </footer>
 
 
-    <script src="/js/subscribe.js"></script>
+    <script src="/js/subscribe.js?v=account-plan-payment-flow"></script>
 
 </body>
 

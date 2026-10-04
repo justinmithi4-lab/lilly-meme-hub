@@ -1,0 +1,3 @@
+ALTER TABLE memes
+    ADD COLUMN cloudinary_public_id VARCHAR(255) NULL AFTER image,
+    MODIFY COLUMN image VARCHAR(2048) NOT NULL;

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lilly Memes - My Profile</title>
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+    <link rel="stylesheet" href="/css/profile.css">
+    <link rel="stylesheet" href="/css/brand.css">
+</head>
+<body>
+    <header class="profile-header">
+        <a href="/member.html" class="logo">
+            <img src="/images/lilly-memes-logo.jpg" class="brand-logo-image" alt="">
+            <span>Lilly Memes</span>
+        </a>
+        <a href="/member.html" class="back-link">
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+            Back to memes
+        </a>
+    </header>
+
+    <main class="profile-page">
+        <div class="page-heading">
+            <span class="eyebrow">MEMBER ACCOUNT</span>
+            <h1>My Profile</h1>
+            <p>Your account information and membership status.</p>
+        </div>
+
+        <p class="page-message" id="profileMessage" role="status" aria-live="polite">
+            Loading your profile...
+        </p>
+
+        <div class="profile-content" id="profileContent" hidden>
+            <section class="profile-card" aria-labelledby="memberInfoHeading">
+                <div class="card-heading">
+                    <div class="profile-avatar" id="profileAvatar" aria-hidden="true">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div>
+                        <h2 id="memberDisplayName">Member</h2>
+                        <p id="memberUsername"></p>
+                    </div>
+                </div>
+
+                <h3 id="memberInfoHeading">Member information</h3>
+                <dl class="details-list">
+                    <div>
+                        <dt>Full name</dt>
+                        <dd id="memberFullName">—</dd>
+                    </div>
+                    <div>
+                        <dt>Username</dt>
+                        <dd id="memberUsernameDetail">—</dd>
+                    </div>
+                    <div>
+                        <dt>Email</dt>
+                        <dd id="memberEmail">—</dd>
+                    </div>
+                    <div>
+                        <dt>Account status</dt>
+                        <dd><span class="status-badge" id="accountStatus">—</span></dd>
+                    </div>
+                </dl>
+            </section>
+
+            <section class="profile-card" aria-labelledby="subscriptionHeading">
+                <div class="section-title">
+                    <div class="title-icon">
+                        <i class="fa-solid fa-credit-card" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                        <h2 id="subscriptionHeading">Subscription</h2>
+                        <p>Your current membership plan and access status.</p>
+                    </div>
+                </div>
+
+                <div id="subscriptionDetails" hidden>
+                    <div class="subscription-summary">
+                        <div>
+                            <span class="detail-label">Plan</span>
+                            <strong id="planName">—</strong>
+                        </div>
+                        <span class="status-badge" id="subscriptionStatus">—</span>
+                    </div>
+                    <dl class="details-list subscription-dates">
+                        <div>
+                            <dt>Starts</dt>
+                            <dd id="subscriptionStart">—</dd>
+                        </div>
+                        <div>
+                            <dt>Expires</dt>
+                            <dd id="subscriptionEnd">—</dd>
+                        </div>
+                        <div>
+                            <dt>Duration</dt>
+                            <dd id="subscriptionDuration">—</dd>
+                        </div>
+                        <div>
+                            <dt>Price</dt>
+                            <dd id="subscriptionPrice">—</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <div class="no-subscription" id="noSubscription" hidden>
+                    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                    <p>You don’t have a subscription yet.</p>
+                    <a href="/plans.html" class="primary-link">View membership plans</a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="/js/media.js?v=cloudinary"></script>
+    <script src="/js/profile.js?v=cloudinary"></script>
+</body>
+</html>

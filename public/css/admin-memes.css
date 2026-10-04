@@ -326,6 +326,13 @@ textarea {
     display: none !important;
 }
 
+@media (max-width: 600px) {
+    .category-create-form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}
+
 
 /* =========================
    CATEGORIES
@@ -365,6 +372,33 @@ textarea {
     background: var(--primary);
     border-color: var(--primary);
     color: white;
+}
+
+.category-create-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.category-create-form .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.category-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.category-tag {
+    padding: 7px 11px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: #08182b;
+    color: var(--text-secondary);
+    font-size: 12px;
 }
 
 

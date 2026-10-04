@@ -398,9 +398,7 @@ function createMemeCard(meme) {
         "meme-image";
 
     image.src =
-        `/uploads/memes/${encodeURIComponent(
-            meme.image
-        )}`;
+        getUploadedMediaUrl(meme.image, "memes");
 
     image.alt =
         meme.title || "Meme";
@@ -458,9 +456,7 @@ function createMemeCard(meme) {
             document.createElement("img");
 
         avatarImage.src =
-            `/uploads/profiles/${encodeURIComponent(
-                meme.profile_image
-            )}`;
+            getUploadedMediaUrl(meme.profile_image, "profiles");
 
         avatarImage.alt =
             meme.username || "User";

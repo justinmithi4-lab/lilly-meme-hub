@@ -2,81 +2,64 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Lilly Memes</title>
-
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/brand.css">
 </head>
 
-<body>
-
-    <h1>😂 Lilly Memes</h1>
-
-    <h2>Login</h2>
-
-
-    <form id="loginForm">
-
-        <div>
-
-            <label>
-                Username or Email
-            </label>
-
-            <input
-                type="text"
-                id="login"
-                placeholder="Username or email"
-                required
-            >
-
-        </div>
-
-        <br>
-
-        <div>
-
-            <label>
-                Password
-            </label>
-
-            <input
-                type="password"
-                id="password"
-                placeholder="Your password"
-                required
-            >
-
-        </div>
-
-        <br>
-
-        <button type="submit">
-            Login
-        </button>
-
-    </form>
-
-
-    <p id="message"></p>
-
-
-    <p>
-        Don't have an account?
-        <a href="/register.html">
-            Create one
+<body class="auth-page login-page">
+    <main class="auth-shell">
+        <a class="auth-brand" href="/" aria-label="Lilly Memes home">
+            <img src="/images/lilly-memes-logo.jpg" class="brand-logo-image" alt="">
+            <span>Lilly Memes</span>
         </a>
-    </p>
+        <section class="auth-card" aria-labelledby="page-title">
+            <header class="auth-heading">
+                <p class="auth-eyebrow">Welcome back</p>
+                <h1 id="page-title">Log in to your account</h1>
+                <p>Pick up where the laughs left off.</p>
+            </header>
 
+            <form id="loginForm" class="auth-form">
+                <div class="form-field">
+                    <label for="login">Username or email</label>
+                    <input
+                        type="text"
+                        id="login"
+                        name="login"
+                        placeholder="Username or email"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
 
-    <script src="/js/login.js"></script>
+                <div class="form-field">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Your password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
 
+                <button class="auth-submit" type="submit">Log in</button>
+            </form>
+
+            <p id="message" class="auth-message" role="status" aria-live="polite"></p>
+
+            <p class="auth-switch">
+                Don’t have an account?
+                <a href="/register.html">Create one</a>
+            </p>
+        </section>
+        <p class="auth-caption">A little laughter goes a long way.</p>
+    </main>
+    <script src="/js/login.js?v=pending-member-plans"></script>
 </body>
 
 </html>

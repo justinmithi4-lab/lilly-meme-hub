@@ -8,6 +8,9 @@ const currentSubscription =
 const subscriptionText =
     document.getElementById("subscriptionText");
 
+const resumePendingPayment =
+    document.getElementById("resumePendingPayment");
+
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -74,6 +77,17 @@ async function loadCurrentSubscription() {
 
         subscriptionText.textContent =
             message;
+
+        if (
+            subscription.status === "pending" &&
+            Number.isInteger(Number(subscription.id))
+        ) {
+            resumePendingPayment.href =
+                `/subscribe.html?subscription_id=${encodeURIComponent(
+                    subscription.id
+                )}`;
+            resumePendingPayment.classList.remove("hidden");
+        }
 
     } catch (error) {
 

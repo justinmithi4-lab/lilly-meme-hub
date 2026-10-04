@@ -7,6 +7,7 @@
     <title>Manage Memes - Lilly Memes</title>
 
     <link rel="stylesheet" href="/css/admin-memes.css">
+    <link rel="stylesheet" href="/css/brand.css">
 </head>
 
 <body>
@@ -25,7 +26,8 @@
             </button>
 
             <a href="/admin.html" class="admin-logo">
-                😂 <span>Lilly Memes</span>
+                <img src="/images/lilly-memes-logo.jpg" class="brand-logo-image" alt="">
+                <span>Lilly Memes</span>
             </a>
         </div>
 
@@ -79,7 +81,7 @@
                     Payments
                 </a>
 
-                <a href="#" class="sidebar-link">
+                <a href="#categoryManager" class="sidebar-link">
                     <span>📁</span>
                     Categories
                 </a>
@@ -297,6 +299,36 @@
 
                 </form>
 
+            </section>
+
+            <section class="admin-card" id="categoryManager">
+                <div class="card-header">
+                    <div>
+                        <h2>Manage Categories</h2>
+                        <p>Add categories for organizing memes.</p>
+                    </div>
+                </div>
+
+                <form id="categoryForm" class="category-create-form">
+                    <div class="form-group">
+                        <label for="categoryName">New category</label>
+                        <input
+                            type="text"
+                            id="categoryName"
+                            name="name"
+                            maxlength="100"
+                            placeholder="Enter category name"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" id="addCategoryButton" class="primary-button">
+                        Add Category
+                    </button>
+                </form>
+
+                <div id="categoryMessage" class="form-message hidden" role="status"></div>
+                <div id="categoryList" class="category-list"></div>
             </section>
 
 
@@ -533,7 +565,8 @@
     </div>
 
 
-    <script src="/js/admin-memes.js"></script>
+    <script src="/js/media.js?v=cloudinary"></script>
+    <script src="/js/admin-memes.js?v=cloudinary"></script>
 
 </body>
 </html>

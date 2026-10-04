@@ -14,6 +14,21 @@ const captionCount = document.getElementById("captionCount");
 const categoriesContainer =
     document.getElementById("categoriesContainer");
 
+const categoryForm =
+    document.getElementById("categoryForm");
+
+const categoryNameInput =
+    document.getElementById("categoryName");
+
+const categoryMessage =
+    document.getElementById("categoryMessage");
+
+const categoryList =
+    document.getElementById("categoryList");
+
+const addCategoryButton =
+    document.getElementById("addCategoryButton");
+
 const memesTableBody =
     document.getElementById("memesTableBody");
 
@@ -90,7 +105,11 @@ let editingMeme = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-    await checkAdmin();
+    const isAdmin = await checkAdmin();
+
+    if (!isAdmin) {
+        return;
+    }
 
     await loadCategories();
 
@@ -115,12 +134,12 @@ async function checkAdmin() {
 
         if (!data.success || !data.user) {
             window.location.href = "/login.html";
-            return;
+            return false;
         }
 
         if (data.user.role !== "admin") {
             window.location.href = "/member.html";
-            return;
+            return false;
         }
 
         adminName.textContent =
@@ -128,11 +147,14 @@ async function checkAdmin() {
             data.user.username ||
             "Admin";
 
+        return true;
+
     } catch (error) {
 
         console.error(error);
 
         window.location.href = "/login.html";
+        return false;
 
     }
 
@@ -180,6 +202,10 @@ function setupEvents() {
         handleEditSubmit
     );
 
+    categoryForm.addEventListener(
+        "submit",
+        handleCategorySubmit
+    );
 
     cancelEditButton.addEventListener(
         "click",
@@ -356,6 +382,7 @@ async function loadCategories() {
         categories = data.categories;
 
         renderCategories();
+        renderCategoryList();
 
     } catch (error) {
 
@@ -369,6 +396,78 @@ async function loadCategories() {
 
     }
 
+}
+
+
+function renderCategoryList() {
+    if (!categoryList) {
+        return;
+    }
+
+    if (categories.length === 0) {
+        categoryList.innerHTML = `
+            <span class="loading-text">No categories yet.</span>
+        `;
+        return;
+    }
+
+    categoryList.innerHTML = categories
+        .map((category) => `
+            <span class="category-tag">
+                ${escapeHtml(category.name)}
+            </span>
+        `)
+        .join("");
+}
+
+
+async function handleCategorySubmit(event) {
+    event.preventDefault();
+    hideMessage(categoryMessage);
+
+    const name = categoryNameInput.value.trim();
+
+    if (!name) {
+        showMessage(categoryMessage, "Enter a category name.", "error");
+        return;
+    }
+
+    addCategoryButton.disabled = true;
+    addCategoryButton.textContent = "Adding...";
+
+    try {
+        const response = await fetch("/api/memes/categories", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message ||
+                "Failed to create category."
+            );
+        }
+
+        categoryNameInput.value = "";
+        showMessage(categoryMessage, data.message, "success");
+        await loadCategories();
+
+    } catch (error) {
+        console.error("Create category error:", error);
+        showMessage(
+            categoryMessage,
+            error.message || "Failed to create category.",
+            "error"
+        );
+    } finally {
+        addCategoryButton.disabled = false;
+        addCategoryButton.textContent = "Add Category";
+    }
 }
 
 
@@ -669,9 +768,7 @@ function renderMemes(memes) {
         memes.map(meme => {
 
             const imageUrl =
-                `/uploads/memes/${encodeURIComponent(
-                    meme.image
-                )}`;
+                getUploadedMediaUrl(meme.image, "memes");
 
 
             const statusClass =
@@ -850,9 +947,7 @@ async function openEditModal(memeId) {
 
 
         editImagePreview.src =
-            `/uploads/memes/${encodeURIComponent(
-                meme.image
-            )}`;
+            getUploadedMediaUrl(meme.image, "memes");
 
 
         const selectedIds =

@@ -2,6 +2,10 @@ const fs = require("fs");
 const path = require("path");
 
 const { pool } = require("../config/database");
+const {
+    deleteCloudinaryAsset,
+    uploadBuffer
+} = require("../utils/cloudinaryUpload");
 
 
 async function createNotification(userId, type, title, message, relatedId = null) {
@@ -56,6 +60,94 @@ async function getCategories(req, res) {
 }
 
 
+async function createCategory(req, res) {
+    const name =
+        String(req.body.name || "").trim();
+
+    if (!name) {
+        return res.status(400).json({
+            success: false,
+            message: "Category name is required."
+        });
+    }
+
+    if (name.length > 100) {
+        return res.status(400).json({
+            success: false,
+            message: "Category name cannot exceed 100 characters."
+        });
+    }
+
+    let connection;
+    let transactionStarted = false;
+
+    try {
+        connection = await pool.getConnection();
+        await connection.beginTransaction();
+        transactionStarted = true;
+
+        const [result] = await connection.execute(
+            `
+            INSERT INTO categories (name)
+            VALUES (?)
+            `,
+            [name]
+        );
+
+        await connection.execute(
+            `
+            INSERT INTO admin_logs
+                (admin_id, action, description, ip_address)
+            VALUES (?, 'category_created', ?, ?)
+            `,
+            [
+                req.session.user.id,
+                `Created meme category: ${name}`,
+                req.ip
+            ]
+        );
+
+        await connection.commit();
+        transactionStarted = false;
+
+        return res.status(201).json({
+            success: true,
+            message: "Category created successfully.",
+            category: {
+                id: result.insertId,
+                name
+            }
+        });
+    } catch (error) {
+        if (connection && transactionStarted) {
+            try {
+                await connection.rollback();
+            } catch (rollbackError) {
+                console.error("Create category rollback error:", rollbackError);
+            }
+        }
+
+        if (error.code === "ER_DUP_ENTRY") {
+            return res.status(409).json({
+                success: false,
+                message: "A category with that name already exists."
+            });
+        }
+
+        console.error("Create category error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to create category."
+        });
+    } finally {
+        if (connection) {
+            connection.release();
+        }
+    }
+}
+
+
 /*
 |--------------------------------------------------------------------------
 | Create Meme
@@ -65,6 +157,8 @@ async function getCategories(req, res) {
 async function createMeme(req, res) {
 
     let connection;
+    let transactionStarted = false;
+    let uploadedAsset;
 
     try {
 
@@ -98,8 +192,6 @@ async function createMeme(req, res) {
 
         if (!title) {
 
-            deleteUploadedFile(req.file.path);
-
             return res.status(400).json({
                 success: false,
                 message: "Meme title is required."
@@ -109,8 +201,6 @@ async function createMeme(req, res) {
 
 
         if (title.length > 150) {
-
-            deleteUploadedFile(req.file.path);
 
             return res.status(400).json({
                 success: false,
@@ -122,8 +212,6 @@ async function createMeme(req, res) {
 
 
         if (caption.length > 500) {
-
-            deleteUploadedFile(req.file.path);
 
             return res.status(400).json({
                 success: false,
@@ -140,15 +228,17 @@ async function createMeme(req, res) {
             );
 
 
-        connection =
-            await pool.getConnection();
+        uploadedAsset = await uploadBuffer(
+            req.file.buffer,
+            {
+                folder: "lilly-memes/memes",
+                resource_type: "image"
+            }
+        );
 
-
+        connection = await pool.getConnection();
         await connection.beginTransaction();
-
-
-        const imageName =
-            req.file.filename;
+        transactionStarted = true;
 
 
         const [result] =
@@ -160,16 +250,18 @@ async function createMeme(req, res) {
                     title,
                     caption,
                     image,
+                    cloudinary_public_id,
                     is_featured,
                     is_active
                 )
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 `,
                 [
                     req.session.user.id,
                     title,
                     caption || null,
-                    imageName,
+                    uploadedAsset.secure_url,
+                    uploadedAsset.public_id,
                     req.body.isFeatured === "true"
                         ? 1
                         : 0,
@@ -229,6 +321,7 @@ async function createMeme(req, res) {
 
 
         await connection.commit();
+        transactionStarted = false;
 
 
         res.status(201).json({
@@ -242,7 +335,7 @@ async function createMeme(req, res) {
                 id: memeId,
                 title,
                 caption,
-                image: imageName
+                image: uploadedAsset.secure_url
             }
 
         });
@@ -250,15 +343,26 @@ async function createMeme(req, res) {
 
     } catch (error) {
 
-        if (connection) {
-            await connection.rollback();
+        if (connection && transactionStarted) {
+            try {
+                await connection.rollback();
+            } catch (rollbackError) {
+                console.error("Create meme rollback error:", rollbackError);
+            }
         }
 
-
-        if (req.file) {
-            deleteUploadedFile(
-                req.file.path
-            );
+        if (uploadedAsset) {
+            try {
+                await deleteCloudinaryAsset(
+                    uploadedAsset.public_id,
+                    "image"
+                );
+            } catch (cleanupError) {
+                console.error(
+                    "Could not remove failed Cloudinary meme upload:",
+                    cleanupError
+                );
+            }
         }
 
 
@@ -522,6 +626,9 @@ async function getMeme(req, res) {
 async function updateMeme(req, res) {
 
     let connection;
+    let transactionStarted = false;
+    let uploadedAsset;
+    let previousAsset;
 
     try {
 
@@ -588,18 +695,18 @@ async function updateMeme(req, res) {
                 req.body.categoryIds
             );
 
-
         connection =
             await pool.getConnection();
 
 
         await connection.beginTransaction();
+        transactionStarted = true;
 
 
         const [existing] =
             await connection.query(
                 `
-                SELECT id
+                SELECT id, image, cloudinary_public_id
                 FROM memes
                 WHERE id = ?
                 LIMIT 1
@@ -611,6 +718,7 @@ async function updateMeme(req, res) {
         if (existing.length === 0) {
 
             await connection.rollback();
+            transactionStarted = false;
 
             return res.status(404).json({
                 success: false,
@@ -620,6 +728,17 @@ async function updateMeme(req, res) {
 
         }
 
+        previousAsset = existing[0];
+
+        if (req.file) {
+            uploadedAsset = await uploadBuffer(
+                req.file.buffer,
+                {
+                    folder: "lilly-memes/memes",
+                    resource_type: "image"
+                }
+            );
+        }
 
         await connection.query(
             `
@@ -628,6 +747,8 @@ async function updateMeme(req, res) {
             SET
                 title = ?,
                 caption = ?,
+                image = ?,
+                cloudinary_public_id = ?,
                 is_featured = ?,
                 is_active = ?
 
@@ -636,6 +757,12 @@ async function updateMeme(req, res) {
             [
                 title,
                 caption || null,
+                uploadedAsset
+                    ? uploadedAsset.secure_url
+                    : previousAsset.image,
+                uploadedAsset
+                    ? uploadedAsset.public_id
+                    : previousAsset.cloudinary_public_id,
                 req.body.isFeatured === "true"
                     ? 1
                     : 0,
@@ -703,7 +830,34 @@ async function updateMeme(req, res) {
 
 
         await connection.commit();
+        transactionStarted = false;
 
+        if (uploadedAsset && previousAsset.cloudinary_public_id) {
+            try {
+                await deleteCloudinaryAsset(
+                    previousAsset.cloudinary_public_id,
+                    "image"
+                );
+            } catch (cleanupError) {
+                console.error(
+                    "Could not remove replaced Cloudinary meme image:",
+                    cleanupError
+                );
+            }
+        } else if (
+            uploadedAsset &&
+            !/^https:\/\//i.test(previousAsset.image)
+        ) {
+            deleteUploadedFile(
+                path.join(
+                    __dirname,
+                    "..",
+                    "uploads",
+                    "memes",
+                    previousAsset.image
+                )
+            );
+        }
 
         res.json({
             success: true,
@@ -714,8 +868,26 @@ async function updateMeme(req, res) {
 
     } catch (error) {
 
-        if (connection) {
-            await connection.rollback();
+        if (connection && transactionStarted) {
+            try {
+                await connection.rollback();
+            } catch (rollbackError) {
+                console.error("Update meme rollback error:", rollbackError);
+            }
+        }
+
+        if (uploadedAsset) {
+            try {
+                await deleteCloudinaryAsset(
+                    uploadedAsset.public_id,
+                    "image"
+                );
+            } catch (cleanupError) {
+                console.error(
+                    "Could not remove failed Cloudinary meme replacement:",
+                    cleanupError
+                );
+            }
         }
 
 
@@ -786,7 +958,8 @@ async function deleteMeme(req, res) {
                 SELECT
                     id,
                     title,
-                    image
+                    image,
+                    cloudinary_public_id
 
                 FROM memes
 
@@ -900,20 +1073,33 @@ async function deleteMeme(req, res) {
 
         await connection.commit();
 
-
-        const imagePath =
-            path.join(
-                __dirname,
-                "..",
-                "uploads",
-                "memes",
-                meme.image
+        if (meme.cloudinary_public_id) {
+            try {
+                await deleteCloudinaryAsset(
+                    meme.cloudinary_public_id,
+                    "image"
+                );
+            } catch (cleanupError) {
+                console.error(
+                    "Meme deleted but Cloudinary image cleanup failed:",
+                    cleanupError
+                );
+                return res.status(500).json({
+                    success: false,
+                    message: "Meme deleted, but its Cloudinary image could not be removed."
+                });
+            }
+        } else if (!/^https:\/\//i.test(meme.image)) {
+            deleteUploadedFile(
+                path.join(
+                    __dirname,
+                    "..",
+                    "uploads",
+                    "memes",
+                    meme.image
+                )
             );
-
-
-        deleteUploadedFile(
-            imagePath
-        );
+        }
 
 
         res.json({
@@ -1660,6 +1846,7 @@ async function downloadMeme(req, res) {
             SELECT
                 id,
                 image,
+                cloudinary_public_id,
                 title
             FROM memes
             WHERE id = ?
@@ -1678,43 +1865,77 @@ async function downloadMeme(req, res) {
 
         const meme = memes[0];
 
-        const filePath = path.join(
-            __dirname,
-            "..",
-            "uploads",
-            "memes",
-            meme.image
-        );
+        let cloudinaryFile = null;
+        if (/^https:\/\/res\.cloudinary\.com\//i.test(meme.image)) {
+            const imageUrl = new URL(meme.image);
+            if (
+                imageUrl.protocol !== "https:" ||
+                imageUrl.hostname !== "res.cloudinary.com"
+            ) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Meme image URL is invalid."
+                });
+            }
 
-        // Security check
-        const uploadsDirectory = path.resolve(
-            path.join(
+            const imageResponse = await fetch(imageUrl);
+            if (!imageResponse.ok) {
+                throw new Error(
+                    `Cloudinary image download failed with status ${imageResponse.status}.`
+                );
+            }
+
+            cloudinaryFile = {
+                buffer: Buffer.from(await imageResponse.arrayBuffer()),
+                contentType: imageResponse.headers.get("content-type") || "image/jpeg"
+            };
+        }
+
+        const safeTitle =
+            (meme.title || "lilly-meme")
+                .replace(/[^a-zA-Z0-9_-]/g, "-")
+                .replace(/-+/g, "-")
+                .substring(0, 80);
+
+        const extension = path.extname(
+            cloudinaryFile
+                ? new URL(meme.image).pathname
+                : meme.image
+        );
+        const downloadName =
+            `${safeTitle || "lilly-meme"}${extension || ".jpg"}`;
+
+        let resolvedFilePath;
+        if (!cloudinaryFile) {
+            const filePath = path.join(
                 __dirname,
                 "..",
                 "uploads",
-                "memes"
-            )
-        );
+                "memes",
+                meme.image
+            );
+            const uploadsDirectory = path.resolve(
+                path.join(__dirname, "..", "uploads", "memes")
+            );
+            resolvedFilePath = path.resolve(filePath);
 
-        const resolvedFilePath =
-            path.resolve(filePath);
+            if (
+                !resolvedFilePath.startsWith(
+                    uploadsDirectory + path.sep
+                )
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid file."
+                });
+            }
 
-        if (
-            !resolvedFilePath.startsWith(
-                uploadsDirectory + path.sep
-            )
-        ) {
-            return res.status(400).json({
-                success: false,
-                message: "Invalid file."
-            });
-        }
-
-        if (!fs.existsSync(resolvedFilePath)) {
-            return res.status(404).json({
-                success: false,
-                message: "Meme image file not found."
-            });
+            if (!fs.existsSync(resolvedFilePath)) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Meme image file not found."
+                });
+            }
         }
 
         // Record download
@@ -1743,31 +1964,16 @@ async function downloadMeme(req, res) {
             [memeId]
         );
 
-        // Create safe download name
-        const safeTitle =
-            (meme.title || "lilly-meme")
-                .replace(
-                    /[^a-zA-Z0-9_-]/g,
-                    "-"
-                )
-                .replace(
-                    /-+/g,
-                    "-"
-                )
-                .substring(0, 80);
-
-        const extension =
-            path.extname(
-                meme.image
+        if (cloudinaryFile) {
+            res.setHeader("Content-Type", cloudinaryFile.contentType);
+            res.setHeader(
+                "Content-Disposition",
+                `attachment; filename="${downloadName}"`
             );
+            return res.send(cloudinaryFile.buffer);
+        }
 
-        const downloadName =
-            `${safeTitle || "lilly-meme"}${extension}`;
-
-        return res.download(
-            resolvedFilePath,
-            downloadName
-        );
+        return res.download(resolvedFilePath, downloadName);
 
     } catch (error) {
 
@@ -2357,6 +2563,7 @@ async function reportMeme(req, res) {
 
 module.exports = {
     getCategories,
+    createCategory,
     createMeme,
     getAdminMemes,
     getMeme,
