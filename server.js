@@ -1,5 +1,6 @@
 const express = require("express");
 const session = require("express-session");
+const MySQLStore = require("express-mysql-session")(session);
 const path = require("path");
 
 require("dotenv").config();
@@ -21,6 +22,18 @@ const notificationRoutes = require("./routes/notificationRoutes");
 const searchRoutes = require("./routes/searchRoutes");
 const storyRoutes = require("./routes/storyRoutes");
 const memberMessageRoutes = require("./routes/memberMessageRoutes");
+
+const sessionStore = new MySQLStore({
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT || 3306),
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+
+    ssl: {
+        rejectUnauthorized: false
+    }
+});
 
 
 const app = express();
@@ -104,9 +117,9 @@ app.use(
 app.use(
     session({
 
-        secret:
-            process.env.SESSION_SECRET ||
-            "change-this-secret",
+        secret: process.env.SESSION_SECRET,
+
+        store: sessionStore,
 
         resave: false,
 
