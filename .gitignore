@@ -1,0 +1,10 @@
+node_modules/
+.env
+
+uploads/memes/*
+uploads/stories/*
+uploads/profiles/*
+
+!uploads/memes/.gitkeep
+!uploads/stories/.gitkeep
+!uploads/profiles/.gitkeep

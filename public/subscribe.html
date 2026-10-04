@@ -1,0 +1,369 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Lilly Memes - Complete Payment</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/subscribe.css"
+    >
+
+</head>
+
+
+<body>
+
+    <header class="top-header">
+
+        <a
+            href="/"
+            class="logo"
+        >
+            😂 Lilly Memes
+        </a>
+
+        <a
+            href="/plans.html"
+            class="back-link"
+        >
+            ← Membership Plans
+        </a>
+
+    </header>
+
+
+    <main class="payment-page">
+
+        <section class="payment-intro">
+
+            <span class="intro-badge">
+                LILLY MEMES MEMBERSHIP
+            </span>
+
+            <h1>
+                Complete your payment
+            </h1>
+
+            <p>
+                Choose your preferred payment method
+                and submit your payment details.
+            </p>
+
+        </section>
+
+
+        <section class="payment-layout">
+
+
+            <!-- ORDER SUMMARY -->
+
+            <aside class="order-card">
+
+                <h2>
+                    Membership
+                </h2>
+
+                <div
+                    id="planSummary"
+                    class="plan-summary"
+                >
+
+                    <div class="loading-small">
+                        Loading plan...
+                    </div>
+
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-row total">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <strong id="totalAmount">
+                        —
+                    </strong>
+
+                </div>
+
+            </aside>
+
+
+            <!-- PAYMENT FORM -->
+
+            <section class="payment-card">
+
+                <form id="paymentForm">
+
+
+                    <div class="form-section">
+
+                        <h2>
+                            Payment method
+                        </h2>
+
+                        <p class="section-description">
+                            Select how you paid for your membership.
+                        </p>
+
+
+                        <div class="payment-methods">
+
+
+                            <label class="payment-option">
+
+                                <input
+                                    type="radio"
+                                    name="payment_method"
+                                    value="airtel_money"
+                                >
+
+                                <span class="payment-option-content">
+
+                                    <span class="payment-icon">
+                                        📱
+                                    </span>
+
+                                    <span>
+                                        <strong>
+                                            Airtel Money
+                                        </strong>
+
+                                        <small>
+                                            Pay using Airtel Money
+                                        </small>
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+
+                            <label class="payment-option">
+
+                                <input
+                                    type="radio"
+                                    name="payment_method"
+                                    value="tnm_mpamba"
+                                >
+
+                                <span class="payment-option-content">
+
+                                    <span class="payment-icon">
+                                        📱
+                                    </span>
+
+                                    <span>
+                                        <strong>
+                                            TNM Mpamba
+                                        </strong>
+
+                                        <small>
+                                            Pay using TNM Mpamba
+                                        </small>
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+
+                            <label class="payment-option">
+
+                                <input
+                                    type="radio"
+                                    name="payment_method"
+                                    value="malipo"
+                                >
+
+                                <span class="payment-option-content">
+
+                                    <span class="payment-icon">
+                                        💳
+                                    </span>
+
+                                    <span>
+                                        <strong>
+                                            Malipo
+                                        </strong>
+
+                                        <small>
+                                            Pay using Malipo
+                                        </small>
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+
+                            <label class="payment-option">
+
+                                <input
+                                    type="radio"
+                                    name="payment_method"
+                                    value="bank"
+                                >
+
+                                <span class="payment-option-content">
+
+                                    <span class="payment-icon">
+                                        🏦
+                                    </span>
+
+                                    <span>
+                                        <strong>
+                                            Bank Transfer
+                                        </strong>
+
+                                        <small>
+                                            Pay by bank transfer
+                                        </small>
+
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+
+                            <label class="payment-option">
+
+                                <input
+                                    type="radio"
+                                    name="payment_method"
+                                    value="manual"
+                                >
+
+                                <span class="payment-option-content">
+
+                                    <span class="payment-icon">
+                                        🧾
+                                    </span>
+
+                                    <span>
+                                        <strong>
+                                            Manual Payment
+                                        </strong>
+
+                                        <small>
+                                            Other payment arrangement
+                                        </small>
+
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-section">
+
+                        <h2>
+                            Payment details
+                        </h2>
+
+                        <p class="section-description">
+                            Enter the details that will help the
+                            administrator verify your payment.
+                        </p>
+
+
+                        <div class="form-group">
+
+                            <label for="phoneNumber">
+                                Phone number
+                            </label>
+
+                            <input
+                                type="tel"
+                                id="phoneNumber"
+                                name="phone_number"
+                                placeholder="e.g. 0999123456"
+                            >
+
+                            <small>
+                                Enter the number used to make the payment.
+                            </small>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="transactionReference">
+                                Transaction reference
+                            </label>
+
+                            <input
+                                type="text"
+                                id="transactionReference"
+                                name="transaction_reference"
+                                placeholder="e.g. transaction ID"
+                            >
+
+                            <small>
+                                Enter the transaction ID/reference from
+                                your payment.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="formMessage"
+                        class="form-message"
+                    ></div>
+
+
+                    <button
+                        type="submit"
+                        id="submitPaymentButton"
+                        class="submit-button"
+                    >
+                        Submit Payment
+                    </button>
+
+
+                    <p class="verification-note">
+                        Your membership will remain pending until
+                        your payment has been verified by Lilly Memes.
+                    </p>
+
+                </form>
+
+            </section>
+
+        </section>
+
+    </main>
+
+
+    <footer class="site-footer">
+        © 2026 JVM Blackscreeen Media.
+    </footer>
+
+
+    <script src="/js/subscribe.js"></script>
+
+</body>
+
+</html>

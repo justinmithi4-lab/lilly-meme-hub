@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Lilly Memes - Your Daily Dose of Memes"
+    >
+
+    <title>Lilly Memes - Your Daily Dose of Memes</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/homepage.css"
+    >
+</head>
+
+<body>
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header class="homepage-header">
+
+        <div class="header-inner">
+
+            <a href="/" class="logo">
+                😂 <span>Lilly Memes</span>
+            </a>
+
+
+            <!-- Desktop search -->
+            <div class="header-search" id="homepageSearchBox">
+
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+
+                <input
+                    type="search"
+                    id="homepageSearch"
+                    placeholder="Search memes..."
+                    autocomplete="off"
+                >
+
+                <button
+                    type="button"
+                    id="clearHomepageSearch"
+                    class="clear-search"
+                    aria-label="Clear search"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+
+            <div
+                class="search-suggestions hidden"
+                id="homepageSearchSuggestions"
+            >
+                <div class="suggestion-title">
+                    Popular searches
+                </div>
+
+                <button type="button" data-search="funny">
+                    😂 Funny
+                </button>
+
+                <button type="button" data-search="Malawi">
+                    🇲🇼 Malawi
+                </button>
+
+                <button type="button" data-search="relationships">
+                    ❤️ Relationships
+                </button>
+
+                <button type="button" data-search="school">
+                    🎓 School
+                </button>
+
+                <button type="button" data-search="sports">
+                    ⚽ Sports
+                </button>
+            </div>
+
+
+            <nav class="desktop-nav">
+
+                <a href="/" class="active">
+                    Home
+                </a>
+
+                <a href="/plans.html">
+                    Membership
+                </a>
+
+                <a href="/login.html">
+                    Login
+                </a>
+
+                <a
+                    href="/register.html"
+                    class="register-nav"
+                >
+                    Register
+                </a>
+
+            </nav>
+
+
+            <!-- Mobile menu button -->
+            <button
+                type="button"
+                class="mobile-menu-button"
+                id="mobileMenuButton"
+                aria-label="Open menu"
+            >
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         MOBILE MENU
+    ========================== -->
+
+    <div
+        class="mobile-menu-overlay"
+        id="mobileMenuOverlay"
+    ></div>
+
+
+    <aside
+        class="mobile-menu"
+        id="mobileMenu"
+    >
+
+        <div class="mobile-menu-header">
+
+            <a href="/" class="logo">
+                😂 Lilly Memes
+            </a>
+
+            <button
+                type="button"
+                id="closeMobileMenu"
+                aria-label="Close menu"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+
+        <nav class="mobile-menu-links">
+
+            <a href="/" class="active">
+                <i class="fa-solid fa-house"></i>
+                Home
+            </a>
+
+            <a href="/plans.html">
+                <i class="fa-solid fa-crown"></i>
+                Membership
+            </a>
+
+            <a href="/login.html">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                Login
+            </a>
+
+            <a href="/register.html">
+                <i class="fa-solid fa-user-plus"></i>
+                Register
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- =========================
+         HERO
+    ========================== -->
+
+    <main>
+
+        <section class="hero">
+
+            <div class="hero-glow hero-glow-one"></div>
+            <div class="hero-glow hero-glow-two"></div>
+
+
+            <div class="hero-content">
+
+                <div class="hero-badge">
+                    <i class="fa-solid fa-face-laugh"></i>
+                    Welcome to Lilly Memes
+                </div>
+
+
+                <h1>
+                    Your Daily Dose
+                    <span>of Memes.</span>
+                </h1>
+
+
+                <p>
+                    Fresh laughs, relatable moments and
+                    Malawi's favourite memes — all in one place.
+                </p>
+
+
+                <div class="hero-buttons">
+
+                    <a
+                        href="/plans.html"
+                        class="primary-button"
+                    >
+                        <i class="fa-solid fa-crown"></i>
+                        Join Lilly Memes
+                    </a>
+
+
+                    <a
+                        href="#memes"
+                        class="secondary-button"
+                    >
+                        <i class="fa-solid fa-images"></i>
+                        Explore Memes
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="hero-decoration">
+
+                <span>😂</span>
+                <span>🤣</span>
+                <span>😭</span>
+                <span>🔥</span>
+                <span>💀</span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             CATEGORIES
+        ========================== -->
+
+        <section class="categories-section">
+
+            <div class="section-container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-eyebrow">
+                            Explore
+                        </span>
+
+                        <h2>
+                            Browse Categories
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="categories-list"
+                    id="categoriesList"
+                >
+
+                    <a
+                        href="/search.html?category=Funny"
+                        class="category-chip"
+                    >
+                        😂 Funny
+                    </a>
+
+                    <a
+                        href="/search.html?category=Relationships"
+                        class="category-chip"
+                    >
+                        ❤️ Relationships
+                    </a>
+
+                    <a
+                        href="/search.html?category=School"
+                        class="category-chip"
+                    >
+                        🎓 School
+                    </a>
+
+                    <a
+                        href="/search.html?category=Malawi"
+                        class="category-chip"
+                    >
+                        🇲🇼 Malawi
+                    </a>
+
+                    <a
+                        href="/search.html?category=Sports"
+                        class="category-chip"
+                    >
+                        ⚽ Sports
+                    </a>
+
+                    <a
+                        href="/search.html?category=Entertainment"
+                        class="category-chip"
+                    >
+                        🎬 Entertainment
+                    </a>
+
+                    <a
+                        href="/search.html?category=Work"
+                        class="category-chip"
+                    >
+                        💼 Work
+                    </a>
+
+                    <a
+                        href="/search.html?category=Trending"
+                        class="category-chip"
+                    >
+                        🔥 Trending
+                    </a>
+
+                    <a
+                        href="/search.html?category=Random"
+                        class="category-chip"
+                    >
+                        🎲 Random
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             MEME SECTIONS
+        ========================== -->
+
+        <section
+            class="memes-section"
+            id="memes"
+        >
+
+            <div class="section-container">
+
+
+                <!-- POPULAR -->
+
+                <div class="meme-section">
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <span class="section-eyebrow">
+                                What's hot
+                            </span>
+
+                            <h2>
+                                🔥 Popular Memes
+                            </h2>
+
+                        </div>
+
+                        <a
+                            href="/search.html?sort=popular"
+                            class="view-all"
+                        >
+                            View all
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+
+                    </div>
+
+
+                    <div
+                        class="meme-grid"
+                        id="popularMemes"
+                    ></div>
+
+                </div>
+
+
+                <!-- LATEST -->
+
+                <div class="meme-section">
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <span class="section-eyebrow">
+                                Fresh from the community
+                            </span>
+
+                            <h2>
+                                🆕 Latest Memes
+                            </h2>
+
+                        </div>
+
+                        <a
+                            href="/search.html?sort=latest"
+                            class="view-all"
+                        >
+                            View all
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+
+                    </div>
+
+
+                    <div
+                        class="meme-grid"
+                        id="latestMemes"
+                    ></div>
+
+                </div>
+
+
+                <!-- MOST DISCUSSED -->
+
+                <div class="meme-section">
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <span class="section-eyebrow">
+                                Join the conversation
+                            </span>
+
+                            <h2>
+                                💬 Most Discussed
+                            </h2>
+
+                        </div>
+
+                        <a
+                            href="/search.html?sort=discussed"
+                            class="view-all"
+                        >
+                            View all
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+
+                    </div>
+
+
+                    <div
+                        class="meme-grid"
+                        id="discussedMemes"
+                    ></div>
+
+                </div>
+
+
+                <!-- LOADING -->
+
+                <div
+                    class="homepage-loading"
+                    id="homepageLoading"
+                >
+
+                    <div class="spinner"></div>
+
+                    <p>
+                        Loading memes...
+                    </p>
+
+                </div>
+
+
+                <!-- ERROR -->
+
+                <div
+                    class="homepage-error hidden"
+                    id="homepageError"
+                >
+
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                    <h3>
+                        Couldn't load the memes
+                    </h3>
+
+                    <p>
+                        Please try again.
+                    </p>
+
+                    <button
+                        type="button"
+                        id="retryHomepage"
+                    >
+                        Try again
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             MEMBERSHIP CTA
+        ========================== -->
+
+        <section class="membership-cta">
+
+            <div class="cta-inner">
+
+                <div class="cta-icon">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+
+
+                <div class="cta-content">
+
+                    <span>
+                        Become a member
+                    </span>
+
+                    <h2>
+                        More memes. More laughs.
+                    </h2>
+
+                    <p>
+                        Join Lilly Memes and unlock the full
+                        meme experience.
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="/plans.html"
+                    class="primary-button"
+                >
+                    View Membership
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer class="homepage-footer">
+
+        <div class="footer-inner">
+
+            <div class="footer-brand">
+
+                <a href="/" class="logo">
+                    😂 Lilly Memes
+                </a>
+
+                <p>
+                    Your Daily Dose of Memes.
+                </p>
+
+            </div>
+
+
+            <div class="footer-links">
+
+                <a href="/">
+                    Home
+                </a>
+
+                <a href="/plans.html">
+                    Membership
+                </a>
+
+                <a href="/login.html">
+                    Login
+                </a>
+
+                <a href="/register.html">
+                    Register
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <p>
+                © 2026 JVM Blackscreeen media.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+    <script src="/js/homepage.js"></script>
+
+</body>
+</html>

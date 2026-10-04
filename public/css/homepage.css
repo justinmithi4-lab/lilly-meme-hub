@@ -1,0 +1,1277 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: #06101f;
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
+}
+
+a {
+    color: inherit;
+}
+
+button,
+input {
+    font-family: inherit;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.homepage-header {
+    position: sticky;
+    top: 0;
+    z-index: 500;
+
+    height: 70px;
+
+    background: rgba(7, 17, 32, 0.94);
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+
+    backdrop-filter: blur(16px);
+}
+
+.header-inner {
+    width: min(1250px, calc(100% - 40px));
+
+    height: 100%;
+
+    margin: auto;
+
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.logo {
+    color: #ffffff;
+    text-decoration: none;
+
+    font-size: 20px;
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+/* Search */
+
+.header-search {
+    position: relative;
+
+    width: 330px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 14px;
+
+    border-radius: 20px;
+
+    background: #101c31;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+
+    transition: 0.2s ease;
+}
+
+.header-search:focus-within {
+    border-color: rgba(71, 112, 255, 0.65);
+    background: #13223b;
+}
+
+.header-search i {
+    color: #718099;
+    font-size: 13px;
+}
+
+.header-search input {
+    width: 100%;
+    min-width: 0;
+
+    margin-left: 9px;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+
+    color: #ffffff;
+
+    font-size: 13px;
+}
+
+.header-search input::placeholder {
+    color: #6e7b92;
+}
+
+.clear-search {
+    display: none;
+
+    width: 25px;
+    height: 25px;
+
+    flex: 0 0 25px;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: transparent;
+    color: #718099;
+
+    cursor: pointer;
+
+    font-size: 11px;
+}
+
+.clear-search:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+.search-suggestions {
+    position: absolute;
+
+    top: calc(100% + 8px);
+
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 330px;
+
+    padding: 8px;
+
+    background: #0c192c;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 10px;
+
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+
+    z-index: 1000;
+}
+
+.search-suggestions .suggestion-title {
+    padding: 7px 9px;
+
+    color: #68778e;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+.search-suggestions button {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    padding: 10px;
+
+    border: 0;
+    border-radius: 7px;
+
+    background: transparent;
+
+    color: #b4bfd0;
+
+    text-align: left;
+
+    font-size: 12px;
+
+    cursor: pointer;
+}
+
+.search-suggestions button:hover {
+    background: #14233a;
+    color: #ffffff;
+}
+
+
+/* Navigation */
+
+.desktop-nav {
+    margin-left: auto;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.desktop-nav a {
+    padding: 9px 13px;
+
+    border-radius: 8px;
+
+    color: #9ba8bd;
+
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.desktop-nav a:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.desktop-nav a.active {
+    color: #ffffff;
+}
+
+.desktop-nav .register-nav {
+    background: #315efb;
+    color: #ffffff;
+}
+
+.desktop-nav .register-nav:hover {
+    background: #416cff;
+}
+
+
+/* Mobile menu button */
+
+.mobile-menu-button {
+    display: none;
+
+    width: 40px;
+    height: 40px;
+
+    margin-left: auto;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: #111e33;
+    color: #ffffff;
+
+    cursor: pointer;
+
+    font-size: 17px;
+}
+
+
+/* =========================
+   MOBILE DRAWER
+========================= */
+
+.mobile-menu-overlay {
+    display: none;
+
+    position: fixed;
+    inset: 0;
+
+    z-index: 800;
+
+    background: rgba(0, 0, 0, 0.65);
+}
+
+.mobile-menu {
+    position: fixed;
+
+    top: 0;
+    right: -290px;
+
+    width: 280px;
+    height: 100vh;
+
+    z-index: 900;
+
+    background: #091526;
+
+    border-left: 1px solid rgba(255, 255, 255, 0.07);
+
+    transition: right 0.25s ease;
+}
+
+.mobile-menu.open {
+    right: 0;
+}
+
+.mobile-menu-overlay.open {
+    display: block;
+}
+
+.mobile-menu-header {
+    height: 70px;
+
+    padding: 0 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.mobile-menu-header button {
+    width: 36px;
+    height: 36px;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: #111e33;
+    color: #ffffff;
+
+    cursor: pointer;
+}
+
+.mobile-menu-links {
+    padding: 15px;
+}
+
+.mobile-menu-links a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 13px 14px;
+    margin-bottom: 5px;
+
+    border-radius: 9px;
+
+    color: #9ba8bd;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.mobile-menu-links a:hover,
+.mobile-menu-links a.active {
+    background: #111e33;
+    color: #ffffff;
+}
+
+.mobile-menu-links i {
+    width: 20px;
+    text-align: center;
+}
+
+
+/* =========================
+   HERO
+========================= */
+
+.hero {
+    position: relative;
+
+    min-height: 540px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            rgba(48, 88, 190, 0.20),
+            transparent 45%
+        ),
+        #06101f;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 5;
+
+    width: min(780px, calc(100% - 40px));
+
+    text-align: center;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 7px 12px;
+
+    border: 1px solid rgba(82, 119, 255, 0.25);
+
+    border-radius: 20px;
+
+    background: rgba(49, 94, 251, 0.08);
+
+    color: #91a9ff;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.hero h1 {
+    margin: 22px 0 0;
+
+    font-size: clamp(42px, 7vw, 76px);
+
+    line-height: 0.98;
+
+    letter-spacing: -3px;
+}
+
+.hero h1 span {
+    display: block;
+
+    color: #5277ff;
+}
+
+.hero p {
+    max-width: 600px;
+
+    margin: 25px auto 0;
+
+    color: #8d9ab0;
+
+    font-size: 16px;
+
+    line-height: 1.7;
+}
+
+.hero-buttons {
+    margin-top: 30px;
+
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.primary-button,
+.secondary-button {
+    min-height: 44px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    padding: 0 18px;
+
+    border-radius: 9px;
+
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    transition: 0.2s ease;
+}
+
+.primary-button {
+    background: #315efb;
+    color: #ffffff;
+}
+
+.primary-button:hover {
+    background: #416cff;
+    transform: translateY(-1px);
+}
+
+.secondary-button {
+    background: #101d32;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    color: #c4cede;
+}
+
+.secondary-button:hover {
+    background: #162641;
+    color: #ffffff;
+}
+
+.hero-decoration {
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+}
+
+.hero-decoration span {
+    position: absolute;
+
+    opacity: 0.12;
+
+    font-size: 48px;
+}
+
+.hero-decoration span:nth-child(1) {
+    top: 18%;
+    left: 8%;
+    transform: rotate(-15deg);
+}
+
+.hero-decoration span:nth-child(2) {
+    top: 24%;
+    right: 10%;
+    transform: rotate(12deg);
+}
+
+.hero-decoration span:nth-child(3) {
+    bottom: 18%;
+    left: 13%;
+    transform: rotate(10deg);
+}
+
+.hero-decoration span:nth-child(4) {
+    bottom: 22%;
+    right: 14%;
+    transform: rotate(-12deg);
+}
+
+.hero-decoration span:nth-child(5) {
+    top: 48%;
+    right: 3%;
+    font-size: 35px;
+}
+
+
+/* =========================
+   SECTION
+========================= */
+
+.section-container {
+    width: min(1200px, calc(100% - 40px));
+
+    margin: auto;
+}
+
+.categories-section {
+    padding: 28px 0;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+    background: #081426;
+}
+
+.section-eyebrow {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #5277ff;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+.section-heading h2 {
+    margin: 0;
+
+    font-size: 21px;
+    letter-spacing: -0.4px;
+}
+
+.categories-list {
+    margin-top: 17px;
+
+    display: flex;
+
+    gap: 8px;
+
+    overflow-x: auto;
+
+    scrollbar-width: none;
+}
+
+.categories-list::-webkit-scrollbar {
+    display: none;
+}
+
+.category-chip {
+    flex: 0 0 auto;
+
+    padding: 9px 13px;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+
+    border-radius: 20px;
+
+    background: #0e1b30;
+
+    color: #aeb9ca;
+
+    text-decoration: none;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.category-chip:hover {
+    background: #162641;
+    color: #ffffff;
+    border-color: rgba(82, 119, 255, 0.35);
+}
+
+
+/* =========================
+   MEMES
+========================= */
+
+.memes-section {
+    padding: 45px 0 70px;
+}
+
+.meme-section {
+    margin-bottom: 55px;
+}
+
+.meme-section:last-child {
+    margin-bottom: 0;
+}
+
+.view-all {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    color: #8190a8;
+
+    text-decoration: none;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.view-all:hover {
+    color: #ffffff;
+}
+
+.meme-grid {
+    margin-top: 18px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+
+/* Meme card */
+
+.homepage-meme-card {
+    overflow: hidden;
+
+    background: #0b172a;
+
+    border: 1px solid rgba(255, 255, 255, 0.06);
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.homepage-meme-card:hover {
+    transform: translateY(-3px);
+
+    border-color: rgba(255, 255, 255, 0.13);
+
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.22);
+}
+
+.homepage-meme-image {
+    width: 100%;
+
+    aspect-ratio: 1 / 1;
+
+    object-fit: cover;
+
+    display: block;
+
+    background: #040a13;
+}
+
+.homepage-meme-content {
+    padding: 13px;
+}
+
+.homepage-meme-title {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.homepage-meme-caption {
+    margin: 6px 0 0;
+
+    color: #7e8ba2;
+
+    font-size: 11px;
+
+    line-height: 1.45;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+}
+
+.homepage-meme-meta {
+    margin-top: 11px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+.homepage-meme-user {
+    color: #8795aa;
+
+    font-size: 10px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.homepage-meme-stats {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    color: #65738a;
+
+    font-size: 10px;
+
+    white-space: nowrap;
+}
+
+.homepage-meme-stats span {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.homepage-meme-stats .liked {
+    color: #ff4d6d;
+}
+
+
+/* =========================
+   LOADING / ERROR
+========================= */
+
+.homepage-loading {
+    min-height: 180px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    gap: 10px;
+
+    color: #738198;
+
+    font-size: 12px;
+}
+
+.spinner {
+    width: 30px;
+    height: 30px;
+
+    border: 3px solid rgba(255, 255, 255, 0.08);
+
+    border-top-color: #5277ff;
+
+    border-radius: 50%;
+
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.homepage-error {
+    min-height: 220px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    text-align: center;
+
+    color: #7d8ba1;
+}
+
+.homepage-error > i {
+    font-size: 28px;
+    color: #d49a47;
+}
+
+.homepage-error h3 {
+    margin: 12px 0 5px;
+
+    color: #c9d2df;
+
+    font-size: 16px;
+}
+
+.homepage-error p {
+    margin: 0;
+
+    font-size: 12px;
+}
+
+.homepage-error button {
+    margin-top: 15px;
+
+    padding: 9px 16px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: #315efb;
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =========================
+   MEMBERSHIP CTA
+========================= */
+
+.membership-cta {
+    padding: 50px 20px;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(49, 94, 251, 0.14),
+            transparent 60%
+        ),
+        #081426;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.cta-inner {
+    width: min(950px, 100%);
+
+    margin: auto;
+
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+}
+
+.cta-icon {
+    flex: 0 0 52px;
+
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background: rgba(49, 94, 251, 0.12);
+
+    color: #6e8cff;
+
+    font-size: 21px;
+}
+
+.cta-content {
+    flex: 1;
+}
+
+.cta-content > span {
+    color: #5277ff;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cta-content h2 {
+    margin: 5px 0;
+
+    font-size: 22px;
+}
+
+.cta-content p {
+    margin: 0;
+
+    color: #7e8ca2;
+
+    font-size: 12px;
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+.homepage-footer {
+    background: #040b15;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+    padding: 35px 0 20px;
+}
+
+.footer-inner {
+    width: min(1200px, calc(100% - 40px));
+
+    margin: auto;
+
+    display: flex;
+    justify-content: space-between;
+
+    gap: 30px;
+}
+
+.footer-brand p {
+    margin: 8px 0 0;
+
+    color: #65738a;
+
+    font-size: 11px;
+}
+
+.footer-links {
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+}
+
+.footer-links a {
+    color: #748198;
+
+    text-decoration: none;
+
+    font-size: 11px;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
+}
+
+.footer-bottom {
+    width: min(1200px, calc(100% - 40px));
+
+    margin: 28px auto 0;
+
+    padding-top: 18px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer-bottom p {
+    margin: 0;
+
+    color: #4f5c70;
+
+    font-size: 10px;
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 950px) {
+
+    .header-search {
+        width: 250px;
+    }
+
+    .meme-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+
+    .search-suggestions {
+        position: fixed;
+
+        top: 68px;
+
+        left: 12px;
+        right: 12px;
+
+        transform: none;
+
+        width: auto;
+    }
+
+    .homepage-header {
+        height: 60px;
+    }
+
+    .header-inner {
+        width: calc(100% - 24px);
+        gap: 10px;
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+
+    .logo span {
+        display: none;
+    }
+
+    .header-search {
+        flex: 1;
+
+        width: auto;
+
+        height: 38px;
+    }
+
+    .desktop-nav {
+        display: none;
+    }
+
+    .mobile-menu-button {
+        display: block;
+    }
+
+
+    /* Hero */
+
+    .hero {
+        min-height: 510px;
+    }
+
+    .hero-content {
+        width: calc(100% - 30px);
+    }
+
+    .hero h1 {
+        font-size: 48px;
+        letter-spacing: -2px;
+    }
+
+    .hero p {
+        margin-top: 20px;
+        font-size: 14px;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        width: min(300px, 100%);
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .primary-button,
+    .secondary-button {
+        width: 100%;
+    }
+
+    .hero-decoration span {
+        font-size: 32px;
+    }
+
+
+    /* Sections */
+
+    .section-container {
+        width: calc(100% - 24px);
+    }
+
+    .categories-section {
+        padding: 23px 0;
+    }
+
+    .memes-section {
+        padding-top: 32px;
+    }
+
+    .meme-section {
+        margin-bottom: 40px;
+    }
+
+    .section-heading h2 {
+        font-size: 18px;
+    }
+
+    .section-eyebrow {
+        font-size: 9px;
+    }
+
+    .view-all {
+        font-size: 10px;
+    }
+
+
+    /* Meme grid */
+
+    .meme-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 9px;
+    }
+
+    .homepage-meme-card {
+        border-radius: 9px;
+    }
+
+    .homepage-meme-content {
+        padding: 9px;
+    }
+
+    .homepage-meme-title {
+        font-size: 12px;
+    }
+
+    .homepage-meme-caption {
+        font-size: 10px;
+    }
+
+    .homepage-meme-meta {
+        display: block;
+    }
+
+    .homepage-meme-user {
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .homepage-meme-stats {
+        font-size: 9px;
+    }
+
+
+    /* CTA */
+
+    .membership-cta {
+        padding: 35px 15px;
+    }
+
+    .cta-inner {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .cta-content h2 {
+        font-size: 20px;
+    }
+
+    .cta-inner .primary-button {
+        width: 100%;
+    }
+
+
+    /* Footer */
+
+    .footer-inner {
+        width: calc(100% - 24px);
+
+        flex-direction: column;
+        align-items: center;
+
+        text-align: center;
+    }
+
+    .footer-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .footer-bottom {
+        width: calc(100% - 24px);
+
+        text-align: center;
+    }
+}
+
+
+@media (max-width: 380px) {
+
+    .hero h1 {
+        font-size: 42px;
+    }
+
+    .meme-grid {
+        gap: 7px;
+    }
+
+}

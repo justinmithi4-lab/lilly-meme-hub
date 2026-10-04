@@ -1,0 +1,1350 @@
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --background: #071426;
+    --background-secondary: #0b1b30;
+    --card: #10243d;
+    --card-hover: #15304f;
+    --border: #1d3857;
+
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+
+    --text: #f8fafc;
+    --text-secondary: #9fb1c7;
+    --text-muted: #71839a;
+
+    --danger: #ef4444;
+    --success: #22c55e;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    background: var(--background);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+    min-height: 100vh;
+}
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.meme-topbar {
+    height: 60px;
+    background: var(--background-secondary);
+    border-bottom: 1px solid var(--border);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 20px;
+
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.back-button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+
+    padding: 7px 12px;
+    border-radius: 7px;
+
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.back-button:hover {
+    background: var(--card);
+}
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.meme-page {
+    width: min(1000px, 100%);
+    margin: 24px auto;
+    padding: 0 16px;
+}
+
+/* =========================================================
+   MEME VIEWER
+========================================================= */
+
+.meme-viewer {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    overflow: hidden;
+}
+
+/* =========================================================
+   MEME IMAGE
+========================================================= */
+
+.meme-image-container {
+    background: #030b16;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 300px;
+    max-height: 700px;
+
+    overflow: hidden;
+}
+
+.meme-image-container img {
+    display: block;
+    width: 100%;
+    max-height: 700px;
+    object-fit: contain;
+}
+
+/* =========================================================
+   MEME INFORMATION
+========================================================= */
+
+.meme-information {
+    padding: 18px;
+}
+
+.meme-information h1 {
+    font-size: 22px;
+    margin-bottom: 7px;
+}
+
+.meme-caption {
+    color: var(--text-secondary);
+    line-height: 1.5;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.meme-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 15px;
+}
+
+.meme-category {
+    color: #60a5fa;
+
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+
+    padding: 4px 8px;
+    border-radius: 14px;
+
+    font-size: 11px;
+}
+
+/* =========================================================
+   MEME ACTIONS
+========================================================= */
+
+.meme-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+
+    padding: 12px 0;
+
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.action-button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+
+    padding: 8px 10px;
+    border-radius: 7px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.action-button:hover {
+    background: var(--card-hover);
+    color: var(--text);
+}
+
+.action-button.liked {
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.action-button.saved {
+    color: #60a5fa;
+    border-color: rgba(59, 130, 246, 0.4);
+}
+
+.danger-action:hover {
+    color: #f87171;
+}
+
+/* =========================================================
+   MEME STATS
+========================================================= */
+
+.meme-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    padding-top: 12px;
+
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+/* =========================================================
+   COMMENTS SECTION
+========================================================= */
+
+.comments-section {
+    margin-top: 18px;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+
+    padding: 16px;
+}
+
+/* Header */
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    margin-bottom: 14px;
+}
+
+.section-header h2 {
+    font-size: 18px;
+}
+
+.section-header span {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+/* =========================================================
+   COMMENT FORM
+========================================================= */
+
+.comment-form textarea {
+    width: 100%;
+
+    background: #08182b;
+    border: 1px solid var(--border);
+    color: var(--text);
+
+    border-radius: 8px;
+    padding: 10px;
+
+    resize: vertical;
+    outline: none;
+
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.comment-form textarea:focus {
+    border-color: var(--primary);
+}
+
+.comment-form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-top: 6px;
+
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.primary-button,
+.secondary-button,
+.danger-button {
+    border-radius: 7px;
+    padding: 8px 12px;
+
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.primary-button {
+    background: var(--primary);
+    color: white;
+    border: none;
+}
+
+.primary-button:hover {
+    background: var(--primary-hover);
+}
+
+.secondary-button {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.secondary-button:hover {
+    background: var(--card-hover);
+}
+
+.danger-button {
+    background: var(--danger);
+    color: white;
+    border: none;
+}
+
+/* =========================================================
+   COMMENTS LIST
+========================================================= */
+
+.comments-list {
+    margin-top: 17px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+.loading-comments {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 20px;
+    font-size: 12px;
+}
+
+/* =========================================================
+   COMMENT THREAD
+========================================================= */
+
+.comment-thread {
+    width: 100%;
+}
+
+/* =========================================================
+   COMMENT ROW
+========================================================= */
+
+.comment {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 7px;
+
+    width: 100%;
+}
+
+/* =========================================================
+   AVATAR
+========================================================= */
+
+.comment-avatar {
+    width: 30px;
+    height: 30px;
+
+    flex: 0 0 30px;
+
+    border-radius: 50%;
+
+    background: var(--primary);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    overflow: hidden;
+}
+
+.comment-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Replies get slightly smaller avatars */
+
+.comment-replies .comment-avatar {
+    width: 26px;
+    height: 26px;
+
+    flex-basis: 26px;
+
+    font-size: 10px;
+}
+
+/* =========================================================
+   COMMENT CONTENT
+========================================================= */
+
+.comment-content {
+    flex: 1;
+    min-width: 0;
+
+    max-width: 100%;
+}
+
+/* =========================================================
+   COMMENT BUBBLE
+========================================================= */
+
+.comment-bubble {
+    display: inline-block;
+
+    max-width: 100%;
+
+    background: #0b1b30;
+
+    border-radius: 15px;
+
+    padding: 7px 10px 8px;
+}
+
+/* =========================================================
+   COMMENT AUTHOR
+========================================================= */
+
+.comment-author {
+    display: block;
+
+    color: var(--text);
+
+    font-weight: 700;
+    font-size: 12px;
+
+    line-height: 1.2;
+
+    margin-bottom: 2px;
+}
+
+/* Replies */
+
+.comment-replies .comment-author {
+    font-size: 11px;
+}
+
+/* =========================================================
+   COMMENT TEXT
+========================================================= */
+
+.comment-text {
+    color: var(--text-secondary);
+
+    font-size: 12px;
+    line-height: 1.35;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Replies */
+
+.comment-replies .comment-text {
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+/* =========================================================
+   COMMENT META
+========================================================= */
+
+.comment-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin: 3px 0 0 8px;
+
+    color: var(--text-muted);
+
+    font-size: 10px;
+    line-height: 1;
+}
+
+.comment-time {
+    color: var(--text-muted);
+}
+
+.comment-action,
+.comment-reply {
+    border: none;
+    background: transparent;
+
+    color: var(--text-secondary);
+
+    font-size: 10px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    padding: 0;
+}
+
+.comment-action:hover,
+.comment-reply:hover {
+    color: var(--text);
+}
+
+/* =========================================================
+   COMMENT REPLIES
+========================================================= */
+
+.comment-replies {
+    margin-left: 37px;
+    margin-top: 7px;
+
+    padding-left: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+
+    border-left: none;
+}
+
+/*
+   Deeper replies are kept compact.
+   We do NOT keep adding huge indentation.
+*/
+
+.comment-replies .comment-replies {
+    margin-left: 31px;
+}
+
+/* =========================================================
+   REPLY BOX
+   ========================================================= */
+
+.reply-box {
+    display: flex;
+    align-items: flex-end;
+    gap: 7px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.reply-input {
+    flex: 1 1 auto;
+    width: 0;
+    min-width: 0;
+    max-width: 100%;
+    resize: none;
+    box-sizing: border-box;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    background: #111a2d;
+    color: #ffffff;
+
+    padding: 8px 12px;
+
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 1.4;
+
+    outline: none;
+
+    min-height: 34px;
+    max-height: 90px;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.reply-input::placeholder {
+    color: #68758e;
+}
+
+.reply-input:focus {
+    border-color: rgba(76, 125, 255, 0.55);
+    background: #131e34;
+}
+
+/* Reply controls */
+
+.reply-controls {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reply-submit,
+.reply-cancel {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.reply-submit {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+
+    border-radius: 50%;
+    background: #315efb;
+    color: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 13px;
+
+    transition:
+        background 0.15s ease,
+        transform 0.15s ease;
+}
+
+.reply-submit:hover {
+    background: #416cff;
+}
+
+.reply-submit:active {
+    transform: scale(0.92);
+}
+
+.reply-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.reply-cancel {
+    background: transparent;
+    color: #7d8aa3;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px;
+    white-space: nowrap;
+}
+
+.reply-cancel:hover {
+    color: #ffffff;
+}
+
+/* =========================================================
+   MOBILE REPLY BOX
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .reply-box {
+        width: 100%;
+        max-width: 100%;
+        gap: 5px;
+        margin-top: 7px;
+        box-sizing: border-box;
+    }
+
+    .reply-input {
+        width: 0;
+        min-width: 0;
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+    .reply-controls {
+        flex: 0 0 auto;
+    }
+
+    .reply-submit {
+        width: 30px;
+        height: 30px;
+        flex-basis: 30px;
+        font-size: 12px;
+    }
+
+    .reply-cancel {
+        font-size: 10px;
+        padding: 4px;
+    }
+}
+
+/* =========================================================
+   REPORT MODAL
+========================================================= */
+
+.modal {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.75);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 16px;
+
+    z-index: 1000;
+}
+
+.modal-content {
+    width: min(500px, 100%);
+
+    background: var(--card);
+
+    border: 1px solid var(--border);
+
+    border-radius: 12px;
+
+    padding: 18px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    margin-bottom: 16px;
+}
+
+.modal-header h2 {
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+.modal-header p {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.close-button {
+    background: transparent;
+    border: none;
+
+    color: var(--text-secondary);
+
+    font-size: 25px;
+
+    cursor: pointer;
+}
+
+.report-option {
+    display: block;
+
+    padding: 9px;
+    margin-bottom: 6px;
+
+    background: #0b1b30;
+
+    border: 1px solid var(--border);
+
+    border-radius: 7px;
+
+    color: var(--text-secondary);
+
+    cursor: pointer;
+
+    font-size: 12px;
+}
+
+.report-option:hover {
+    background: var(--card-hover);
+}
+
+.report-option input {
+    margin-right: 7px;
+}
+
+#reportDetails {
+    width: 100%;
+
+    margin-top: 8px;
+
+    background: #08182b;
+    border: 1px solid var(--border);
+
+    border-radius: 7px;
+
+    color: var(--text);
+
+    padding: 9px;
+
+    resize: vertical;
+
+    outline: none;
+
+    font-family: inherit;
+    font-size: 12px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    gap: 7px;
+
+    margin-top: 15px;
+}
+
+/* =========================================================
+   STATUS MESSAGES
+========================================================= */
+
+.message {
+    padding: 8px 10px;
+
+    border-radius: 7px;
+
+    margin-top: 10px;
+
+    font-size: 12px;
+}
+
+.message.success {
+    background: rgba(34, 197, 94, 0.12);
+    color: #4ade80;
+}
+
+.message.error {
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    body {
+        overflow-x: hidden;
+    }
+
+    /* Top bar */
+
+    .meme-topbar {
+        height: 56px;
+        padding: 0 12px;
+    }
+
+    .logo {
+        font-size: 16px;
+    }
+
+    .back-button {
+        padding: 6px 9px;
+        font-size: 12px;
+    }
+
+    /* Page */
+
+    .meme-page {
+        width: 100%;
+        margin: 10px auto;
+        padding: 0 6px;
+    }
+
+    .meme-viewer,
+    .comments-section {
+        border-radius: 9px;
+    }
+
+    /* Image */
+
+    .meme-image-container {
+        min-height: 220px;
+        max-height: 600px;
+    }
+
+    .meme-image-container img {
+        max-height: 600px;
+    }
+
+    /* Information */
+
+    .meme-information {
+        padding: 13px;
+    }
+
+    .meme-information h1 {
+        font-size: 18px;
+    }
+
+    .meme-caption {
+        font-size: 13px;
+    }
+
+    /* Actions */
+
+    .meme-actions {
+        gap: 5px;
+        padding: 10px 0;
+    }
+
+    .action-button {
+        flex: 1 1 auto;
+        justify-content: center;
+
+        padding: 7px 5px;
+
+        font-size: 11px;
+    }
+
+    .meme-stats {
+        gap: 9px;
+        padding-top: 10px;
+        font-size: 10px;
+    }
+
+    /* =====================================================
+       MOBILE COMMENTS
+    ===================================================== */
+
+    .comments-section {
+        margin-top: 10px;
+        padding: 11px 9px;
+    }
+
+    .section-header {
+        margin-bottom: 10px;
+    }
+
+    .section-header h2 {
+        font-size: 16px;
+    }
+
+    .section-header span {
+        font-size: 11px;
+    }
+
+    /* Comment form */
+
+    .comment-form textarea {
+        min-height: 45px;
+        padding: 8px;
+
+        font-size: 12px;
+
+        border-radius: 7px;
+    }
+
+    .comment-form-footer {
+        margin-top: 5px;
+    }
+
+    .primary-button {
+        padding: 7px 10px;
+        font-size: 11px;
+    }
+
+    /* Comments list */
+
+    .comments-list {
+        margin-top: 12px;
+        gap: 10px;
+    }
+
+    /* Main comment */
+
+    .comment {
+        gap: 6px;
+    }
+
+    .comment-avatar {
+        width: 28px;
+        height: 28px;
+
+        flex-basis: 28px;
+
+        font-size: 10px;
+    }
+
+    .comment-bubble {
+        width: fit-content;
+        max-width: 100%;
+
+        border-radius: 13px;
+
+        padding: 6px 8px 7px;
+    }
+
+    .comment-author {
+        font-size: 11px;
+    }
+
+    .comment-text {
+        font-size: 11px;
+        line-height: 1.3;
+    }
+
+    /* Metadata */
+
+    .comment-meta {
+        gap: 8px;
+
+        margin-left: 6px;
+        margin-top: 3px;
+
+        font-size: 9px;
+    }
+
+    .comment-action,
+    .comment-reply {
+        font-size: 9px;
+    }
+
+    /* =====================================================
+       MOBILE REPLIES
+    ===================================================== */
+
+    .comment-replies {
+        margin-left: 32px;
+        margin-top: 5px;
+
+        gap: 6px;
+    }
+
+    .comment-replies .comment-avatar {
+        width: 24px;
+        height: 24px;
+
+        flex-basis: 24px;
+
+        font-size: 9px;
+    }
+
+    .comment-replies .comment-bubble {
+        border-radius: 12px;
+        padding: 5px 7px 6px;
+    }
+
+    .comment-replies .comment-author {
+        font-size: 10px;
+    }
+
+    .comment-replies .comment-text {
+        font-size: 10px;
+        line-height: 1.3;
+    }
+
+    /*
+       Do not let deeply nested replies
+       destroy the mobile screen width.
+    */
+
+    .comment-replies .comment-replies {
+        margin-left: 27px;
+    }
+
+    /* Modal */
+
+    .modal {
+        padding: 10px;
+    }
+
+    .modal-content {
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .modal-header h2 {
+        font-size: 16px;
+    }
+
+    .modal-header p {
+        font-size: 11px;
+    }
+
+    .report-option {
+        padding: 8px;
+        font-size: 11px;
+    }
+
+    #reportDetails {
+        font-size: 11px;
+    }
+
+    .modal-actions {
+        margin-top: 12px;
+    }
+}
+
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .meme-page {
+        padding: 0 4px;
+    }
+
+    .comments-section {
+        padding: 9px 7px;
+    }
+
+    .comment-avatar {
+        width: 26px;
+        height: 26px;
+        flex-basis: 26px;
+    }
+
+    .comment-replies {
+        margin-left: 29px;
+    }
+
+    .comment-replies .comment-replies {
+        margin-left: 24px;
+    }
+
+    .comment-text {
+        font-size: 10.5px;
+    }
+
+    .comment-replies .comment-text {
+        font-size: 10px;
+    }
+}
+
+/* =========================================================
+   COMMENT ACTIONS
+   ========================================================= */
+
+.comment-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 5px;
+    padding-left: 2px;
+}
+
+/* Like button */
+
+.comment-like-button,
+.reply-button {
+    border: none;
+    background: transparent;
+    padding: 2px 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: #8f9bb3;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition:
+        color 0.15s ease,
+        transform 0.15s ease;
+}
+
+.comment-like-button:hover,
+.reply-button:hover {
+    color: #dbe4f5;
+}
+
+.comment-like-button:active,
+.reply-button:active {
+    transform: scale(0.95);
+}
+
+/* Heart */
+
+.comment-like-button i {
+    font-size: 12px;
+    transition:
+        transform 0.15s ease,
+        color 0.15s ease;
+}
+
+/* Liked state */
+
+.comment-like-button.liked {
+    color: #ff4d6d;
+}
+
+.comment-like-button.liked i {
+    color: #ff4d6d;
+}
+
+/* Small pop when liking */
+
+.comment-like-button.liked i {
+    animation: commentHeartPop 0.2s ease;
+}
+
+@keyframes commentHeartPop {
+    0% {
+        transform: scale(0.8);
+    }
+
+    50% {
+        transform: scale(1.25);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Like count */
+
+.comment-like-count {
+    font-size: 11px;
+    font-weight: 500;
+    color: #7d8aa3;
+    min-width: 8px;
+}
+
+/* Reply */
+
+.reply-button {
+    color: #8f9bb3;
+}
+
+.reply-button:hover {
+    color: #ffffff;
+}
+
+/* Separator between actions */
+
+.comment-meta .comment-like-button::after {
+    content: "";
+    display: none;
+}
+
+
+/* =========================================================
+   REPLIES
+   ========================================================= */
+
+.comment-replies {
+    margin-left: 38px;
+    margin-top: 7px;
+}
+
+.comment-replies .comment-thread {
+    margin-bottom: 8px;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .comment-meta {
+        gap: 12px;
+        margin-top: 4px;
+    }
+
+    .comment-like-button,
+    .reply-button {
+        font-size: 11px;
+    }
+
+    .comment-like-button i {
+        font-size: 11px;
+    }
+
+    .comment-like-count {
+        font-size: 10px;
+    }
+
+    .comment-replies {
+        margin-left: 28px;
+    }
+}
+
+/* Reply count / expand button */
+.replies-toggle {
+    border: none;
+    background: transparent;
+    padding: 3px 0;
+    margin-top: 5px;
+    color: #7f8ba3;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.replies-toggle:hover {
+    color: #ffffff;
+}
+
+.comment-replies[hidden] {
+    display: none;
+}
+
+.comment-replies {
+    margin-left: 38px;
+    margin-top: 7px;
+}
+
+@media (max-width: 600px) {
+    .replies-toggle {
+        font-size: 10px;
+    }
+
+    .comment-replies {
+        margin-left: 28px;
+    }
+}

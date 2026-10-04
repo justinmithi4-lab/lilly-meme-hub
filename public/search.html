@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Search - Lilly Memes</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/search.css">
+</head>
+
+<body>
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+
+        <a href="/member.html" class="logo">
+            😂 <span>Lilly Memes</span>
+        </a>
+
+        <div class="top-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="search"
+                id="searchInput"
+                placeholder="Search memes..."
+                autocomplete="off"
+            >
+
+            <button id="clearSearch" class="clear-search" type="button">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <a href="/member.html" class="back-button">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Back</span>
+        </a>
+
+    </header>
+
+
+    <!-- MAIN -->
+    <main class="search-page">
+
+        <section class="search-heading">
+
+            <div>
+                <h1>Search</h1>
+                <p id="searchDescription">
+                    Find memes, categories and creators.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- FILTERS -->
+        <section class="search-filters">
+
+            <div class="filter-group">
+
+                <label for="categoryFilter">
+                    Category
+                </label>
+
+                <select id="categoryFilter">
+                    <option value="">All categories</option>
+                </select>
+
+            </div>
+
+
+            <div class="filter-group">
+
+                <label for="sortFilter">
+                    Sort by
+                </label>
+
+                <select id="sortFilter">
+
+                    <option value="latest">
+                        Latest
+                    </option>
+
+                    <option value="popular">
+                        Most Liked
+                    </option>
+
+                    <option value="discussed">
+                        Most Discussed
+                    </option>
+
+                    <option value="downloads">
+                        Most Downloaded
+                    </option>
+
+                    <option value="views">
+                        Most Viewed
+                    </option>
+
+                </select>
+
+            </div>
+
+        </section>
+
+
+        <!-- RESULTS INFO -->
+        <div class="results-header">
+
+            <h2 id="resultsTitle">
+                Recent memes
+            </h2>
+
+            <span id="resultsCount"></span>
+
+        </div>
+
+
+        <!-- RESULTS -->
+        <section id="searchResults" class="search-grid"></section>
+
+
+        <!-- LOADING -->
+        <div id="searchLoading" class="search-status hidden">
+
+            <div class="spinner"></div>
+
+            <p>Searching...</p>
+
+        </div>
+
+
+        <!-- EMPTY -->
+        <div id="searchEmpty" class="search-status hidden">
+
+            <div class="status-icon">
+                <i class="fa-solid fa-face-frown"></i>
+            </div>
+
+            <h3>No memes found</h3>
+
+            <p>
+                Try another search term or category.
+            </p>
+
+        </div>
+
+
+        <!-- ERROR -->
+        <div id="searchError" class="search-status hidden">
+
+            <div class="status-icon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <h3>Something went wrong</h3>
+
+            <p id="searchErrorMessage">
+                We couldn't load the search results.
+            </p>
+
+            <button id="retrySearch" type="button">
+                Try again
+            </button>
+
+        </div>
+
+
+        <!-- LOAD MORE -->
+        <button
+            id="loadMoreButton"
+            class="load-more hidden"
+            type="button"
+        >
+            Load more
+        </button>
+
+    </main>
+
+
+    <!-- MOBILE NAV -->
+    <nav class="mobile-nav">
+
+        <a href="/member.html">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+
+        <a href="/search.html" class="active">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Search</span>
+        </a>
+
+        <a href="/plans.html">
+            <i class="fa-solid fa-crown"></i>
+            <span>Plans</span>
+        </a>
+
+        <a href="/member.html">
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
+        </a>
+
+    </nav>
+
+
+    <script src="/js/search.js"></script>
+
+</body>
+</html>

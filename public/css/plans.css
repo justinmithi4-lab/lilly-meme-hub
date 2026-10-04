@@ -1,0 +1,550 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #06111f;
+    --bg-secondary: #0b192b;
+    --card: #0e2035;
+    --card-hover: #122943;
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #f4f7fb;
+    --muted: #9eacbd;
+    --primary: #1877f2;
+    --primary-hover: #0f68db;
+    --success: #22c55e;
+}
+
+body {
+    min-height: 100vh;
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(24, 119, 242, 0.16),
+            transparent 35%
+        ),
+        var(--bg);
+
+    color: var(--text);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+}
+
+
+/* HEADER */
+
+.top-header {
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 24px;
+
+    border-bottom: 1px solid var(--border);
+
+    background: rgba(6, 17, 31, 0.92);
+
+    position: sticky;
+    top: 0;
+
+    z-index: 20;
+
+    backdrop-filter: blur(12px);
+}
+
+.logo {
+    color: var(--text);
+
+    text-decoration: none;
+
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.back-link {
+    color: var(--muted);
+
+    text-decoration: none;
+
+    font-size: 14px;
+}
+
+.back-link:hover {
+    color: white;
+}
+
+
+/* MAIN */
+
+.plans-page {
+    width: min(1100px, calc(100% - 32px));
+
+    margin: 0 auto;
+
+    padding: 55px 0 70px;
+}
+
+
+/* INTRO */
+
+.plans-intro {
+    text-align: center;
+
+    max-width: 700px;
+
+    margin: 0 auto 40px;
+}
+
+.intro-badge {
+    display: inline-block;
+
+    padding: 7px 12px;
+
+    border-radius: 999px;
+
+    background: rgba(24, 119, 242, 0.12);
+
+    color: #5da2ff;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.6px;
+}
+
+.plans-intro h1 {
+    margin-top: 18px;
+
+    font-size: clamp(32px, 6vw, 48px);
+
+    line-height: 1.05;
+}
+
+.plans-intro p {
+    margin-top: 16px;
+
+    color: var(--muted);
+
+    font-size: 16px;
+
+    line-height: 1.7;
+}
+
+
+/* CURRENT SUBSCRIPTION */
+
+.current-subscription {
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    padding: 18px;
+
+    margin-bottom: 30px;
+
+    border: 1px solid rgba(34, 197, 94, 0.25);
+
+    background: rgba(34, 197, 94, 0.08);
+
+    border-radius: 14px;
+}
+
+.current-subscription.hidden {
+    display: none;
+}
+
+.subscription-icon {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(34, 197, 94, 0.15);
+
+    color: #4ade80;
+
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.current-subscription h2 {
+    font-size: 16px;
+}
+
+.current-subscription p {
+    margin-top: 4px;
+
+    color: var(--muted);
+
+    font-size: 14px;
+}
+
+
+/* PLANS */
+
+.plans-container {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 20px;
+
+    align-items: stretch;
+}
+
+.plan-card {
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 26px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 20px;
+
+    background: linear-gradient(
+        180deg,
+        rgba(14, 32, 53, 0.98),
+        rgba(9, 25, 42, 0.98)
+    );
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.plan-card:hover {
+    transform: translateY(-4px);
+
+    border-color: rgba(24, 119, 242, 0.4);
+}
+
+.plan-card.featured {
+    border-color: rgba(24, 119, 242, 0.55);
+
+    box-shadow:
+        0 15px 45px
+        rgba(24, 119, 242, 0.12);
+}
+
+.plan-badge {
+    display: inline-block;
+
+    align-self: flex-start;
+
+    padding: 5px 9px;
+
+    margin-bottom: 15px;
+
+    border-radius: 999px;
+
+    background: rgba(24, 119, 242, 0.14);
+
+    color: #65a8ff;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+.plan-name {
+    font-size: 23px;
+
+    font-weight: 800;
+}
+
+.plan-description {
+    min-height: 44px;
+
+    margin-top: 10px;
+
+    color: var(--muted);
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+.plan-price {
+    margin-top: 25px;
+
+    font-size: 32px;
+
+    font-weight: 900;
+}
+
+.plan-price small {
+    color: var(--muted);
+
+    font-size: 13px;
+
+    font-weight: 500;
+}
+
+.plan-duration {
+    margin-top: 6px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+.plan-button {
+    width: 100%;
+
+    margin-top: 25px;
+
+    padding: 13px 16px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: var(--primary);
+
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.1s ease;
+}
+
+.plan-button:hover {
+    background: var(--primary-hover);
+}
+
+.plan-button:active {
+    transform: scale(0.98);
+}
+
+.plan-button:disabled {
+    opacity: 0.5;
+
+    cursor: not-allowed;
+}
+
+
+/* LOADING */
+
+.loading {
+    grid-column: 1 / -1;
+
+    min-height: 200px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: var(--muted);
+
+    gap: 12px;
+}
+
+.spinner {
+    width: 30px;
+    height: 30px;
+
+    border: 3px solid rgba(255, 255, 255, 0.1);
+
+    border-top-color: var(--primary);
+
+    border-radius: 50%;
+
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* ERROR */
+
+.plans-error {
+    grid-column: 1 / -1;
+
+    text-align: center;
+
+    padding: 40px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 16px;
+
+    color: var(--muted);
+}
+
+
+/* BENEFITS */
+
+.membership-info {
+    margin-top: 65px;
+
+    text-align: center;
+}
+
+.membership-info h2 {
+    font-size: 25px;
+}
+
+.benefits-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-top: 25px;
+}
+
+.benefit {
+    padding: 22px 16px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 16px;
+
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.benefit > span {
+    font-size: 27px;
+}
+
+.benefit h3 {
+    margin-top: 12px;
+
+    font-size: 15px;
+}
+
+.benefit p {
+    margin-top: 8px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* FOOTER */
+
+.site-footer {
+    padding: 25px;
+
+    border-top: 1px solid var(--border);
+
+    color: var(--muted);
+
+    text-align: center;
+
+    font-size: 12px;
+}
+
+
+/* TABLET */
+
+@media (max-width: 850px) {
+
+    .plans-container {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .benefits-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .top-header {
+        padding: 0 16px;
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+
+    .back-link {
+        font-size: 12px;
+    }
+
+    .plans-page {
+        width: min(
+            100% - 24px,
+            500px
+        );
+
+        padding-top: 38px;
+    }
+
+    .plans-container {
+        grid-template-columns: 1fr;
+    }
+
+    .benefits-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .plan-card {
+        padding: 22px;
+    }
+
+    .plans-intro h1 {
+        font-size: 34px;
+    }
+
+    .plans-intro p {
+        font-size: 14px;
+    }
+
+}
+
+@media (max-width: 380px) {
+
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+
+}

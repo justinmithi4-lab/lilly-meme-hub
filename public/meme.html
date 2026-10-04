@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Meme - Lilly Memes</title>
+
+    <link rel="stylesheet" href="/css/meme.css">
+</head>
+
+<body>
+
+<header class="meme-topbar">
+
+    <a href="/member.html" class="logo">
+        😂 Lilly Memes
+    </a>
+
+    <button
+        type="button"
+        id="backButton"
+        class="back-button"
+    >
+        ← Back
+    </button>
+
+</header>
+
+
+<main class="meme-page">
+
+    <section class="meme-viewer">
+
+        <!-- IMAGE -->
+        <div class="meme-image-container">
+
+            <img
+                id="memeImage"
+                src=""
+                alt="Meme"
+            >
+
+        </div>
+
+
+        <!-- INFORMATION -->
+        <div class="meme-information">
+
+            <h1 id="memeTitle">
+                Loading meme...
+            </h1>
+
+            <p
+                id="memeCaption"
+                class="meme-caption"
+            ></p>
+
+
+            <div
+                id="memeCategories"
+                class="meme-categories"
+            ></div>
+
+
+            <!-- ACTIONS -->
+            <div class="meme-actions">
+
+                <button
+                    type="button"
+                    id="likeButton"
+                    class="action-button"
+                >
+                    ❤️
+                    <span id="likeCount">0</span>
+                </button>
+
+
+                <button
+                    type="button"
+                    id="saveButton"
+                    class="action-button"
+                >
+                    🔖
+                    <span>Save</span>
+                </button>
+
+
+                <button
+                    type="button"
+                    id="downloadButton"
+                    class="action-button"
+                >
+                    ⬇️
+                    <span>Download</span>
+                </button>
+
+
+                <button
+                    type="button"
+                    id="shareButton"
+                    class="action-button"
+                >
+                    🔗
+                    <span>Share</span>
+                </button>
+
+
+                <button
+                    type="button"
+                    id="reportButton"
+                    class="action-button danger-action"
+                >
+                    🚩
+                    <span>Report</span>
+                </button>
+
+            </div>
+
+
+            <!-- STATS -->
+            <div class="meme-stats">
+
+                <span>
+                    👁️
+                    <strong id="viewCount">0</strong>
+                    views
+                </span>
+
+                <span>
+                    ⬇️
+                    <strong id="downloadCount">0</strong>
+                    downloads
+                </span>
+
+                <span>
+                    💬
+                    <strong id="commentCount">0</strong>
+                    comments
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- COMMENTS -->
+    <section class="comments-section">
+
+        <div class="section-header">
+
+            <h2>
+                Comments
+            </h2>
+
+            <span id="commentsTotal">
+                0
+            </span>
+
+        </div>
+
+
+        <!-- COMMENT FORM -->
+        <form
+            id="commentForm"
+            class="comment-form"
+        >
+
+            <textarea
+                id="commentInput"
+                maxlength="500"
+                rows="3"
+                placeholder="Write a comment..."
+                required
+            ></textarea>
+
+
+            <div class="comment-form-footer">
+
+                <span>
+                    <span id="commentCharacterCount">0</span>/500
+                </span>
+
+                <button
+                    type="submit"
+                    id="commentButton"
+                    class="primary-button"
+                >
+                    Comment
+                </button>
+
+            </div>
+
+        </form>
+
+
+        <div
+            id="commentsMessage"
+            class="message hidden"
+        ></div>
+
+
+        <!-- COMMENTS LIST -->
+        <div
+            id="commentsList"
+            class="comments-list"
+        >
+            <div class="loading-comments">
+                Loading comments...
+            </div>
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- REPORT MODAL -->
+<div
+    id="reportModal"
+    class="modal hidden"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>
+                    Report Meme
+                </h2>
+
+                <p>
+                    Tell us why you are reporting this meme.
+                </p>
+            </div>
+
+            <button
+                type="button"
+                id="closeReportButton"
+                class="close-button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="reportForm">
+
+            <label
+                class="report-option"
+            >
+                <input
+                    type="radio"
+                    name="reportReason"
+                    value="inappropriate"
+                    required
+                >
+                Inappropriate content
+            </label>
+
+
+            <label
+                class="report-option"
+            >
+                <input
+                    type="radio"
+                    name="reportReason"
+                    value="copyright"
+                >
+                Copyright issue
+            </label>
+
+
+            <label
+                class="report-option"
+            >
+                <input
+                    type="radio"
+                    name="reportReason"
+                    value="spam"
+                >
+                Spam
+            </label>
+
+
+            <label
+                class="report-option"
+            >
+                <input
+                    type="radio"
+                    name="reportReason"
+                    value="other"
+                >
+                Other
+            </label>
+
+
+            <textarea
+                id="reportDetails"
+                maxlength="500"
+                rows="4"
+                placeholder="Additional details (optional)"
+            ></textarea>
+
+
+            <div
+                id="reportMessage"
+                class="message hidden"
+            ></div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    id="cancelReportButton"
+                    class="secondary-button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="danger-button"
+                >
+                    Submit Report
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script src="/js/meme.js"></script>
+
+</body>
+</html>

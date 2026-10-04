@@ -1,0 +1,809 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: #07101f;
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =========================
+   TOP BAR
+========================= */
+
+.topbar {
+    height: 68px;
+    background: #0b1629;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 24px;
+
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+
+.logo {
+    color: #ffffff;
+    text-decoration: none;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+.top-search {
+    width: min(600px, 50vw);
+
+    height: 42px;
+
+    margin: 0 auto;
+
+    background: #111e33;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+
+    border-radius: 22px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 14px;
+
+    transition: border-color 0.2s ease,
+                background 0.2s ease;
+}
+
+
+.top-search:focus-within {
+    border-color: rgba(69, 112, 255, 0.6);
+    background: #14223a;
+}
+
+
+.top-search > i {
+    color: #77849b;
+    font-size: 14px;
+}
+
+
+.top-search input {
+    flex: 1;
+
+    min-width: 0;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    padding: 0 10px;
+}
+
+
+.top-search input::placeholder {
+    color: #718097;
+}
+
+
+.clear-search {
+    border: none;
+    background: transparent;
+
+    color: #718097;
+
+    cursor: pointer;
+
+    width: 28px;
+    height: 28px;
+
+    border-radius: 50%;
+
+    display: none;
+}
+
+
+.clear-search:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+
+.back-button {
+    color: #b8c3d6;
+    text-decoration: none;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+.back-button:hover {
+    color: #ffffff;
+}
+
+
+/* =========================
+   PAGE
+========================= */
+
+.search-page {
+    width: min(1200px, calc(100% - 40px));
+
+    margin: 0 auto;
+
+    padding: 35px 0 100px;
+}
+
+
+.search-heading h1 {
+    margin: 0;
+
+    font-size: 28px;
+}
+
+
+.search-heading p {
+    margin: 7px 0 0;
+
+    color: #7f8da5;
+
+    font-size: 14px;
+}
+
+
+/* =========================
+   FILTERS
+========================= */
+
+.search-filters {
+    display: flex;
+
+    gap: 12px;
+
+    margin-top: 25px;
+
+    padding: 16px;
+
+    background: #0b1629;
+
+    border: 1px solid rgba(255, 255, 255, 0.06);
+
+    border-radius: 12px;
+}
+
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+
+    min-width: 180px;
+}
+
+
+.filter-group label {
+    color: #8996aa;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+}
+
+
+.filter-group select {
+    height: 38px;
+
+    padding: 0 12px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 8px;
+
+    background: #111e33;
+
+    color: #ffffff;
+
+    outline: none;
+
+    cursor: pointer;
+}
+
+
+.filter-group select:focus {
+    border-color: rgba(69, 112, 255, 0.6);
+}
+
+
+/* =========================
+   RESULTS HEADER
+========================= */
+
+.results-header {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin: 30px 0 16px;
+}
+
+
+.results-header h2 {
+    margin: 0;
+
+    font-size: 18px;
+}
+
+
+#resultsCount {
+    color: #718097;
+
+    font-size: 12px;
+}
+
+
+/* =========================
+   GRID
+========================= */
+
+.search-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+
+/* =========================
+   MEME CARD
+========================= */
+
+.meme-card {
+    background: #0b1629;
+
+    border: 1px solid rgba(255, 255, 255, 0.06);
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+
+.meme-card:hover {
+    transform: translateY(-3px);
+
+    border-color: rgba(255, 255, 255, 0.12);
+
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+
+.meme-image-wrapper {
+    width: 100%;
+
+    aspect-ratio: 1 / 1;
+
+    background: #050b15;
+
+    overflow: hidden;
+}
+
+
+.meme-image {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+
+.meme-card-content {
+    padding: 12px;
+}
+
+
+.meme-title {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.meme-caption {
+    margin: 6px 0 0;
+
+    color: #8491a7;
+
+    font-size: 12px;
+
+    line-height: 1.4;
+
+    display: -webkit-box;
+
+    -webkit-line-clamp: 2;
+
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+}
+
+
+.meme-user {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin-top: 11px;
+}
+
+
+.meme-avatar {
+    width: 25px;
+    height: 25px;
+
+    border-radius: 50%;
+
+    background: #1c2c47;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #b8c5da;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    overflow: hidden;
+}
+
+
+.meme-avatar img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+.meme-username {
+    color: #9ba8bc;
+
+    font-size: 11px;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+}
+
+
+.meme-stats {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 10px;
+
+    color: #68768d;
+
+    font-size: 11px;
+}
+
+
+.meme-stat {
+    display: flex;
+
+    align-items: center;
+
+    gap: 4px;
+}
+
+
+.meme-stat.liked {
+    color: #ff4d6d;
+}
+
+
+/* =========================
+   STATUS
+========================= */
+
+.search-status {
+    min-height: 280px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    color: #7d8aa0;
+}
+
+
+.search-status h3 {
+    margin: 14px 0 5px;
+
+    color: #c5cede;
+
+    font-size: 16px;
+}
+
+
+.search-status p {
+    margin: 0;
+
+    font-size: 13px;
+}
+
+
+.status-icon {
+    width: 55px;
+    height: 55px;
+
+    border-radius: 50%;
+
+    background: #101d32;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #718097;
+
+    font-size: 20px;
+}
+
+
+.spinner {
+    width: 30px;
+    height: 30px;
+
+    border: 3px solid rgba(255, 255, 255, 0.1);
+
+    border-top-color: #5277ff;
+
+    border-radius: 50%;
+
+    animation: spin 0.8s linear infinite;
+}
+
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+#retrySearch {
+    margin-top: 15px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #315efb;
+
+    color: #ffffff;
+
+    padding: 9px 16px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+#retrySearch:hover {
+    background: #416cff;
+}
+
+
+.load-more {
+    display: block;
+
+    margin: 30px auto 0;
+
+    padding: 10px 22px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 8px;
+
+    background: #0e1b30;
+
+    color: #c2ccdc;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.load-more:hover {
+    background: #14223a;
+
+    color: #ffffff;
+}
+
+
+/* =========================
+   UTILITY
+========================= */
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =========================
+   MOBILE NAV
+========================= */
+
+.mobile-nav {
+    display: none;
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 1000px) {
+
+    .search-grid {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+
+    .topbar {
+        height: 60px;
+
+        padding: 0 12px;
+    }
+
+
+    .logo span {
+        display: none;
+    }
+
+
+    .top-search {
+        width: auto;
+
+        flex: 1;
+
+        margin: 0 10px;
+    }
+
+
+    .back-button span {
+        display: none;
+    }
+
+
+    .search-page {
+        width: calc(100% - 24px);
+
+        padding-top: 25px;
+
+        padding-bottom: 85px;
+    }
+
+
+    .search-heading h1 {
+        font-size: 23px;
+    }
+
+
+    .search-filters {
+        padding: 12px;
+
+        gap: 8px;
+    }
+
+
+    .filter-group {
+        min-width: 0;
+
+        flex: 1;
+    }
+
+
+    .filter-group select {
+        width: 100%;
+    }
+
+
+    .search-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+    }
+
+
+    .meme-card-content {
+        padding: 9px;
+    }
+
+
+    .meme-title {
+        font-size: 12px;
+    }
+
+
+    .meme-caption {
+        font-size: 10px;
+    }
+
+
+    .meme-stats {
+        gap: 8px;
+
+        font-size: 9px;
+    }
+
+
+    .mobile-nav {
+        position: fixed;
+
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        height: 62px;
+
+        background: #0a1527;
+
+        border-top: 1px solid rgba(255, 255, 255, 0.07);
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-around;
+
+        z-index: 200;
+    }
+
+
+    .mobile-nav a {
+        flex: 1;
+
+        height: 100%;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 4px;
+
+        color: #69778e;
+
+        text-decoration: none;
+
+        font-size: 10px;
+    }
+
+
+    .mobile-nav a i {
+        font-size: 17px;
+    }
+
+
+    .mobile-nav a.active {
+        color: #ffffff;
+    }
+
+}
+
+
+@media (max-width: 400px) {
+
+    .search-grid {
+        gap: 7px;
+    }
+
+
+    .meme-card {
+        border-radius: 9px;
+    }
+
+
+    .meme-card-content {
+        padding: 8px;
+    }
+
+
+    .meme-user {
+        margin-top: 8px;
+    }
+
+
+    .meme-stats {
+        gap: 5px;
+    }
+
+}

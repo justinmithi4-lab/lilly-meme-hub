@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Memes - Lilly Memes</title>
+
+    <link rel="stylesheet" href="/css/admin-memes.css">
+</head>
+
+<body>
+
+    <!-- TOP BAR -->
+    <header class="admin-topbar">
+
+        <div class="topbar-left">
+            <button
+                type="button"
+                id="menuButton"
+                class="menu-button"
+                aria-label="Open menu"
+            >
+                ☰
+            </button>
+
+            <a href="/admin.html" class="admin-logo">
+                😂 <span>Lilly Memes</span>
+            </a>
+        </div>
+
+        <div class="topbar-right">
+            <span id="adminName" class="admin-name">
+                Admin
+            </span>
+
+            <button
+                type="button"
+                id="logoutButton"
+                class="logout-button"
+            >
+                Logout
+            </button>
+        </div>
+
+    </header>
+
+
+    <!-- LAYOUT -->
+    <div class="admin-layout">
+
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="admin-sidebar">
+
+            <nav>
+
+                <a href="/admin.html" class="sidebar-link">
+                    <span>📊</span>
+                    Dashboard
+                </a>
+
+                <a href="/admin-memes.html" class="sidebar-link active">
+                    <span>😂</span>
+                    Memes
+                </a>
+
+                <a href="#" class="sidebar-link">
+                    <span>📖</span>
+                    Stories
+                </a>
+
+                <a href="#" class="sidebar-link">
+                    <span>👥</span>
+                    Members
+                </a>
+
+                <a href="#" class="sidebar-link">
+                    <span>💳</span>
+                    Payments
+                </a>
+
+                <a href="#" class="sidebar-link">
+                    <span>📁</span>
+                    Categories
+                </a>
+
+                <a href="#" class="sidebar-link">
+                    <span>🚩</span>
+                    Reports
+                </a>
+
+                <a href="#" class="sidebar-link">
+                    <span>⚙️</span>
+                    Settings
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-main">
+
+            <div class="page-header">
+
+                <div>
+                    <h1>Manage Memes</h1>
+
+                    <p>
+                        Upload, edit and manage memes published on Lilly Memes.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- UPLOAD CARD -->
+            <section class="admin-card">
+
+                <div class="card-header">
+                    <div>
+                        <h2>Upload New Meme</h2>
+
+                        <p>
+                            Add a meme to the Lilly Memes collection.
+                        </p>
+                    </div>
+                </div>
+
+
+                <form
+                    id="memeForm"
+                    enctype="multipart/form-data"
+                >
+
+                    <!-- IMAGE -->
+                    <div class="form-group">
+
+                        <label for="image">
+                            Meme Image
+                        </label>
+
+                        <div
+                            id="imageDropArea"
+                            class="image-drop-area"
+                        >
+
+                            <input
+                                type="file"
+                                id="image"
+                                name="image"
+                                accept="image/jpeg,image/png,image/webp,image/gif"
+                                hidden
+                            >
+
+                            <div
+                                id="uploadPlaceholder"
+                                class="upload-placeholder"
+                            >
+
+                                <div class="upload-icon">
+                                    🖼️
+                                </div>
+
+                                <strong>
+                                    Click to choose an image
+                                </strong>
+
+                                <span>
+                                    JPG, PNG, WEBP or GIF — maximum 10 MB
+                                </span>
+
+                            </div>
+
+                            <img
+                                id="imagePreview"
+                                class="image-preview hidden"
+                                alt="Meme preview"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TITLE -->
+                    <div class="form-group">
+
+                        <label for="title">
+                            Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            maxlength="150"
+                            placeholder="Enter meme title"
+                            required
+                        >
+
+                        <div class="character-count">
+                            <span id="titleCount">0</span>/150
+                        </div>
+
+                    </div>
+
+
+                    <!-- CAPTION -->
+                    <div class="form-group">
+
+                        <label for="caption">
+                            Caption
+                        </label>
+
+                        <textarea
+                            id="caption"
+                            name="caption"
+                            maxlength="500"
+                            rows="4"
+                            placeholder="Write a caption for this meme..."
+                        ></textarea>
+
+                        <div class="character-count">
+                            <span id="captionCount">0</span>/500
+                        </div>
+
+                    </div>
+
+
+                    <!-- CATEGORIES -->
+                    <div class="form-group">
+
+                        <label>
+                            Categories
+                        </label>
+
+                        <div
+                            id="categoriesContainer"
+                            class="categories-container"
+                        >
+                            <span class="loading-text">
+                                Loading categories...
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <!-- FEATURED -->
+                    <div class="checkbox-row">
+
+                        <label class="checkbox-label">
+
+                            <input
+                                type="checkbox"
+                                id="isFeatured"
+                            >
+
+                            <span>
+                                Mark as featured meme
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+                    <div
+                        id="formMessage"
+                        class="form-message hidden"
+                    ></div>
+
+
+                    <!-- BUTTONS -->
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            id="uploadButton"
+                            class="primary-button"
+                        >
+                            Upload Meme
+                        </button>
+
+                        <button
+                            type="button"
+                            id="cancelEditButton"
+                            class="secondary-button hidden"
+                        >
+                            Cancel Edit
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            <!-- MEMES -->
+            <section class="admin-card">
+
+                <div class="card-header">
+
+                    <div>
+                        <h2>Published Memes</h2>
+
+                        <p>
+                            Manage the memes currently stored in the database.
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        id="refreshButton"
+                        class="secondary-button"
+                    >
+                        ↻ Refresh
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="memesMessage"
+                    class="form-message hidden"
+                ></div>
+
+
+                <!-- DESKTOP TABLE -->
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Image</th>
+                                <th>Meme</th>
+                                <th>Categories</th>
+                                <th>Stats</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="memesTableBody">
+
+                            <tr>
+                                <td
+                                    colspan="6"
+                                    class="loading-cell"
+                                >
+                                    Loading memes...
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- EDIT MODAL -->
+    <div
+        id="editModal"
+        class="modal hidden"
+    >
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+                    <h2>Edit Meme</h2>
+
+                    <p>
+                        Update the meme information.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    id="closeModalButton"
+                    class="close-button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="editForm">
+
+                <input
+                    type="hidden"
+                    id="editMemeId"
+                >
+
+
+                <div class="edit-preview">
+
+                    <img
+                        id="editImagePreview"
+                        src=""
+                        alt="Meme"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="editTitle">
+                        Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editTitle"
+                        maxlength="150"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="editCaption">
+                        Caption
+                    </label>
+
+                    <textarea
+                        id="editCaption"
+                        maxlength="500"
+                        rows="4"
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Categories
+                    </label>
+
+                    <div
+                        id="editCategoriesContainer"
+                        class="categories-container"
+                    ></div>
+
+                </div>
+
+
+                <div class="checkbox-row">
+
+                    <label class="checkbox-label">
+
+                        <input
+                            type="checkbox"
+                            id="editFeatured"
+                        >
+
+                        <span>
+                            Featured meme
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <div class="checkbox-row">
+
+                    <label class="checkbox-label">
+
+                        <input
+                            type="checkbox"
+                            id="editActive"
+                        >
+
+                        <span>
+                            Meme is active
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <div
+                    id="editMessage"
+                    class="form-message hidden"
+                ></div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                    >
+                        Save Changes
+                    </button>
+
+                    <button
+                        type="button"
+                        id="modalCancelButton"
+                        class="secondary-button"
+                    >
+                        Cancel
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script src="/js/admin-memes.js"></script>
+
+</body>
+</html>
