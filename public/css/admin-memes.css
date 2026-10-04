@@ -45,126 +45,15 @@ button {
    TOP BAR
 ========================= */
 
-.admin-topbar {
-    height: 64px;
-    background: var(--background-secondary);
-    border-bottom: 1px solid var(--border);
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 0 24px;
-
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.topbar-left,
-.topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.admin-logo {
-    color: var(--text);
-    text-decoration: none;
-    font-size: 20px;
-    font-weight: 700;
-}
-
-.menu-button {
-    display: none;
-
-    border: none;
-    background: transparent;
-    color: var(--text);
-
-    font-size: 24px;
-}
-
-.admin-name {
-    color: var(--text-secondary);
-    font-size: 14px;
-}
-
-.logout-button {
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text);
-
-    padding: 8px 14px;
-    border-radius: 8px;
-}
-
-.logout-button:hover {
-    background: var(--card);
-}
-
 
 /* =========================
    LAYOUT
 ========================= */
 
-.admin-layout {
-    display: flex;
-    min-height: calc(100vh - 64px);
-}
-
 
 /* =========================
    SIDEBAR
 ========================= */
-
-.admin-sidebar {
-    width: 240px;
-
-    background: var(--background-secondary);
-    border-right: 1px solid var(--border);
-
-    padding: 24px 14px;
-
-    flex-shrink: 0;
-}
-
-.sidebar-link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    color: var(--text-secondary);
-    text-decoration: none;
-
-    padding: 12px 14px;
-    margin-bottom: 5px;
-
-    border-radius: 9px;
-
-    font-size: 14px;
-}
-
-.sidebar-link:hover {
-    background: var(--card);
-    color: var(--text);
-}
-
-.sidebar-link.active {
-    background: var(--primary);
-    color: white;
-}
-
-
-/* =========================
-   MAIN
-========================= */
-
-.admin-main {
-    flex: 1;
-    padding: 30px;
-    max-width: 1500px;
-}
 
 .page-header {
     margin-bottom: 25px;
@@ -390,6 +279,20 @@ textarea {
     flex-wrap: wrap;
     gap: 8px;
     margin-top: 16px;
+}
+
+.admin-navigation a {
+    text-decoration: none;
+}
+
+.admin-navigation a:focus-visible,
+.sidebar-bottom .sidebar-link:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+#categoryManager {
+    scroll-margin-top: 96px;
 }
 
 .category-tag {
@@ -741,49 +644,7 @@ td {
    MOBILE
 ========================= */
 
-@media (max-width: 900px) {
-
-    .admin-sidebar {
-        position: fixed;
-
-        left: -250px;
-        top: 64px;
-        bottom: 0;
-
-        z-index: 200;
-
-        transition: left 0.25s ease;
-    }
-
-    .admin-sidebar.open {
-        left: 0;
-    }
-
-    .menu-button {
-        display: block;
-    }
-
-    .admin-main {
-        width: 100%;
-        padding: 20px;
-    }
-
-    .admin-topbar {
-        padding: 0 15px;
-    }
-
-    .admin-name {
-        display: none;
-    }
-
-}
-
-
 @media (max-width: 600px) {
-
-    .admin-main {
-        padding: 15px;
-    }
 
     .admin-card {
         padding: 17px;
@@ -809,10 +670,6 @@ td {
 
     .actions {
         flex-direction: column;
-    }
-
-    .admin-logo span {
-        font-size: 17px;
     }
 
 }

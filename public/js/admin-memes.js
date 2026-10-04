@@ -232,6 +232,12 @@ function setupEvents() {
         }
     );
 
+    sidebar.querySelectorAll(".admin-nav-item").forEach((link) => {
+        link.addEventListener("click", () => {
+            sidebar.classList.remove("open");
+        });
+    });
+
 
     closeModalButton.addEventListener(
         "click",

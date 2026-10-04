@@ -583,25 +583,25 @@ INSERT INTO plans
     (name, description, price, currency, duration_days)
 VALUES
     (
-        'Daily',
-        'Access Lilly Memes for one day.',
-        500.00,
-        'MWK',
-        1
-    ),
-    (
         'Weekly',
         'Access Lilly Memes for seven days.',
-        2500.00,
+        200.00,
         'MWK',
         7
     ),
     (
         'Monthly',
         'Access Lilly Memes for thirty days.',
-        7000.00,
+        1000.00,
         'MWK',
         30
+    ),
+    (
+        '3 Months',
+        'Access Lilly Memes for ninety days.',
+        2000.00,
+        'MWK',
+        90
     );
 
 

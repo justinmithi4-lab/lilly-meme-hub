@@ -7,46 +7,15 @@
     <title>Manage Memes - Lilly Memes</title>
 
     <link rel="stylesheet" href="/css/admin-memes.css">
+    <link rel="stylesheet" href="/css/admin.css?v=story-delete">
     <link rel="stylesheet" href="/css/brand.css">
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
 </head>
 
 <body>
-
-    <!-- TOP BAR -->
-    <header class="admin-topbar">
-
-        <div class="topbar-left">
-            <button
-                type="button"
-                id="menuButton"
-                class="menu-button"
-                aria-label="Open menu"
-            >
-                ☰
-            </button>
-
-            <a href="/admin.html" class="admin-logo">
-                <img src="/images/lilly-memes-logo.jpg" class="brand-logo-image" alt="">
-                <span>Lilly Memes</span>
-            </a>
-        </div>
-
-        <div class="topbar-right">
-            <span id="adminName" class="admin-name">
-                Admin
-            </span>
-
-            <button
-                type="button"
-                id="logoutButton"
-                class="logout-button"
-            >
-                Logout
-            </button>
-        </div>
-
-    </header>
-
 
     <!-- LAYOUT -->
     <div class="admin-layout">
@@ -54,49 +23,64 @@
         <!-- SIDEBAR -->
         <aside id="sidebar" class="admin-sidebar">
 
-            <nav>
+            <div class="admin-brand">
+                <div class="brand-icon">
+                    <img src="/images/lilly-memes-logo.jpg" class="brand-logo-image" alt="">
+                </div>
+                <div>
+                    <strong>Lilly Memes</strong>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
 
-                <a href="/admin.html" class="sidebar-link">
-                    <span>📊</span>
-                    Dashboard
+            <nav class="admin-navigation">
+                <a href="/admin.html?section=dashboard" class="admin-nav-item">
+                    <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+                    <span>Dashboard</span>
                 </a>
 
-                <a href="/admin-memes.html" class="sidebar-link active">
-                    <span>😂</span>
-                    Memes
+                <a href="/admin-memes.html" class="admin-nav-item active" aria-current="page">
+                    <i class="fa-solid fa-images" aria-hidden="true"></i>
+                    <span>Memes</span>
                 </a>
 
-                <a href="#" class="sidebar-link">
-                    <span>📖</span>
-                    Stories
+                <a href="/admin.html?section=stories" class="admin-nav-item">
+                    <i class="fa-solid fa-circle-play" aria-hidden="true"></i>
+                    <span>Stories</span>
                 </a>
 
-                <a href="#" class="sidebar-link">
-                    <span>👥</span>
-                    Members
+                <a href="/admin.html?section=members" class="admin-nav-item">
+                    <i class="fa-solid fa-users" aria-hidden="true"></i>
+                    <span>Members</span>
                 </a>
 
-                <a href="#" class="sidebar-link">
-                    <span>💳</span>
-                    Payments
+                <a href="/admin.html?section=payments" class="admin-nav-item">
+                    <i class="fa-solid fa-money-bill-transfer" aria-hidden="true"></i>
+                    <span>Payments</span>
                 </a>
 
-                <a href="#categoryManager" class="sidebar-link">
-                    <span>📁</span>
-                    Categories
+                <a href="#categoryManager" class="admin-nav-item">
+                    <i class="fa-solid fa-folder" aria-hidden="true"></i>
+                    <span>Categories</span>
                 </a>
 
-                <a href="#" class="sidebar-link">
-                    <span>🚩</span>
-                    Reports
+                <a href="/admin.html?section=messages" class="admin-nav-item">
+                    <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                    <span>Member Messages</span>
                 </a>
-
-                <a href="#" class="sidebar-link">
-                    <span>⚙️</span>
-                    Settings
-                </a>
-
             </nav>
+
+            <div class="sidebar-bottom">
+                <a href="/" class="sidebar-link">
+                    <i class="fa-solid fa-globe" aria-hidden="true"></i>
+                    View Website
+                </a>
+
+                <button type="button" class="sidebar-link" id="logoutButton">
+                    <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+                    Logout
+                </button>
+            </div>
 
         </aside>
 
@@ -104,18 +88,31 @@
         <!-- MAIN CONTENT -->
         <main class="admin-main">
 
-            <div class="page-header">
+            <header class="admin-topbar">
+                <button
+                    type="button"
+                    id="menuButton"
+                    class="mobile-menu-button"
+                    aria-label="Open menu"
+                >
+                    <i class="fa-solid fa-bars" aria-hidden="true"></i>
+                </button>
 
-                <div>
+                <div class="topbar-title">
                     <h1>Manage Memes</h1>
-
-                    <p>
-                        Upload, edit and manage memes published on Lilly Memes.
-                    </p>
+                    <p>Upload, edit and manage memes published on Lilly Memes.</p>
                 </div>
 
-            </div>
+                <div class="admin-user">
+                    <div class="admin-avatar">A</div>
+                    <div class="admin-user-info">
+                        <strong id="adminName">Admin</strong>
+                        <span>Administrator</span>
+                    </div>
+                </div>
+            </header>
 
+            <div class="admin-content">
 
             <!-- UPLOAD CARD -->
             <section class="admin-card">
@@ -399,6 +396,8 @@
 
             </section>
 
+            </div>
+
         </main>
 
     </div>
@@ -566,7 +565,7 @@
 
 
     <script src="/js/media.js?v=cloudinary"></script>
-    <script src="/js/admin-memes.js?v=admin-memes-fix-2"></script>
+    <script src="/js/admin-memes.js?v=admin-shared-sidebar"></script>
 
 </body>
 </html>

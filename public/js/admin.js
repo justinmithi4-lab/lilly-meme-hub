@@ -2251,6 +2251,16 @@ async function initializeAdmin() {
 
     await loadPayments();
 
+    const requestedSection =
+        new URLSearchParams(window.location.search).get("section");
+
+    if (
+        requestedSection &&
+        Object.prototype.hasOwnProperty.call(sections, requestedSection)
+    ) {
+        switchSection(requestedSection);
+    }
+
     if (storyForm) {
         storyForm.addEventListener("submit", handleStorySubmit);
     }
