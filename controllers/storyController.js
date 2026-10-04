@@ -228,8 +228,115 @@ async function createStory(req, res) {
     }
 }
 
+async function deleteStory(req, res) {
+    const storyId = Number(req.params.id);
+
+    if (!Number.isInteger(storyId) || storyId <= 0) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid story ID."
+        });
+    }
+
+    let connection;
+    let transactionStarted = false;
+
+    try {
+        connection = await pool.getConnection();
+        await connection.beginTransaction();
+        transactionStarted = true;
+
+        const [stories] = await connection.execute(
+            `
+            SELECT id, caption, cloudinary_public_id, media_type
+            FROM stories
+            WHERE id = ?
+            LIMIT 1
+            FOR UPDATE
+            `,
+            [storyId]
+        );
+
+        if (stories.length === 0) {
+            await connection.rollback();
+            transactionStarted = false;
+
+            return res.status(404).json({
+                success: false,
+                message: "Story not found."
+            });
+        }
+
+        const story = stories[0];
+
+        await connection.execute(
+            "DELETE FROM stories WHERE id = ?",
+            [storyId]
+        );
+
+        await connection.execute(
+            `
+            INSERT INTO admin_logs
+                (admin_id, action, description, ip_address)
+            VALUES (?, 'story_deleted', ?, ?)
+            `,
+            [
+                req.session.user.id,
+                `Deleted story #${storyId}${story.caption ? `: ${story.caption}` : "."}`,
+                req.ip
+            ]
+        );
+
+        await connection.commit();
+        transactionStarted = false;
+
+        if (story.cloudinary_public_id) {
+            try {
+                await deleteCloudinaryAsset(
+                    story.cloudinary_public_id,
+                    story.media_type
+                );
+            } catch (cleanupError) {
+                console.error(
+                    "Story deleted but Cloudinary media cleanup failed:",
+                    cleanupError
+                );
+                return res.status(500).json({
+                    success: false,
+                    message: "Story deleted, but its Cloudinary media could not be removed."
+                });
+            }
+        }
+
+        return res.json({
+            success: true,
+            message: "Story deleted successfully."
+        });
+    } catch (error) {
+        if (connection && transactionStarted) {
+            try {
+                await connection.rollback();
+            } catch (rollbackError) {
+                console.error("Delete story rollback error:", rollbackError);
+            }
+        }
+
+        console.error("Delete story error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to delete story."
+        });
+    } finally {
+        if (connection) {
+            connection.release();
+        }
+    }
+}
+
 module.exports = {
     getActiveStories,
     getAdminStories,
-    createStory
+    createStory,
+    deleteStory
 };

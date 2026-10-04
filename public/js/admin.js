@@ -2259,6 +2259,10 @@ async function initializeAdmin() {
         refreshStoriesBtn.addEventListener("click", loadAdminStories);
     }
 
+    if (storiesTableBody) {
+        storiesTableBody.addEventListener("click", handleStoryTableClick);
+    }
+
     if (refreshMessagesBtn) {
         refreshMessagesBtn.addEventListener("click", loadMemberMessages);
     }
@@ -2344,7 +2348,7 @@ async function loadAdminStories() {
 
     storiesTableBody.innerHTML = `
         <tr>
-            <td colspan="5" class="loading-cell">Loading stories...</td>
+            <td colspan="6" class="loading-cell">Loading stories...</td>
         </tr>
     `;
 
@@ -2361,10 +2365,48 @@ async function loadAdminStories() {
         console.error("Load stories error:", error);
         storiesTableBody.innerHTML = `
             <tr>
-                <td colspan="5" class="empty-cell">Failed to load stories.</td>
+                <td colspan="6" class="empty-cell">Failed to load stories.</td>
             </tr>
         `;
         showToast(error.message || "Failed to load stories.");
+    }
+}
+
+async function handleStoryTableClick(event) {
+    if (!(event.target instanceof Element)) {
+        return;
+    }
+
+    const deleteButton = event.target.closest("[data-delete-story]");
+
+    if (!deleteButton || !storiesTableBody.contains(deleteButton)) {
+        return;
+    }
+
+    const storyId = deleteButton.dataset.deleteStory;
+
+    if (!confirm("Delete this story? This cannot be undone.")) {
+        return;
+    }
+
+    deleteButton.disabled = true;
+
+    try {
+        const response = await fetch(`/api/stories/${encodeURIComponent(storyId)}`, {
+            method: "DELETE"
+        });
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Failed to delete story.");
+        }
+
+        showToast(data.message || "Story deleted successfully.");
+        await loadAdminStories();
+    } catch (error) {
+        console.error("Delete story error:", error);
+        showToast(error.message || "Failed to delete story.");
+        deleteButton.disabled = false;
     }
 }
 
@@ -2373,7 +2415,7 @@ function renderAdminStories(stories) {
     if (stories.length === 0) {
         storiesTableBody.innerHTML = `
             <tr>
-                <td colspan="5" class="empty-cell">No stories have been published.</td>
+                <td colspan="6" class="empty-cell">No stories have been published.</td>
             </tr>
         `;
         return;
@@ -2399,6 +2441,17 @@ function renderAdminStories(stories) {
                     <span class="story-status ${active ? "story-status-active" : "story-status-expired"}">
                         ${active ? "Active" : "Expired"}
                     </span>
+                </td>
+                <td>
+                    <button
+                        class="story-delete-btn"
+                        type="button"
+                        data-delete-story="${escapeHtml(story.id)}"
+                        aria-label="Delete story"
+                    >
+                        <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                        Delete
+                    </button>
                 </td>
             </tr>
         `;

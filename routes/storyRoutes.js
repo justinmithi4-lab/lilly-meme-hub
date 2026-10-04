@@ -9,7 +9,8 @@ const requireActiveSubscription =
 const {
     getActiveStories,
     getAdminStories,
-    createStory
+    createStory,
+    deleteStory
 } = require("../controllers/storyController");
 
 const router = express.Router();
@@ -101,6 +102,12 @@ router.post(
         });
     },
     createStory
+);
+
+router.delete(
+    "/:id",
+    requireAdmin,
+    deleteStory
 );
 
 module.exports = router;
