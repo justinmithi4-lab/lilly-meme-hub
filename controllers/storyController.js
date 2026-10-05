@@ -9,6 +9,7 @@ async function getActiveStories(req, res) {
         const [stories] = await pool.execute(`
             SELECT
                 s.id,
+                s.user_id,
                 s.media,
                 s.media_type,
                 s.caption,
@@ -19,7 +20,18 @@ async function getActiveStories(req, res) {
                     SELECT COUNT(DISTINCT sv.user_id)
                     FROM story_views sv
                     WHERE sv.story_id = s.id
-                ) AS view_count
+                ) AS view_count,
+                (
+                    SELECT COUNT(*)
+                    FROM story_likes sl
+                    WHERE sl.story_id = s.id
+                ) AS like_count,
+                EXISTS (
+                    SELECT 1
+                    FROM story_likes sl
+                    WHERE sl.story_id = s.id
+                      AND sl.user_id = ?
+                ) AS user_liked
             FROM stories s
             INNER JOIN users u
                 ON u.id = s.user_id
@@ -27,7 +39,7 @@ async function getActiveStories(req, res) {
               AND s.expires_at > NOW()
             ORDER BY s.created_at DESC
             LIMIT 50
-        `);
+        `, [req.session.user.id]);
 
         return res.json({
             success: true,
@@ -40,6 +52,118 @@ async function getActiveStories(req, res) {
             success: false,
             message: "Failed to load stories."
         });
+    }
+}
+
+async function toggleStoryLike(req, res) {
+    const storyId = Number(req.params.id);
+
+    if (!Number.isInteger(storyId) || storyId <= 0) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid story ID."
+        });
+    }
+
+    let connection;
+    let transactionStarted = false;
+
+    try {
+        connection = await pool.getConnection();
+        await connection.beginTransaction();
+        transactionStarted = true;
+
+        const [stories] = await connection.execute(
+            `
+            SELECT id
+            FROM stories
+            WHERE id = ?
+              AND is_active = 1
+              AND expires_at > NOW()
+            LIMIT 1
+            FOR UPDATE
+            `,
+            [storyId]
+        );
+
+        if (!stories.length) {
+            await connection.rollback();
+            transactionStarted = false;
+            return res.status(404).json({
+                success: false,
+                message: "Story not found or expired."
+            });
+        }
+
+        const userId = req.session.user.id;
+        const [existing] = await connection.execute(
+            `
+            SELECT id
+            FROM story_likes
+            WHERE story_id = ?
+              AND user_id = ?
+            LIMIT 1
+            `,
+            [storyId, userId]
+        );
+
+        let liked;
+        if (existing.length) {
+            await connection.execute(
+                `
+                DELETE FROM story_likes
+                WHERE story_id = ?
+                  AND user_id = ?
+                `,
+                [storyId, userId]
+            );
+            liked = false;
+        } else {
+            await connection.execute(
+                `
+                INSERT INTO story_likes (story_id, user_id)
+                VALUES (?, ?)
+                `,
+                [storyId, userId]
+            );
+            liked = true;
+        }
+
+        const [likeRows] = await connection.execute(
+            `
+            SELECT COUNT(*) AS like_count
+            FROM story_likes
+            WHERE story_id = ?
+            `,
+            [storyId]
+        );
+
+        await connection.commit();
+        transactionStarted = false;
+
+        return res.json({
+            success: true,
+            liked,
+            like_count: Number(likeRows[0].like_count)
+        });
+    } catch (error) {
+        if (connection && transactionStarted) {
+            try {
+                await connection.rollback();
+            } catch (rollbackError) {
+                console.error("Story like rollback error:", rollbackError);
+            }
+        }
+
+        console.error("Toggle story like error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to save story like."
+        });
+    } finally {
+        if (connection) {
+            connection.release();
+        }
     }
 }
 
@@ -336,6 +460,7 @@ async function deleteStory(req, res) {
 
 module.exports = {
     getActiveStories,
+    toggleStoryLike,
     getAdminStories,
     createStory,
     deleteStory

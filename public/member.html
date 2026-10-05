@@ -40,7 +40,7 @@
 
     <link
         rel="stylesheet"
-        href="/css/member.css?v=compact-card-info"
+        href="/css/member.css?v=story-viewer"
     >
 
     <link
@@ -299,6 +299,44 @@
     ></div>
 
 </section>
+
+<div class="member-story-viewer hidden" id="memberStoryViewer" role="dialog" aria-modal="true" aria-label="Story viewer">
+    <div class="member-story-backdrop" data-member-story-close></div>
+    <button class="member-story-close" id="memberStoryClose" type="button" aria-label="Close stories">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+    <button class="member-story-nav member-story-previous" id="memberStoryPrevious" type="button" aria-label="Previous story">
+        <i class="fa-solid fa-chevron-left"></i>
+    </button>
+    <article class="member-story-viewer-card" id="memberStoryViewerCard">
+        <div class="member-story-progress" id="memberStoryProgress"></div>
+        <header class="member-story-viewer-header">
+            <img id="memberStoryAvatar" alt="">
+            <div>
+                <strong id="memberStoryUsername"></strong>
+                <span id="memberStoryTime"></span>
+            </div>
+            <button class="member-story-mute" id="memberStoryMute" type="button" aria-label="Unmute video">
+                <i class="fa-solid fa-volume-xmark"></i>
+            </button>
+        </header>
+        <div class="member-story-media" id="memberStoryMedia"></div>
+        <p class="member-story-caption hidden" id="memberStoryCaption"></p>
+        <footer class="member-story-footer">
+            <button class="member-story-like" id="memberStoryLike" type="button" aria-pressed="false">
+                <i class="fa-regular fa-heart"></i>
+                <span>Like</span>
+                <strong id="memberStoryLikeCount">0</strong>
+            </button>
+            <span>Tap to like</span>
+        </footer>
+        <button class="member-story-tap member-story-tap-left" id="memberStoryTapPrevious" type="button" aria-label="Previous story"></button>
+        <button class="member-story-tap member-story-tap-right" id="memberStoryTapNext" type="button" aria-label="Next story"></button>
+    </article>
+    <button class="member-story-nav member-story-next" id="memberStoryNext" type="button" aria-label="Next story">
+        <i class="fa-solid fa-chevron-right"></i>
+    </button>
+</div>
 
 
 <!-- =========================================================
@@ -1164,7 +1202,7 @@
 
 <script src="/js/media.js?v=cloudinary"></script>
 
-<script src="/js/member.js?v=card-size-icons"></script>
+<script src="/js/member.js?v=story-viewer"></script>
 
 
 </body>

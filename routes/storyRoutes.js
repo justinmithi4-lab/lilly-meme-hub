@@ -8,6 +8,7 @@ const requireActiveSubscription =
 
 const {
     getActiveStories,
+    toggleStoryLike,
     getAdminStories,
     createStory,
     deleteStory
@@ -63,6 +64,12 @@ router.get(
     "/",
     requireActiveSubscription,
     getActiveStories
+);
+
+router.post(
+    "/:id/like",
+    requireActiveSubscription,
+    toggleStoryLike
 );
 
 router.get(

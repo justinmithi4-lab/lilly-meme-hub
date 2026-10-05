@@ -40,6 +40,19 @@ const storiesContainer =
 const viewStoriesButton =
     document.getElementById("viewStoriesButton");
 
+const memberStoryViewer = document.getElementById("memberStoryViewer");
+const memberStoryMedia = document.getElementById("memberStoryMedia");
+const memberStoryProgress = document.getElementById("memberStoryProgress");
+const memberStoryLike = document.getElementById("memberStoryLike");
+let memberStoryGroups = [];
+let activeMemberStoryGroup = 0;
+let activeMemberStoryIndex = 0;
+let memberStoryTimer;
+let memberStoryDuration = 5000;
+let memberStoryPaused = false;
+let memberStoryElapsed = 0;
+let memberStoryStartedAt = 0;
+
 /* =========================================
    MEMBER SEARCH
 ========================================= */
@@ -245,6 +258,7 @@ async function startMemberExperience() {
     setupMembershipNavigation();
     setupMemberMessaging();
     setupNotificationControls();
+    setupMemberStoryViewer();
 
     await refreshUnreadNotificationCount();
 
@@ -268,7 +282,13 @@ async function startMemberExperience() {
     });
 
     if (viewStoriesButton) {
-        viewStoriesButton.addEventListener("click", loadStories);
+        viewStoriesButton.addEventListener("click", () => {
+            if (memberStoryGroups.length) {
+                openMemberStoryViewer(0);
+            } else {
+                loadStories();
+            }
+        });
     }
 }
 
@@ -816,39 +836,48 @@ async function loadStories() {
         const stories = Array.isArray(data.stories) ? data.stories : [];
 
         if (stories.length === 0) {
+            memberStoryGroups = [];
             renderEmptyStories();
             return;
         }
 
-        storiesContainer.innerHTML = stories.map((story) => {
-            const mediaUrl =
-                getUploadedMediaUrl(story.media, "stories");
-            const preview = story.media_type === "video"
-                ? `<video src="${mediaUrl}" muted autoplay loop playsinline></video>`
-                : `<img src="${mediaUrl}" alt="">`;
+        memberStoryGroups = groupMemberStories(stories);
+        storiesContainer.replaceChildren();
+        memberStoryGroups.forEach((group, groupIndex) => {
+            const story = group.stories[group.stories.length - 1];
+            const card = document.createElement("button");
+            card.type = "button";
+            card.className = "member-story-card";
+            card.setAttribute("aria-label", `View ${group.username}'s stories`);
 
-            return `
-                <a
-                    class="member-story-card"
-                    href="${mediaUrl}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Open story by ${escapeHtml(story.username || "member") }"
-                >
-                    ${preview}
-                    <span class="member-story-overlay">
-                        <strong>${escapeHtml(story.username || "Member")}</strong>
-                        ${
-                            story.caption
-                                ? `<small>${escapeHtml(story.caption)}</small>`
-                                : ""
-                        }
-                    </span>
-                </a>
-            `;
-        }).join("");
+            const preview = story.media_type === "video"
+                ? document.createElement("video")
+                : document.createElement("img");
+            preview.className = "member-story-preview";
+            preview.src = getUploadedMediaUrl(story.media, "stories");
+            preview.alt = "";
+            if (preview instanceof HTMLVideoElement) {
+                preview.muted = true;
+                preview.autoplay = true;
+                preview.loop = true;
+                preview.playsInline = true;
+                preview.preload = "metadata";
+            }
+
+            const overlay = document.createElement("span");
+            overlay.className = "member-story-overlay";
+            const name = document.createElement("strong");
+            name.textContent = group.username;
+            const caption = document.createElement("small");
+            caption.textContent = story.caption || "View story";
+            overlay.append(name, caption);
+            card.append(preview, overlay);
+            card.addEventListener("click", () => openMemberStoryViewer(groupIndex));
+            storiesContainer.appendChild(card);
+        });
     } catch (error) {
         console.error("Failed to load stories:", error);
+        memberStoryGroups = [];
         storiesContainer.innerHTML = `
             <div class="story-placeholder">
                 <div class="story-avatar">
@@ -858,6 +887,251 @@ async function loadStories() {
             </div>
         `;
     }
+}
+
+function groupMemberStories(stories) {
+    const groups = new Map();
+    stories.forEach((story) => {
+        const key = String(story.user_id);
+        if (!groups.has(key)) {
+            groups.set(key, {
+                username: story.username || "Member",
+                stories: []
+            });
+        }
+        groups.get(key).stories.push(story);
+    });
+
+    return Array.from(groups.values()).map((group) => {
+        group.stories.sort((first, second) =>
+            new Date(first.created_at) - new Date(second.created_at)
+        );
+        return group;
+    });
+}
+
+function setupMemberStoryViewer() {
+    if (!memberStoryViewer) return;
+
+    document.getElementById("memberStoryClose").addEventListener("click", closeMemberStoryViewer);
+    document.querySelectorAll("[data-member-story-close]").forEach((element) => {
+        element.addEventListener("click", closeMemberStoryViewer);
+    });
+    document.getElementById("memberStoryPrevious").addEventListener("click", showPreviousMemberStory);
+    document.getElementById("memberStoryNext").addEventListener("click", showNextMemberStory);
+    document.getElementById("memberStoryTapPrevious").addEventListener("click", showPreviousMemberStory);
+    document.getElementById("memberStoryTapNext").addEventListener("click", showNextMemberStory);
+    memberStoryLike.addEventListener("click", toggleMemberStoryLike);
+    document.getElementById("memberStoryMute").addEventListener("click", toggleMemberStoryMute);
+
+    document.addEventListener("keydown", (event) => {
+        if (memberStoryViewer.classList.contains("hidden")) return;
+        if (event.key === "Escape") closeMemberStoryViewer();
+        else if (event.key === "ArrowRight") showNextMemberStory();
+        else if (event.key === "ArrowLeft") showPreviousMemberStory();
+        else if (event.key === " ") {
+            event.preventDefault();
+            toggleMemberStoryPause();
+        }
+    });
+
+    document.getElementById("memberStoryViewerCard").addEventListener("click", (event) => {
+        if (event.target.closest(".member-story-viewer-header, .member-story-footer, .member-story-caption")) {
+            return;
+        }
+        if (!event.target.closest(".member-story-tap")) toggleMemberStoryPause();
+    });
+}
+
+function openMemberStoryViewer(groupIndex, storyIndex = 0) {
+    activeMemberStoryGroup = groupIndex;
+    activeMemberStoryIndex = storyIndex;
+    memberStoryViewer.classList.remove("hidden");
+    document.body.classList.add("member-story-open");
+    renderMemberStory();
+}
+
+function closeMemberStoryViewer() {
+    clearTimeout(memberStoryTimer);
+    const video = memberStoryMedia.querySelector("video");
+    if (video) video.pause();
+    memberStoryViewer.classList.add("hidden");
+    document.body.classList.remove("member-story-open");
+}
+
+function renderMemberStory() {
+    clearTimeout(memberStoryTimer);
+    const group = memberStoryGroups[activeMemberStoryGroup];
+    if (!group) {
+        closeMemberStoryViewer();
+        return;
+    }
+
+    const story = group.stories[activeMemberStoryIndex];
+    const oldVideo = memberStoryMedia.querySelector("video");
+    if (oldVideo) oldVideo.pause();
+    memberStoryMedia.replaceChildren();
+    memberStoryProgress.replaceChildren();
+
+    group.stories.forEach((item, index) => {
+        const track = document.createElement("span");
+        track.className = "member-story-progress-track";
+        const fill = document.createElement("span");
+        fill.className = "member-story-progress-fill";
+        if (index < activeMemberStoryIndex) fill.classList.add("is-complete");
+        else if (index === activeMemberStoryIndex) fill.classList.add("is-active");
+        track.appendChild(fill);
+        memberStoryProgress.appendChild(track);
+    });
+
+    const mediaUrl = getUploadedMediaUrl(story.media, "stories");
+    const avatar = document.getElementById("memberStoryAvatar");
+    avatar.src = mediaUrl;
+    document.getElementById("memberStoryUsername").textContent = group.username;
+    document.getElementById("memberStoryTime").textContent = formatMemberStoryTime(story.created_at);
+    const caption = document.getElementById("memberStoryCaption");
+    caption.textContent = story.caption || "";
+    caption.classList.toggle("hidden", !story.caption);
+
+    if (story.media_type === "video") {
+        const video = document.createElement("video");
+        video.className = "member-story-media-content";
+        video.src = mediaUrl;
+        video.autoplay = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.addEventListener("loadedmetadata", () => {
+            memberStoryDuration = Math.max(1000, video.duration * 1000);
+            startMemberStoryProgress();
+        }, { once: true });
+        video.addEventListener("ended", showNextMemberStory, { once: true });
+        memberStoryMedia.appendChild(video);
+        memberStoryDuration = 15000;
+        startMemberStoryProgress();
+        video.play().catch((error) => console.warn("Story video autoplay was blocked:", error));
+    } else {
+        const image = document.createElement("img");
+        image.className = "member-story-media-content";
+        image.src = mediaUrl;
+        image.alt = story.caption || `${group.username}'s story`;
+        memberStoryMedia.appendChild(image);
+        memberStoryDuration = 5000;
+        startMemberStoryProgress();
+    }
+
+    updateMemberStoryLike(story);
+    const mute = document.getElementById("memberStoryMute");
+    mute.classList.toggle("hidden", story.media_type !== "video");
+    mute.setAttribute("aria-label", "Unmute video");
+    mute.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+}
+
+function updateMemberStoryLike(story) {
+    memberStoryLike.setAttribute("aria-pressed", String(Boolean(Number(story.user_liked))));
+    memberStoryLike.classList.toggle("is-liked", Boolean(Number(story.user_liked)));
+    memberStoryLike.innerHTML = `
+        <i class="fa-${Number(story.user_liked) ? "solid" : "regular"} fa-heart"></i>
+        <span>Like</span>
+        <strong id="memberStoryLikeCount">${Number(story.like_count || 0)}</strong>
+    `;
+}
+
+async function toggleMemberStoryLike() {
+    const story = memberStoryGroups[activeMemberStoryGroup]?.stories[activeMemberStoryIndex];
+    if (!story) return;
+
+    memberStoryLike.disabled = true;
+    try {
+        const response = await fetch(`/api/stories/${encodeURIComponent(story.id)}/like`, {
+            method: "POST"
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Couldn't save your like.");
+        }
+
+        story.user_liked = data.liked ? 1 : 0;
+        story.like_count = Number(data.like_count);
+        updateMemberStoryLike(story);
+    } catch (error) {
+        console.error("Story like error:", error);
+        window.alert(error.message);
+    } finally {
+        memberStoryLike.disabled = false;
+    }
+}
+
+function startMemberStoryProgress() {
+    clearTimeout(memberStoryTimer);
+    memberStoryPaused = false;
+    memberStoryElapsed = 0;
+    const activeFill = memberStoryProgress.querySelector(".member-story-progress-fill.is-active");
+    if (activeFill) {
+        activeFill.style.animationDuration = `${memberStoryDuration}ms`;
+        activeFill.style.animationPlayState = "running";
+    }
+    memberStoryStartedAt = performance.now();
+    memberStoryTimer = window.setTimeout(showNextMemberStory, memberStoryDuration);
+}
+
+function toggleMemberStoryPause() {
+    const video = memberStoryMedia.querySelector("video");
+    memberStoryPaused = !memberStoryPaused;
+    const activeFill = memberStoryProgress.querySelector(".member-story-progress-fill.is-active");
+    if (memberStoryPaused) {
+        memberStoryElapsed += performance.now() - memberStoryStartedAt;
+        clearTimeout(memberStoryTimer);
+        if (activeFill) activeFill.style.animationPlayState = "paused";
+        if (video) video.pause();
+    } else {
+        if (activeFill) activeFill.style.animationPlayState = "running";
+        if (video) video.play().catch((error) => console.warn("Could not resume story video:", error));
+        memberStoryStartedAt = performance.now();
+        memberStoryTimer = window.setTimeout(showNextMemberStory, Math.max(0, memberStoryDuration - memberStoryElapsed));
+    }
+}
+
+function showNextMemberStory() {
+    clearTimeout(memberStoryTimer);
+    const group = memberStoryGroups[activeMemberStoryGroup];
+    if (activeMemberStoryIndex < group.stories.length - 1) {
+        activeMemberStoryIndex += 1;
+        renderMemberStory();
+    } else if (activeMemberStoryGroup < memberStoryGroups.length - 1) {
+        openMemberStoryViewer(activeMemberStoryGroup + 1);
+    } else {
+        closeMemberStoryViewer();
+    }
+}
+
+function showPreviousMemberStory() {
+    if (activeMemberStoryIndex > 0) {
+        activeMemberStoryIndex -= 1;
+        renderMemberStory();
+    } else if (activeMemberStoryGroup > 0) {
+        const previousGroup = memberStoryGroups[activeMemberStoryGroup - 1];
+        openMemberStoryViewer(activeMemberStoryGroup - 1, previousGroup.stories.length - 1);
+    }
+}
+
+function toggleMemberStoryMute() {
+    const video = memberStoryMedia.querySelector("video");
+    if (!video) return;
+    video.muted = !video.muted;
+    const button = document.getElementById("memberStoryMute");
+    button.setAttribute("aria-label", video.muted ? "Unmute video" : "Mute video");
+    button.innerHTML = `<i class="fa-solid ${video.muted ? "fa-volume-xmark" : "fa-volume-high"}"></i>`;
+}
+
+function formatMemberStoryTime(value) {
+    const created = new Date(value);
+    if (Number.isNaN(created.getTime())) return "";
+    const minutes = Math.floor((Date.now() - created.getTime()) / 60000);
+    if (minutes < 1) return "Just now";
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    return `${Math.floor(hours / 24)}d ago`;
 }
 
 
