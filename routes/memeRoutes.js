@@ -308,7 +308,7 @@ router.post(
 */
 
 router.post(
-    "/comments/:commentId/reply",
+    "/:id/comments/:commentId/reply",
     requireLogin,
     requireMember,
     requireActiveSubscription,

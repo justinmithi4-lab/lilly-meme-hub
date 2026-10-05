@@ -1288,7 +1288,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response =
                 await fetch(
-                    `/api/memes/${memeId}/comments`,
+                    `/api/memes/${memeId}/comments/${commentId}/reply`,
                     {
                         method: "POST",
                         headers: {
@@ -1296,9 +1296,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 "application/json"
                         },
                         body: JSON.stringify({
-                            comment_text: text,
-                            parent_id:
-                                commentId
+                            comment_text: text
                         })
                     }
                 );

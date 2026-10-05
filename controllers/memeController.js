@@ -2295,10 +2295,10 @@ async function createComment(req, res) {
         const memeId = Number(req.params.id);
         const userId = req.session.user.id;
 
-        let {
-            comment_text,
-            parent_id
-        } = req.body;
+        let comment_text = req.body.comment_text;
+        let parent_id =
+            req.body.parent_id ??
+            req.params.commentId;
 
         if (!Number.isInteger(memeId) || memeId <= 0) {
             return res.status(400).json({
@@ -2463,8 +2463,8 @@ async function createComment(req, res) {
                 parentComment.user_id,
                 "comment_reply",
                 "Someone replied to your comment",
-                `${req.session.user.username} replied to your comment.`,
-                memeId
+                `${req.session.user.username} replied to your comment: "${comment_text.slice(0, 300)}"`,
+                parentComment.id
             );
         }
 
