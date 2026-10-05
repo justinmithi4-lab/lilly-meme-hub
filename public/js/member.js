@@ -844,36 +844,42 @@ async function loadStories() {
         memberStoryGroups = groupMemberStories(stories);
         storiesContainer.replaceChildren();
         memberStoryGroups.forEach((group, groupIndex) => {
-            const story = group.stories[group.stories.length - 1];
-            const card = document.createElement("button");
-            card.type = "button";
-            card.className = "member-story-card";
-            card.setAttribute("aria-label", `View ${group.username}'s stories`);
+            group.stories.forEach((story, storyIndex) => {
+                const card = document.createElement("button");
+                card.type = "button";
+                card.className = "member-story-card";
+                card.setAttribute(
+                    "aria-label",
+                    `View story by ${group.username}${story.caption ? `: ${story.caption}` : ""}`
+                );
 
-            const preview = story.media_type === "video"
-                ? document.createElement("video")
-                : document.createElement("img");
-            preview.className = "member-story-preview";
-            preview.src = getUploadedMediaUrl(story.media, "stories");
-            preview.alt = "";
-            if (preview instanceof HTMLVideoElement) {
-                preview.muted = true;
-                preview.autoplay = true;
-                preview.loop = true;
-                preview.playsInline = true;
-                preview.preload = "metadata";
-            }
+                const preview = story.media_type === "video"
+                    ? document.createElement("video")
+                    : document.createElement("img");
+                preview.className = "member-story-preview";
+                preview.src = getUploadedMediaUrl(story.media, "stories");
+                preview.alt = "";
+                if (preview instanceof HTMLVideoElement) {
+                    preview.muted = true;
+                    preview.autoplay = true;
+                    preview.loop = true;
+                    preview.playsInline = true;
+                    preview.preload = "metadata";
+                }
 
-            const overlay = document.createElement("span");
-            overlay.className = "member-story-overlay";
-            const name = document.createElement("strong");
-            name.textContent = group.username;
-            const caption = document.createElement("small");
-            caption.textContent = story.caption || "View story";
-            overlay.append(name, caption);
-            card.append(preview, overlay);
-            card.addEventListener("click", () => openMemberStoryViewer(groupIndex));
-            storiesContainer.appendChild(card);
+                const overlay = document.createElement("span");
+                overlay.className = "member-story-overlay";
+                const name = document.createElement("strong");
+                name.textContent = group.username;
+                const caption = document.createElement("small");
+                caption.textContent = story.caption || "View story";
+                overlay.append(name, caption);
+                card.append(preview, overlay);
+                card.addEventListener("click", () =>
+                    openMemberStoryViewer(groupIndex, storyIndex)
+                );
+                storiesContainer.appendChild(card);
+            });
         });
     } catch (error) {
         console.error("Failed to load stories:", error);
