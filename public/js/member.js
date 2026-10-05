@@ -2090,7 +2090,33 @@ function playNotificationSound(force = false) {
                 title.textContent =
                     notification.title || "Notification";
 
-                item.appendChild(title);
+                const relatedMemeId =
+                    Number(notification.related_meme_id);
+
+                const relatedCommentId =
+                    Number(notification.related_comment_id);
+
+                const notificationContent =
+                    Number.isInteger(relatedMemeId) &&
+                    relatedMemeId > 0
+                        ? document.createElement("a")
+                        : item;
+
+                if (notificationContent !== item) {
+                    notificationContent.className =
+                        "notification-link";
+
+                    notificationContent.href =
+                        `/meme.html?id=${encodeURIComponent(relatedMemeId)}` +
+                        (
+                            Number.isInteger(relatedCommentId) &&
+                            relatedCommentId > 0
+                                ? `#comment-${encodeURIComponent(relatedCommentId)}`
+                                : "#comments"
+                        );
+                }
+
+                notificationContent.appendChild(title);
 
                 if (notification.message) {
 
@@ -2100,7 +2126,7 @@ function playNotificationSound(force = false) {
                     message.textContent =
                         notification.message;
 
-                    item.appendChild(message);
+                    notificationContent.appendChild(message);
 
                 }
 
@@ -2120,10 +2146,14 @@ function playNotificationSound(force = false) {
                         time.textContent =
                             createdAt.toLocaleString();
 
-                        item.appendChild(time);
+                        notificationContent.appendChild(time);
 
                     }
 
+                }
+
+                if (notificationContent !== item) {
+                    item.appendChild(notificationContent);
                 }
 
                 if (!isRead) {

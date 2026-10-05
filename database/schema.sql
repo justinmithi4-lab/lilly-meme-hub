@@ -455,6 +455,8 @@ CREATE TABLE notifications (
 
     related_id INT UNSIGNED,
 
+    related_comment_id INT UNSIGNED DEFAULT NULL,
+
     is_read BOOLEAN NOT NULL DEFAULT FALSE,
 
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -462,7 +464,12 @@ CREATE TABLE notifications (
     CONSTRAINT fk_notification_user
         FOREIGN KEY (user_id)
         REFERENCES users(id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_notification_comment
+        FOREIGN KEY (related_comment_id)
+        REFERENCES comments(id)
+        ON DELETE SET NULL
 );
 
 

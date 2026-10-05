@@ -868,6 +868,22 @@ img {
 
 }
 
+.notification-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+.notification-link:hover h3,
+.notification-link:focus-visible h3 {
+    color: var(--primary);
+}
+
+.notification-link:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+}
+
 
 .notification-item:last-child {
 

@@ -8,7 +8,14 @@ const {
 } = require("../utils/cloudinaryUpload");
 
 
-async function createNotification(userId, type, title, message, relatedId = null) {
+async function createNotification(
+    userId,
+    type,
+    title,
+    message,
+    relatedId = null,
+    relatedCommentId = null
+) {
     if (!userId) {
         return;
     }
@@ -17,10 +24,24 @@ async function createNotification(userId, type, title, message, relatedId = null
         await pool.execute(
             `
             INSERT INTO notifications
-                (user_id, type, title, message, related_id)
-            VALUES (?, ?, ?, ?, ?)
+                (
+                    user_id,
+                    type,
+                    title,
+                    message,
+                    related_id,
+                    related_comment_id
+                )
+            VALUES (?, ?, ?, ?, ?, ?)
             `,
-            [userId, type, title, message, relatedId]
+            [
+                userId,
+                type,
+                title,
+                message,
+                relatedId,
+                relatedCommentId
+            ]
         );
     } catch (error) {
         console.error("Create notification error:", error);
@@ -2252,6 +2273,7 @@ async function toggleCommentLike(req, res) {
                 "comment_like",
                 "Someone liked your comment",
                 `${req.session.user.username} liked your comment.`,
+                commentId,
                 commentId
             );
         }
@@ -2451,7 +2473,8 @@ async function createComment(req, res) {
                 parentId
                     ? `${req.session.user.username} replied to a comment on your meme.`
                     : `${req.session.user.username} commented on your meme.`,
-                memeId
+                memeId,
+                result.insertId
             );
         }
 
@@ -2464,6 +2487,7 @@ async function createComment(req, res) {
                 "comment_reply",
                 "Someone replied to your comment",
                 `${req.session.user.username} replied to your comment: "${comment_text.slice(0, 300)}"`,
+                parentComment.id,
                 parentComment.id
             );
         }

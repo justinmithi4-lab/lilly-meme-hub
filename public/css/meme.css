@@ -366,6 +366,14 @@ body {
     width: 100%;
 }
 
+.comment-thread.notification-comment-target {
+    border-radius: 12px;
+    outline: 2px solid var(--primary);
+    outline-offset: 4px;
+    background: rgba(79, 124, 255, 0.08);
+    transition: background-color 0.3s ease;
+}
+
 /* =========================================================
    COMMENT ROW
 ========================================================= */

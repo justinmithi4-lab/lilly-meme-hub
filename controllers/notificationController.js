@@ -7,16 +7,48 @@ async function getNotifications(req, res) {
         const [notifications] = await pool.execute(
             `
             SELECT
-                id,
-                type,
-                title,
-                message,
-                related_id,
-                is_read,
-                created_at
+                notifications.id,
+                notifications.type,
+                notifications.title,
+                notifications.message,
+                notifications.related_id,
+                COALESCE(
+                    notifications.related_comment_id,
+                    CASE
+                        WHEN notifications.type = 'comment_like'
+                            THEN notifications.related_id
+                        WHEN notifications.type = 'comment_reply'
+                            AND notifications.title = 'Someone replied to your comment'
+                            THEN notifications.related_id
+                    END
+                ) AS related_comment_id,
+                COALESCE(
+                    related_comment.meme_id,
+                    CASE
+                        WHEN notifications.type = 'meme_comment'
+                            THEN notifications.related_id
+                        WHEN notifications.type = 'comment_reply'
+                            AND notifications.title = 'Someone replied to a comment'
+                            THEN notifications.related_id
+                    END
+                ) AS related_meme_id,
+                notifications.is_read,
+                notifications.created_at
             FROM notifications
-            WHERE user_id = ?
-            ORDER BY created_at DESC
+            LEFT JOIN comments AS related_comment
+                ON related_comment.id = COALESCE(
+                    notifications.related_comment_id,
+                    CASE
+                        WHEN notifications.type = 'comment_like'
+                            THEN notifications.related_id
+                        WHEN notifications.type = 'comment_reply'
+                            AND notifications.title = 'Someone replied to your comment'
+                            THEN notifications.related_id
+                    END
+                )
+                AND related_comment.is_deleted = FALSE
+            WHERE notifications.user_id = ?
+            ORDER BY notifications.created_at DESC
             LIMIT 50
             `,
             [userId]

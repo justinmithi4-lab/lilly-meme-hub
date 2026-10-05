@@ -458,6 +458,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             renderComments(data.comments || []);
+            scrollToNotificationComment();
 
             if (commentsMessage) {
                 commentsMessage.textContent = "";
@@ -470,6 +471,74 @@ document.addEventListener("DOMContentLoaded", () => {
                 commentsMessage.textContent =
                     "Unable to load comments.";
             }
+        }
+    }
+
+    function scrollToNotificationComment() {
+        if (!commentsList) {
+            return;
+        }
+
+        const commentMatch =
+            window.location.hash.match(/^#comment-(\d+)$/);
+
+        if (commentMatch) {
+            const target =
+                document.getElementById(
+                    `comment-${commentMatch[1]}`
+                );
+
+            if (target) {
+                let repliesContainer =
+                    target.closest(".comment-replies");
+
+                while (repliesContainer) {
+                    repliesContainer.hidden = false;
+
+                    const parentThread =
+                        repliesContainer.closest(".comment-thread");
+
+                    if (!parentThread) {
+                        break;
+                    }
+
+                    expandedReplies.add(
+                        Number(parentThread.dataset.commentId)
+                    );
+
+                    const replyToggle =
+                        parentThread.querySelector(".replies-toggle");
+
+                    if (replyToggle) {
+                        replyToggle.textContent = "Hide replies";
+                    }
+
+                    repliesContainer =
+                        parentThread.parentElement.closest(
+                            ".comment-replies"
+                        );
+                }
+
+                target.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+                target.classList.add("notification-comment-target");
+
+                window.setTimeout(
+                    () => target.classList.remove("notification-comment-target"),
+                    3000
+                );
+
+                return;
+            }
+        }
+
+        if (window.location.hash === "#comments") {
+            document.querySelector(".comments-section")?.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
         }
     }
 
@@ -543,6 +612,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const thread = document.createElement("article");
 
         thread.className = "comment-thread";
+        thread.id = `comment-${comment.id}`;
         thread.dataset.commentId = comment.id;
 
         const commentElement =
