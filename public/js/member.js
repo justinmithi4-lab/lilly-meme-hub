@@ -4,9 +4,6 @@ const popularContainer =
 const latestContainer =
     document.getElementById("latestMemes");
 
-const discussedContainer =
-    document.getElementById("discussedMemes");
-
 const memberFeeds = {
     popular: {
         name: "popular",
@@ -21,13 +18,6 @@ const memberFeeds = {
         container: latestContainer,
         memes: [],
         toggle: document.querySelector('[data-feed-toggle="latest"]')
-    },
-    discussed: {
-        name: "discussed",
-        responseKey: "mostDiscussed",
-        container: discussedContainer,
-        memes: [],
-        toggle: document.querySelector('[data-feed-toggle="discussed"]')
     }
 };
 
@@ -656,11 +646,6 @@ async function loadHomepageMemes() {
             latestContainer
         );
 
-        showLoading(
-            discussedContainer
-        );
-
-
         const response =
             await fetch(
                 "/api/memes/homepage"
@@ -685,7 +670,6 @@ async function loadHomepageMemes() {
 
         memberFeeds.popular.memes = data.popular || [];
         memberFeeds.latest.memes = data.latest || [];
-        memberFeeds.discussed.memes = data.mostDiscussed || [];
 
         Object.values(memberFeeds).forEach((feed) => {
             renderMemberFeed(feed, false);
@@ -706,10 +690,6 @@ async function loadHomepageMemes() {
 
         showError(
             latestContainer
-        );
-
-        showError(
-            discussedContainer
         );
 
     }

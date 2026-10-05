@@ -4,9 +4,6 @@ const popularMemes =
 const latestMemes =
     document.getElementById("latestMemes");
 
-const discussedMemes =
-    document.getElementById("discussedMemes");
-
 const categoriesList =
     document.getElementById("categoriesList");
 
@@ -249,12 +246,6 @@ async function loadHomepageMemes() {
         renderSection(
             latestMemes,
             (data.latest || []).slice(0, 2)
-        );
-
-
-        renderSection(
-            discussedMemes,
-            (data.mostDiscussed || []).slice(0, 2)
         );
 
         renderCategories(data.categories || []);
