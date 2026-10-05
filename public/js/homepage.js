@@ -7,6 +7,12 @@ const latestMemes =
 const discussedMemes =
     document.getElementById("discussedMemes");
 
+const categoriesList =
+    document.getElementById("categoriesList");
+
+const categoryMemeSections =
+    document.getElementById("categoryMemeSections");
+
 const homepageLoading =
     document.getElementById("homepageLoading");
 
@@ -236,21 +242,22 @@ async function loadHomepageMemes() {
 
         renderSection(
             popularMemes,
-            data.popular || []
+            (data.popular || []).slice(0, 2)
         );
 
 
         renderSection(
             latestMemes,
-            data.latest || []
+            (data.latest || []).slice(0, 2)
         );
 
 
         renderSection(
             discussedMemes,
-            data.mostDiscussed || []
+            (data.mostDiscussed || []).slice(0, 2)
         );
 
+        renderCategories(data.categories || []);
 
     } catch (error) {
 
@@ -270,6 +277,67 @@ async function loadHomepageMemes() {
             "hidden"
         );
     }
+}
+
+function renderCategories(categories) {
+    if (categoriesList) {
+        const categoryIcons = {
+            funny: "😂",
+            relationships: "❤️",
+            school: "🎓",
+            malawi: "🇲🇼",
+            sports: "⚽",
+            entertainment: "🎬",
+            work: "💼",
+            trending: "🔥",
+            random: "🎲"
+        };
+
+        categoriesList.innerHTML = categories.length
+            ? categories.map((category) => {
+                const icon = categoryIcons[category.name.toLowerCase()] || "🏷️";
+                const link = document.createElement("a");
+                link.className = "category-chip";
+                link.href = `/search.html?category=${encodeURIComponent(category.name)}`;
+                link.textContent = `${icon} ${category.name}`;
+                return link.outerHTML;
+            }).join("")
+            : '<span class="category-chip">No categories available.</span>';
+    }
+
+    if (!categoryMemeSections) {
+        return;
+    }
+
+    categoryMemeSections.innerHTML = "";
+
+    categories.forEach((category) => {
+        const section = document.createElement("section");
+        section.className = "meme-section";
+        section.id = `category-${category.id}`;
+
+        const heading = document.createElement("div");
+        heading.className = "section-heading";
+
+        const titleGroup = document.createElement("div");
+        const eyebrow = document.createElement("span");
+        eyebrow.className = "section-eyebrow";
+        eyebrow.textContent = "Explore";
+
+        const title = document.createElement("h2");
+        title.textContent = category.name;
+
+        titleGroup.append(eyebrow, title);
+        heading.appendChild(titleGroup);
+
+        const grid = document.createElement("div");
+        grid.className = "meme-grid";
+
+        renderSection(grid, category.memes || []);
+
+        section.append(heading, grid);
+        categoryMemeSections.appendChild(section);
+    });
 }
 
 

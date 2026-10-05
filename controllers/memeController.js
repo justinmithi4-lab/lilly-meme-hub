@@ -1148,7 +1148,14 @@ async function deleteMeme(req, res) {
 
 
 async function getHomepageMemes(req, res) {
+    return sendHomepageMemes(req, res, false);
+}
 
+async function getAllMemberMemes(req, res) {
+    return sendHomepageMemes(req, res, true);
+}
+
+async function sendHomepageMemes(req, res, includeAll) {
     try {
 
         const userId =
@@ -1160,22 +1167,29 @@ async function getHomepageMemes(req, res) {
         const popular =
             await getFeedSection(
                 "popular",
-                userId
+                userId,
+                includeAll
             );
 
 
         const latest =
             await getFeedSection(
                 "latest",
-                userId
+                userId,
+                includeAll
             );
 
 
         const mostDiscussed =
             await getFeedSection(
                 "discussed",
-                userId
+                userId,
+                includeAll
             );
+
+        const categories = includeAll
+            ? null
+            : await getHomepageCategorySections(userId);
 
 
         res.json({
@@ -1186,7 +1200,9 @@ async function getHomepageMemes(req, res) {
 
             latest,
 
-            mostDiscussed
+            mostDiscussed,
+
+            ...(categories ? { categories } : {})
 
         });
 
@@ -1212,6 +1228,114 @@ async function getHomepageMemes(req, res) {
 
 }
 
+async function getHomepageCategorySections(userId) {
+    const [categories] = await pool.query(`
+        SELECT id, name
+        FROM categories
+        WHERE is_active = 1
+        ORDER BY name ASC
+    `);
+
+    const [memes] = await pool.query(
+        `
+        WITH ranked_category_memes AS (
+            SELECT
+                category.id AS category_id,
+                category.name AS category_name,
+                meme.id,
+                meme.title,
+                meme.caption,
+                meme.image,
+                meme.created_at,
+                user.username,
+                (
+                    SELECT COUNT(DISTINCT meme_view.user_id)
+                    FROM meme_views meme_view
+                    WHERE meme_view.meme_id = meme.id
+                ) AS view_count,
+                COUNT(DISTINCT meme_like.id) AS like_count,
+                COUNT(DISTINCT meme_comment.id) AS comment_count,
+                EXISTS(
+                    SELECT 1
+                    FROM likes user_like
+                    WHERE user_like.meme_id = meme.id
+                      AND user_like.user_id = ?
+                ) AS user_liked,
+                GROUP_CONCAT(
+                    DISTINCT all_category.name
+                    ORDER BY all_category.name
+                    SEPARATOR ', '
+                ) AS categories,
+                ROW_NUMBER() OVER (
+                    PARTITION BY category.id
+                    ORDER BY meme.created_at DESC, meme.id DESC
+                ) AS category_rank
+            FROM categories category
+            INNER JOIN meme_categories category_meme
+                ON category_meme.category_id = category.id
+            INNER JOIN memes meme
+                ON meme.id = category_meme.meme_id
+            INNER JOIN users user
+                ON user.id = meme.user_id
+            LEFT JOIN likes meme_like
+                ON meme_like.meme_id = meme.id
+            LEFT JOIN comments meme_comment
+                ON meme_comment.meme_id = meme.id
+                AND meme_comment.is_deleted = 0
+            LEFT JOIN meme_categories all_meme_categories
+                ON all_meme_categories.meme_id = meme.id
+            LEFT JOIN categories all_category
+                ON all_category.id = all_meme_categories.category_id
+            WHERE category.is_active = 1
+              AND meme.is_active = 1
+            GROUP BY
+                category.id,
+                category.name,
+                meme.id,
+                user.username
+        )
+        SELECT
+            category_id,
+            category_name,
+            id,
+            title,
+            caption,
+            image,
+            created_at,
+            username,
+            view_count,
+            like_count,
+            comment_count,
+            user_liked,
+            categories
+        FROM ranked_category_memes
+        WHERE category_rank <= 2
+        ORDER BY category_name ASC, created_at DESC, id DESC
+        `,
+        [userId]
+    );
+
+    const sectionsById = new Map(
+        categories.map((category) => [
+            category.id,
+            {
+                id: category.id,
+                name: category.name,
+                memes: []
+            }
+        ])
+    );
+
+    memes.forEach((meme) => {
+        const section = sectionsById.get(meme.category_id);
+        if (section) {
+            section.memes.push(meme);
+        }
+    });
+
+    return Array.from(sectionsById.values());
+}
+
 
 /*
 |--------------------------------------------------------------------------
@@ -1221,7 +1345,8 @@ async function getHomepageMemes(req, res) {
 
 async function getFeedSection(
     section,
-    userId
+    userId,
+    includeAll = false
 ) {
 
     let orderBy;
@@ -1315,7 +1440,7 @@ async function getFeedSection(
 
             ORDER BY ${orderBy}
 
-            LIMIT 6
+            ${includeAll ? "" : "LIMIT 6"}
             `,
             [userId]
         );
@@ -2570,6 +2695,7 @@ module.exports = {
     updateMeme,
     deleteMeme,
     getHomepageMemes,
+    getAllMemberMemes,
     toggleLike,
     recordMemeView,
     toggleSaveMeme,

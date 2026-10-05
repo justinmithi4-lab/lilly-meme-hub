@@ -20,10 +20,7 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
-    <link
-        rel="stylesheet"
-        href="/css/homepage.css"
-    >
+    <link rel="stylesheet" href="/css/homepage.css?v=database-category-feeds">
     <link rel="stylesheet" href="/css/brand.css">
 </head>
 
@@ -293,70 +290,7 @@
                     class="categories-list"
                     id="categoriesList"
                 >
-
-                    <a
-                        href="/search.html?category=Funny"
-                        class="category-chip"
-                    >
-                        😂 Funny
-                    </a>
-
-                    <a
-                        href="/search.html?category=Relationships"
-                        class="category-chip"
-                    >
-                        ❤️ Relationships
-                    </a>
-
-                    <a
-                        href="/search.html?category=School"
-                        class="category-chip"
-                    >
-                        🎓 School
-                    </a>
-
-                    <a
-                        href="/search.html?category=Malawi"
-                        class="category-chip"
-                    >
-                        🇲🇼 Malawi
-                    </a>
-
-                    <a
-                        href="/search.html?category=Sports"
-                        class="category-chip"
-                    >
-                        ⚽ Sports
-                    </a>
-
-                    <a
-                        href="/search.html?category=Entertainment"
-                        class="category-chip"
-                    >
-                        🎬 Entertainment
-                    </a>
-
-                    <a
-                        href="/search.html?category=Work"
-                        class="category-chip"
-                    >
-                        💼 Work
-                    </a>
-
-                    <a
-                        href="/search.html?category=Trending"
-                        class="category-chip"
-                    >
-                        🔥 Trending
-                    </a>
-
-                    <a
-                        href="/search.html?category=Random"
-                        class="category-chip"
-                    >
-                        🎲 Random
-                    </a>
-
+                    <span class="category-chip">Loading categories...</span>
                 </div>
 
             </div>
@@ -394,14 +328,6 @@
 
                         </div>
 
-                        <a
-                            href="/search.html?sort=popular"
-                            class="view-all"
-                        >
-                            View all
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-
                     </div>
 
 
@@ -430,14 +356,6 @@
                             </h2>
 
                         </div>
-
-                        <a
-                            href="/search.html?sort=latest"
-                            class="view-all"
-                        >
-                            View all
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </a>
 
                     </div>
 
@@ -468,14 +386,6 @@
 
                         </div>
 
-                        <a
-                            href="/search.html?sort=discussed"
-                            class="view-all"
-                        >
-                            View all
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-
                     </div>
 
 
@@ -485,6 +395,8 @@
                     ></div>
 
                 </div>
+
+                <div id="categoryMemeSections"></div>
 
 
                 <!-- LOADING -->
@@ -637,7 +549,7 @@
 
 
     <script src="/js/media.js?v=cloudinary"></script>
-    <script src="/js/homepage.js?v=cloudinary"></script>
+    <script src="/js/homepage.js?v=database-category-feeds"></script>
 
 </body>
 </html>

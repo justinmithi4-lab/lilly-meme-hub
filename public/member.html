@@ -10,7 +10,28 @@
         content="width=device-width, initial-scale=1.0"
     >
 
+    <meta
+        name="theme-color"
+        content="#071426"
+    >
+
     <title>Lilly Memes - Home</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
 
     <link
         rel="stylesheet"
@@ -19,462 +40,784 @@
 
     <link
         rel="stylesheet"
-        href="/css/member.css?v=member-messages"
+        href="/css/member.css?v=compact-card-info"
     >
-    <link rel="stylesheet" href="/css/brand.css">
+
+    <link
+        rel="stylesheet"
+        href="/css/brand.css"
+    >
 
 </head>
 
+
 <body>
 
-    <!-- =========================================
-         TOP NAVIGATION
-    ========================================== -->
 
-    <header class="top-navigation">
+<!-- =========================================================
+     TOP NAVIGATION
+========================================================= -->
 
-        <div class="nav-left">
+<header class="top-navigation">
 
-            <button
-                class="mobile-menu-button"
-                id="menuButton"
-                aria-label="Open menu"
-            >
-                ☰
-            </button>
+    <div class="nav-left">
 
-            <a
-                href="/member.html"
-                class="logo"
-            >
-                <img src="/images/lilly-memes-logo.jpg" class="brand-logo-image" alt="">
-                <span>Lilly Memes</span>
-            </a>
-
-        </div>
+        <button
+            class="mobile-menu-button"
+            id="menuButton"
+            aria-label="Open menu"
+            type="button"
+        >
+            <i class="fa-solid fa-bars"></i>
+        </button>
 
 
-        <div class="member-search" id="memberSearchBox">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <a
+            href="/member.html"
+            class="logo"
+        >
 
-            <input
-                type="search"
-                id="memberSearch"
-                placeholder="Search memes..."
-                autocomplete="off"
-            >
+            <span class="logo-image-wrap">
+                <img
+                    src="/images/lilly-memes-logo.jpg"
+                    class="brand-logo-image"
+                    alt="Lilly Memes"
+                >
+            </span>
+
+            <span class="logo-text">
+                Lilly <strong>Memes</strong>
+            </span>
+
+        </a>
+
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <div
+        class="member-search"
+        id="memberSearchBox"
+    >
+
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+
+        <input
+            type="search"
+            id="memberSearch"
+            placeholder="Search memes..."
+            autocomplete="off"
+        >
+
+        <button
+            type="button"
+            id="clearMemberSearch"
+            class="clear-search"
+            aria-label="Clear search"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+
+        <div
+            class="member-search-suggestions hidden"
+            id="memberSearchSuggestions"
+        >
+
+            <div class="suggestion-title">
+                Popular searches
+            </div>
 
             <button
                 type="button"
-                id="clearMemberSearch"
-                class="clear-search"
-                aria-label="Clear search"
+                data-search="funny"
             >
-                <i class="fa-solid fa-xmark"></i>
+                😂 Funny
             </button>
 
-            <div class="member-search-suggestions hidden" id="memberSearchSuggestions">
-                <div class="suggestion-title">Popular searches</div>
+            <button
+                type="button"
+                data-search="Malawi"
+            >
+                🇲🇼 Malawi
+            </button>
 
-                <button type="button" data-search="funny">
-                    😂 Funny
-                </button>
+            <button
+                type="button"
+                data-search="relationships"
+            >
+                ❤️ Relationships
+            </button>
 
-                <button type="button" data-search="Malawi">
-                    🇲🇼 Malawi
-                </button>
+            <button
+                type="button"
+                data-search="school"
+            >
+                🎓 School
+            </button>
 
-                <button type="button" data-search="relationships">
-                    ❤️ Relationships
-                </button>
+            <button
+                type="button"
+                data-search="sports"
+            >
+                ⚽ Sports
+            </button>
 
-                <button type="button" data-search="school">
-                    🎓 School
-                </button>
+        </div>
 
-                <button type="button" data-search="sports">
-                    ⚽ Sports
-                </button>
+    </div>
+
+
+    <!-- DESKTOP NAVIGATION -->
+
+    <nav class="desktop-navigation">
+
+        <a
+            href="/member.html"
+            class="nav-item active"
+        >
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+
+
+        <a
+            href="#popular"
+            class="nav-item"
+        >
+            <i class="fa-solid fa-fire-flame-curved"></i>
+            <span>Popular</span>
+        </a>
+
+
+        <button
+            class="nav-item notification-button"
+            id="notificationButton"
+            type="button"
+            aria-expanded="false"
+            aria-controls="notificationPanel"
+        >
+
+            <i class="fa-solid fa-bell"></i>
+
+            <span>
+                Notifications
+            </span>
+
+            <span
+                class="notification-count"
+                id="notificationCount"
+                hidden
+            >
+                0
+            </span>
+
+        </button>
+
+
+        <button
+            class="profile-button"
+            id="profileButton"
+            type="button"
+            aria-label="Profile"
+        >
+            <i class="fa-solid fa-user"></i>
+        </button>
+
+    </nav>
+
+</header>
+
+
+<!-- =========================================================
+     NOTIFICATIONS
+========================================================= -->
+
+<section
+    class="notification-panel"
+    id="notificationPanel"
+    aria-label="Notifications"
+    hidden
+>
+
+    <div class="notification-panel-header">
+
+        <div>
+            <span class="panel-eyebrow">
+                Lilly Memes
+            </span>
+
+            <h2>
+                Notifications
+            </h2>
+        </div>
+
+        <button
+            class="notification-mark-all"
+            id="markAllNotificationsRead"
+            type="button"
+            hidden
+        >
+            Mark all read
+        </button>
+
+    </div>
+
+
+    <div class="notification-sound-controls">
+
+        <label for="notificationSoundEnabled">
+
+            <input
+                id="notificationSoundEnabled"
+                type="checkbox"
+            >
+
+            <span>
+                Play sound for new notifications
+            </span>
+
+        </label>
+
+
+        <button
+            class="notification-test-sound"
+            id="testNotificationSound"
+            type="button"
+        >
+            Test sound
+        </button>
+
+    </div>
+
+
+    <div
+        class="notification-list"
+        id="notificationList"
+        aria-live="polite"
+    ></div>
+
+</section>
+
+
+<!-- =========================================================
+     PAGE LAYOUT
+========================================================= -->
+
+<main class="page-layout">
+
+
+    <!-- =====================================================
+         LEFT SIDEBAR
+    ====================================================== -->
+
+    <aside
+        class="left-sidebar"
+        id="sideMenu"
+    >
+
+        <div class="sidebar-profile">
+
+            <div
+                class="profile-avatar"
+                id="profileAvatar"
+            >
+                👤
             </div>
+
+
+            <div class="sidebar-profile-info">
+
+                <strong id="profileUsername">
+                    Member
+                </strong>
+
+                <small>
+                    Lilly Memes Member
+                </small>
+
+            </div>
+
         </div>
 
 
-        <nav class="desktop-navigation">
+        <nav class="sidebar-navigation">
 
             <a
                 href="/member.html"
-                class="nav-item active"
+                class="sidebar-link active"
             >
-                <i class="fa-solid fa-house"></i>
-                <span>Home</span>
+                <span class="sidebar-icon">
+                    <i class="fa-solid fa-house"></i>
+                </span>
+
+                <span>
+                    Home
+                </span>
             </a>
+
 
             <a
                 href="#popular"
-                class="nav-item"
+                class="sidebar-link"
             >
-                <i class="fa-solid fa-fire-flame-curved"></i>
-                <span>Popular</span>
+                <span class="sidebar-icon">
+                    <i class="fa-solid fa-fire-flame-curved"></i>
+                </span>
+
+                <span>
+                    Popular Memes
+                </span>
             </a>
 
-            <button
-                class="nav-item notification-button"
-                id="notificationButton"
-                aria-expanded="false"
-                aria-controls="notificationPanel"
-            >
-                <i class="fa-solid fa-bell"></i>
-                <span>Notifications</span>
 
-                <span
-                    class="notification-count"
-                    id="notificationCount"
-                    hidden
-                >
-                    0
+            <a
+                href="#latest"
+                class="sidebar-link"
+            >
+                <span class="sidebar-icon">
+                    <i class="fa-solid fa-newspaper"></i>
+                </span>
+
+                <span>
+                    Latest Memes
+                </span>
+            </a>
+
+
+            <a
+                href="#discussed"
+                class="sidebar-link"
+            >
+                <span class="sidebar-icon">
+                    <i class="fa-solid fa-comments"></i>
+                </span>
+
+                <span>
+                    Most Discussed
+                </span>
+            </a>
+
+
+            <a
+                href="/plans.html"
+                class="sidebar-link"
+            >
+                <span class="sidebar-icon">
+                    <i class="fa-solid fa-crown"></i>
+                </span>
+
+                <span>
+                    Subscription
+                </span>
+            </a>
+
+
+            <button
+                class="sidebar-link"
+                id="contactAdminButton"
+                type="button"
+            >
+
+                <span class="sidebar-icon">
+                    <i class="fa-solid fa-envelope"></i>
+                </span>
+
+                <span>
+                    Contact Admin
                 </span>
 
             </button>
 
+        </nav>
+
+
+        <div class="sidebar-divider"></div>
+
+
+        <nav class="sidebar-navigation">
+
             <button
-                class="profile-button"
-                id="profileButton"
-                aria-label="Profile"
+                class="sidebar-link logout-link"
+                id="logoutButton"
+                type="button"
             >
-                <i class="fa-solid fa-user"></i>
+
+                <span class="sidebar-icon">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </span>
+
+                <span>
+                    Logout
+                </span>
+
             </button>
 
         </nav>
 
-    </header>
 
-    <section
-        class="notification-panel"
-        id="notificationPanel"
-        aria-label="Notifications"
-        hidden
-    >
-        <div class="notification-panel-header">
-            <h2>Notifications</h2>
-            <button
-                class="notification-mark-all"
-                id="markAllNotificationsRead"
-                type="button"
-                hidden
-            >
-                Mark all read
-            </button>
+        <div class="sidebar-bottom-note">
+
+            <span class="sidebar-dot"></span>
+
+            <span>
+                You're part of the fun.
+            </span>
+
         </div>
-        <div class="notification-sound-controls">
-            <label for="notificationSoundEnabled">
-                <input
-                    id="notificationSoundEnabled"
-                    type="checkbox"
-                >
-                Play a sound for new notifications
-            </label>
-            <button
-                class="notification-test-sound"
-                id="testNotificationSound"
-                type="button"
-            >
-                Test sound
-            </button>
-        </div>
-        <div
-            class="notification-list"
-            id="notificationList"
-            aria-live="polite"
-        ></div>
-    </section>
+
+    </aside>
 
 
-    <!-- =========================================
-         MAIN LAYOUT
-    ========================================== -->
+    <!-- =====================================================
+         MAIN FEED
+    ====================================================== -->
 
-    <main class="page-layout">
-
-
-        <!-- =====================================
-             LEFT SIDEBAR
-        ====================================== -->
-
-        <aside
-            class="left-sidebar"
-            id="sideMenu"
-        >
-
-            <div class="sidebar-profile">
-
-                <div
-                    class="profile-avatar"
-                    id="profileAvatar"
-                >
-                    👤
-                </div>
-
-                <div>
-
-                    <strong id="profileUsername">
-                        Member
-                    </strong>
-
-                    <small>
-                        Lilly Memes Member
-                    </small>
-
-                </div>
-
-            </div>
+    <section class="main-feed">
 
 
-            <nav class="sidebar-navigation">
+        <!-- =================================================
+             WELCOME HERO
+        ================================================== -->
 
-                <a
-                    href="/member.html"
-                    class="sidebar-link active"
-                >
-                    <i class="fa-solid fa-house"></i>
-                    <span>Home</span>
-                </a>
+        <section class="welcome-hero">
 
-                <a
-                    href="#popular"
-                    class="sidebar-link"
-                >
-                    <i class="fa-solid fa-fire-flame-curved"></i>
-                    <span>Popular Memes</span>
-                </a>
+            <div class="welcome-content">
 
-                <a
-                    href="#latest"
-                    class="sidebar-link"
-                >
-                    <i class="fa-solid fa-newspaper"></i>
-                    <span>Latest Memes</span>
-                </a>
-
-                <a
-                    href="#discussed"
-                    class="sidebar-link"
-                >
-                    <i class="fa-solid fa-comments"></i>
-                    <span>Most Discussed</span>
-                </a>
-
-                <a
-                    href="/plans.html"
-                    class="sidebar-link"
-                >
-                    <i class="fa-solid fa-credit-card"></i>
-                    <span>Subscription</span>
-                </a>
-
-                <button
-                    class="sidebar-link"
-                    id="contactAdminButton"
-                    type="button"
-                >
-                    <i class="fa-solid fa-envelope"></i>
-                    <span>Contact Admin</span>
-                </button>
-
-            </nav>
+                <span class="welcome-badge">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    Welcome back
+                </span>
 
 
-            <div class="sidebar-divider"></div>
+                <h1>
+                    Your daily dose of
+                    <span>good vibes.</span>
+                </h1>
 
 
-            <nav class="sidebar-navigation">
-
-                <button
-                    class="sidebar-link logout-link"
-                    id="logoutButton"
-                >
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Logout</span>
-                </button>
-
-            </nav>
-
-        </aside>
+                <p>
+                    Laugh, discover, share and enjoy the funniest
+                    memes from the Lilly Memes community.
+                </p>
 
 
-        <!-- =====================================
-             FEED
-        ====================================== -->
+                <div class="welcome-actions">
 
-        <section class="main-feed">
-
-
-            <!-- STORIES -->
-
-            <section class="stories-section">
-
-                <div class="section-heading">
-
-                    <h2>
-                        Stories
-                    </h2>
-
-                    <button id="viewStoriesButton">
-                        View all
-                    </button>
-
-                </div>
-
-
-                <div
-                    class="stories-container"
-                    id="storiesContainer"
-                >
-
-                    <div class="story-placeholder">
-                        <span>
-                            Stories coming soon
-                        </span>
-                    </div>
-
-                </div>
-
-            </section>
-
-            <div
-                class="contact-admin-modal"
-                id="contactAdminModal"
-                hidden
-            >
-                <section
-                    class="contact-admin-dialog"
-                    role="dialog"
-                    aria-modal="true"
-                    aria-labelledby="contactAdminTitle"
-                >
-                    <button
-                        class="contact-admin-close"
-                        id="closeContactAdmin"
-                        type="button"
-                        aria-label="Close contact form"
+                    <a
+                        href="#popular"
+                        class="hero-primary-button"
                     >
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                    <div class="contact-admin-heading">
-                        <span class="contact-admin-icon">
-                            <i class="fa-solid fa-envelope"></i>
-                        </span>
-                        <div>
-                            <h2 id="contactAdminTitle">Contact Admin</h2>
-                            <p>Send a message directly to the Lilly Memes admin.</p>
-                        </div>
-                    </div>
-                    <form id="contactAdminForm">
-                        <label class="contact-admin-field">
-                            <span>Subject</span>
-                            <input
-                                type="text"
-                                id="contactAdminSubject"
-                                name="subject"
-                                maxlength="120"
-                                required
-                            >
-                        </label>
-                        <label class="contact-admin-field">
-                            <span>Message</span>
-                            <textarea
-                                id="contactAdminMessage"
-                                name="message"
-                                rows="5"
-                                maxlength="2000"
-                                required
-                            ></textarea>
-                        </label>
-                        <p
-                            class="contact-admin-feedback"
-                            id="contactAdminFeedback"
-                            role="status"
-                            aria-live="polite"
-                            hidden
-                        ></p>
-                        <div class="contact-admin-actions">
-                            <button
-                                class="contact-admin-cancel"
-                                id="cancelContactAdmin"
-                                type="button"
-                            >Cancel</button>
-                            <button
-                                class="contact-admin-submit"
-                                id="sendContactAdminMessage"
-                                type="submit"
-                            >
-                                <i class="fa-solid fa-paper-plane"></i>
-                                Send message
-                            </button>
-                        </div>
-                    </form>
-                </section>
+                        <i class="fa-solid fa-fire"></i>
+                        Explore memes
+                    </a>
+
+
+                    <a
+                        href="#latest"
+                        class="hero-secondary-button"
+                    >
+                        <i class="fa-solid fa-sparkles"></i>
+                        What's new
+                    </a>
+
+                </div>
+
             </div>
 
 
-            <!-- =================================
-                 POPULAR
-            ================================== -->
+            <div class="welcome-decoration">
 
-            <section
-                class="meme-section"
-                id="popular"
-            >
+                <div class="hero-circle hero-circle-one">
+                    😂
+                </div>
 
-                <div class="section-heading">
+                <div class="hero-circle hero-circle-two">
+                    🤣
+                </div>
+
+                <div class="hero-circle hero-circle-three">
+                    🔥
+                </div>
+
+                <div class="hero-glow"></div>
+
+                <div class="hero-main-emoji">
+                    😂
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             STORIES
+        ================================================== -->
+
+        <section class="stories-section">
+
+            <div class="section-heading">
+
+                <div class="section-title-wrap">
+
+                    <span class="section-icon purple">
+                        <i class="fa-solid fa-circle-play"></i>
+                    </span>
 
                     <div>
 
                         <h2>
-                            🔥 Popular Memes
+                            Stories
                         </h2>
 
                         <p>
-                            What members are enjoying
+                            Quick laughs from the community
                         </p>
 
                     </div>
 
-                    <button>
-                        See all
-                    </button>
-
                 </div>
 
 
-                <div
-                    class="meme-grid"
-                    id="popularMemes"
+                <button
+                    id="viewStoriesButton"
+                    type="button"
                 >
+                    View all
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
 
-                    <div class="loading-card">
-                        Loading memes...
+            </div>
+
+
+            <div
+                class="stories-container"
+                id="storiesContainer"
+            >
+
+                <div class="story-placeholder">
+
+                    <div class="story-placeholder-icon">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
+
+                    <span>
+                        Stories coming soon
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             CONTACT ADMIN MODAL
+        ================================================== -->
+
+        <div
+            class="contact-admin-modal"
+            id="contactAdminModal"
+            hidden
+        >
+
+            <section
+                class="contact-admin-dialog"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="contactAdminTitle"
+            >
+
+                <button
+                    class="contact-admin-close"
+                    id="closeContactAdmin"
+                    type="button"
+                    aria-label="Close contact form"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+
+                <div class="contact-admin-heading">
+
+                    <span class="contact-admin-icon">
+                        <i class="fa-solid fa-envelope"></i>
+                    </span>
+
+
+                    <div>
+
+                        <span class="modal-eyebrow">
+                            Get in touch
+                        </span>
+
+                        <h2 id="contactAdminTitle">
+                            Contact Admin
+                        </h2>
+
+                        <p>
+                            Send a message directly to the Lilly Memes admin.
+                        </p>
+
                     </div>
 
                 </div>
 
+
+                <form id="contactAdminForm">
+
+                    <label class="contact-admin-field">
+
+                        <span>
+                            Subject
+                        </span>
+
+                        <input
+                            type="text"
+                            id="contactAdminSubject"
+                            name="subject"
+                            maxlength="120"
+                            placeholder="What would you like to ask?"
+                            required
+                        >
+
+                    </label>
+
+
+                    <label class="contact-admin-field">
+
+                        <span>
+                            Message
+                        </span>
+
+                        <textarea
+                            id="contactAdminMessage"
+                            name="message"
+                            rows="5"
+                            maxlength="2000"
+                            placeholder="Write your message here..."
+                            required
+                        ></textarea>
+
+                    </label>
+
+
+                    <p
+                        class="contact-admin-feedback"
+                        id="contactAdminFeedback"
+                        role="status"
+                        aria-live="polite"
+                        hidden
+                    ></p>
+
+
+                    <div class="contact-admin-actions">
+
+                        <button
+                            class="contact-admin-cancel"
+                            id="cancelContactAdmin"
+                            type="button"
+                        >
+                            Cancel
+                        </button>
+
+
+                        <button
+                            class="contact-admin-submit"
+                            id="sendContactAdminMessage"
+                            type="submit"
+                        >
+                            <i class="fa-solid fa-paper-plane"></i>
+                            Send message
+                        </button>
+
+                    </div>
+
+                </form>
+
             </section>
 
+        </div>
 
-            <!-- =================================
-                 LATEST
-            ================================== -->
 
-            <section
-                class="meme-section"
-                id="latest"
-            >
+        <!-- =================================================
+             POPULAR MEMES
+        ================================================== -->
 
-                <div class="section-heading">
+        <section
+            class="meme-section"
+            id="popular"
+        >
+
+            <div class="section-heading">
+
+                <div class="section-title-wrap">
+
+                    <span class="section-icon orange">
+                        <i class="fa-solid fa-fire-flame-curved"></i>
+                    </span>
 
                     <div>
 
                         <h2>
-                            🆕 Latest Memes
+                            Popular Memes
+                        </h2>
+
+                        <p>
+                            What members are enjoying right now
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <button type="button" data-feed-toggle="popular" aria-expanded="false">
+                    Show more
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                </button>
+
+            </div>
+
+
+            <div
+                class="meme-grid"
+                id="popularMemes"
+            >
+
+                <div class="loading-card">
+                    Loading memes...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             LATEST MEMES
+        ================================================== -->
+
+        <section
+            class="meme-section"
+            id="latest"
+        >
+
+            <div class="section-heading">
+
+                <div class="section-title-wrap">
+
+                    <span class="section-icon blue">
+                        <i class="fa-solid fa-bolt"></i>
+                    </span>
+
+                    <div>
+
+                        <h2>
+                            Latest Memes
                         </h2>
 
                         <p>
@@ -483,42 +826,52 @@
 
                     </div>
 
-                    <button>
-                        See all
-                    </button>
-
                 </div>
 
 
-                <div
-                    class="meme-grid"
-                    id="latestMemes"
-                >
+                <button type="button" data-feed-toggle="latest" aria-expanded="false">
+                    Show more
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                </button>
 
-                    <div class="loading-card">
-                        Loading memes...
-                    </div>
-
-                </div>
-
-            </section>
+            </div>
 
 
-            <!-- =================================
-                 MOST DISCUSSED
-            ================================== -->
-
-            <section
-                class="meme-section"
-                id="discussed"
+            <div
+                class="meme-grid"
+                id="latestMemes"
             >
 
-                <div class="section-heading">
+                <div class="loading-card">
+                    Loading memes...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             MOST DISCUSSED
+        ================================================== -->
+
+        <section
+            class="meme-section"
+            id="discussed"
+        >
+
+            <div class="section-heading">
+
+                <div class="section-title-wrap">
+
+                    <span class="section-icon green">
+                        <i class="fa-solid fa-comments"></i>
+                    </span>
 
                     <div>
 
                         <h2>
-                            💬 Most Discussed
+                            Most Discussed
                         </h2>
 
                         <p>
@@ -527,194 +880,292 @@
 
                     </div>
 
-                    <button>
-                        See all
-                    </button>
-
                 </div>
 
 
-                <div
-                    class="meme-grid"
-                    id="discussedMemes"
-                >
+                <button type="button" data-feed-toggle="discussed" aria-expanded="false">
+                    Show more
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                </button>
 
-                    <div class="loading-card">
-                        Loading memes...
-                    </div>
+            </div>
 
+
+            <div
+                class="meme-grid"
+                id="discussedMemes"
+            >
+
+                <div class="loading-card">
+                    Loading memes...
                 </div>
 
-            </section>
-
+            </div>
 
         </section>
 
 
-        <!-- =====================================
-             RIGHT SIDEBAR
-        ====================================== -->
-
-        <aside class="right-sidebar">
+    </section>
 
 
-            <!-- CATEGORIES -->
+    <!-- =====================================================
+         RIGHT SIDEBAR
+    ====================================================== -->
 
-            <section
-                class="side-card"
-                id="categories"
-            >
+    <aside class="right-sidebar">
 
-                <div class="side-card-heading">
+
+        <!-- CATEGORIES -->
+
+        <section
+            class="side-card categories-card"
+            id="categories"
+        >
+
+            <div class="side-card-heading">
+
+                <div>
+
+                    <span class="side-card-eyebrow">
+                        Discover
+                    </span>
 
                     <h3>
                         Categories
                     </h3>
 
-                    <button>
-                        View all
-                    </button>
-
                 </div>
 
 
-                <div class="category-list">
-
-                    <button>
-                        😂 Funny
-                    </button>
-
-                    <button>
-                        ❤️ Relationships
-                    </button>
-
-                    <button>
-                        🎓 School
-                    </button>
-
-                    <button>
-                        🇲🇼 Malawi
-                    </button>
-
-                    <button>
-                        ⚽ Sports
-                    </button>
-
-                    <button>
-                        🎬 Entertainment
-                    </button>
-
-                </div>
-
-            </section>
-
-
-            <!-- MEMBERSHIP -->
-
-            <section class="side-card membership-card">
-
-                <span class="membership-icon">
-                    💎
-                </span>
-
-                <h3>
-                    Your Membership
-                </h3>
-
-                <p id="membershipStatus">
-                    Checking subscription...
-                </p>
-
-                <button
-                    class="membership-button"
-                    id="membershipButton"
-                >
-                    View Membership
+                <button type="button">
+                    View all
                 </button>
 
-            </section>
+            </div>
 
 
-            <footer class="member-footer">
+            <div class="category-list">
 
+                <button>
+                    <span>😂</span>
+                    Funny
+                </button>
+
+                <button>
+                    <span>❤️</span>
+                    Relationships
+                </button>
+
+                <button>
+                    <span>🎓</span>
+                    School
+                </button>
+
+                <button>
+                    <span>🇲🇼</span>
+                    Malawi
+                </button>
+
+                <button>
+                    <span>⚽</span>
+                    Sports
+                </button>
+
+                <button>
+                    <span>🎬</span>
+                    Entertainment
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- MEMBERSHIP -->
+
+        <section class="side-card membership-card">
+
+            <div class="membership-glow"></div>
+
+
+            <span class="membership-icon">
+                <i class="fa-solid fa-crown"></i>
+            </span>
+
+
+            <span class="membership-label">
+                MEMBER ACCESS
+            </span>
+
+
+            <h3>
+                Your Membership
+            </h3>
+
+
+            <p id="membershipStatus">
+                Checking subscription...
+            </p>
+
+
+            <button
+                class="membership-button"
+                id="membershipButton"
+                type="button"
+            >
                 <span>
-                    © 2026 Lilly Memes
+                    View Membership
                 </span>
 
-                <span>
-                    JVM Blackscreeen Media
-                </span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
 
-            </footer>
-
-
-        </aside>
-
-    </main>
+        </section>
 
 
-    <!-- =========================================
-         MOBILE BOTTOM NAVIGATION
-    ========================================== -->
+        <!-- COMMUNITY CARD -->
 
-    <nav class="mobile-bottom-navigation">
+        <section class="side-card community-card">
 
-        <a
-            href="/member.html"
-            class="mobile-nav-item active"
-        >
+            <div class="community-icon">
+                <i class="fa-solid fa-users"></i>
+            </div>
+
+
+            <div>
+
+                <strong>
+                    You're part of the fun.
+                </strong>
+
+                <p>
+                    Keep scrolling. There's always another laugh waiting.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <footer class="member-footer">
+
+            <span>
+                © 2026 Lilly Memes
+            </span>
+
+            <span>
+                JVM Blackscreeen Media
+            </span>
+
+        </footer>
+
+    </aside>
+
+</main>
+
+
+<!-- =========================================================
+     MOBILE BOTTOM NAVIGATION
+========================================================= -->
+
+<nav class="mobile-bottom-navigation">
+
+    <a
+        href="/member.html"
+        class="mobile-nav-item active"
+    >
+
+        <span class="mobile-nav-icon">
             <i class="fa-solid fa-house"></i>
-            <small>Home</small>
-        </a>
+        </span>
 
-        <a
-            href="#popular"
-            class="mobile-nav-item"
-        >
+        <small>
+            Home
+        </small>
+
+    </a>
+
+
+    <a
+        href="#popular"
+        class="mobile-nav-item"
+    >
+
+        <span class="mobile-nav-icon">
             <i class="fa-solid fa-fire-flame-curved"></i>
-            <small>Popular</small>
-        </a>
+        </span>
 
-        <button
-            class="mobile-nav-item"
-            id="mobileNotificationButton"
-            aria-label="Notifications"
-            aria-expanded="false"
-            aria-controls="notificationPanel"
-        >
+        <small>
+            Popular
+        </small>
+
+    </a>
+
+
+    <button
+        class="mobile-nav-item"
+        id="mobileNotificationButton"
+        type="button"
+        aria-label="Notifications"
+        aria-expanded="false"
+        aria-controls="notificationPanel"
+    >
+
+        <span class="mobile-nav-icon">
+
             <i class="fa-solid fa-bell"></i>
-            <small>Alerts</small>
+
             <span
                 class="notification-count"
                 id="mobileNotificationCount"
                 aria-label="Unread notifications"
                 hidden
-            >0</span>
-        </button>
+            >
+                0
+            </span>
 
-        <button
-            class="mobile-nav-item"
-            id="mobileProfileButton"
-        >
+        </span>
+
+        <small>
+            Alerts
+        </small>
+
+    </button>
+
+
+    <button
+        class="mobile-nav-item"
+        id="mobileProfileButton"
+        type="button"
+    >
+
+        <span class="mobile-nav-icon">
             <i class="fa-solid fa-user"></i>
-            <small>Profile</small>
-        </button>
+        </span>
 
-    </nav>
+        <small>
+            Profile
+        </small>
 
+    </button>
 
-    <!-- =========================================
-         MENU OVERLAY
-    ========================================== -->
-
-    <div
-        class="menu-overlay"
-        id="menuOverlay"
-    ></div>
+</nav>
 
 
-    <script src="/js/media.js?v=cloudinary"></script>
-    <script src="/js/member.js?v=cloudinary"></script>
+<!-- =========================================================
+     MENU OVERLAY
+========================================================= -->
+
+<div
+    class="menu-overlay"
+    id="menuOverlay"
+></div>
+
+
+<script src="/js/media.js?v=cloudinary"></script>
+
+<script src="/js/member.js?v=card-size-icons"></script>
+
 
 </body>
 

@@ -10,6 +10,7 @@ const requireAdmin = require("../middleware/requireAdmin");
 const {
     getMeme,
     getHomepageMemes,
+    getAllMemberMemes,
     createMeme,
     getAdminMemes,
     updateMeme,
@@ -90,6 +91,14 @@ const upload = multer({
 router.get(
     "/homepage",
     getHomepageMemes
+);
+
+router.get(
+    "/all",
+    requireLogin,
+    requireMember,
+    requireActiveSubscription,
+    getAllMemberMemes
 );
 
 

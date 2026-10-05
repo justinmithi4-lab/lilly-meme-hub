@@ -7,6 +7,33 @@ const latestContainer =
 const discussedContainer =
     document.getElementById("discussedMemes");
 
+const memberFeeds = {
+    popular: {
+        name: "popular",
+        responseKey: "popular",
+        container: popularContainer,
+        memes: [],
+        toggle: document.querySelector('[data-feed-toggle="popular"]')
+    },
+    latest: {
+        name: "latest",
+        responseKey: "latest",
+        container: latestContainer,
+        memes: [],
+        toggle: document.querySelector('[data-feed-toggle="latest"]')
+    },
+    discussed: {
+        name: "discussed",
+        responseKey: "mostDiscussed",
+        container: discussedContainer,
+        memes: [],
+        toggle: document.querySelector('[data-feed-toggle="discussed"]')
+    }
+};
+
+let allMemberFeeds = null;
+let allMemberFeedsRequest = null;
+
 const storiesContainer =
     document.getElementById("storiesContainer");
 
@@ -233,6 +260,12 @@ async function startMemberExperience() {
 
     await loadHomepageMemes();
     await loadStories();
+
+    Object.values(memberFeeds).forEach((feed) => {
+        if (feed.toggle) {
+            feed.toggle.addEventListener("click", () => toggleMemberFeed(feed));
+        }
+    });
 
     if (viewStoriesButton) {
         viewStoriesButton.addEventListener("click", loadStories);
@@ -630,22 +663,13 @@ async function loadHomepageMemes() {
         }
 
 
-        renderMemes(
-            popularContainer,
-            data.popular
-        );
+        memberFeeds.popular.memes = data.popular || [];
+        memberFeeds.latest.memes = data.latest || [];
+        memberFeeds.discussed.memes = data.mostDiscussed || [];
 
-
-        renderMemes(
-            latestContainer,
-            data.latest
-        );
-
-
-        renderMemes(
-            discussedContainer,
-            data.mostDiscussed
-        );
+        Object.values(memberFeeds).forEach((feed) => {
+            renderMemberFeed(feed, false);
+        });
 
 
     } catch (error) {
@@ -670,6 +694,72 @@ async function loadHomepageMemes() {
 
     }
 
+}
+
+async function toggleMemberFeed(feed) {
+    if (!feed.toggle || feed.toggle.disabled) {
+        return;
+    }
+
+    if (feed.toggle.getAttribute("aria-expanded") === "true") {
+        renderMemberFeed(feed, false);
+        return;
+    }
+
+    feed.toggle.disabled = true;
+    feed.toggle.textContent = "Loading...";
+
+    try {
+        if (!allMemberFeeds) {
+            if (!allMemberFeedsRequest) {
+                allMemberFeedsRequest = fetch("/api/memes/all")
+                    .then(async (response) => {
+                        const data = await response.json();
+
+                        if (!response.ok || !data.success) {
+                            throw new Error(data.message || "Failed to load all memes.");
+                        }
+
+                        return data;
+                    })
+                    .finally(() => {
+                        allMemberFeedsRequest = null;
+                    });
+            }
+
+            allMemberFeeds = await allMemberFeedsRequest;
+        }
+
+        feed.memes = allMemberFeeds[feed.responseKey] || [];
+        renderMemberFeed(feed, true);
+    } catch (error) {
+        console.error("Show more memes error:", error);
+        feed.toggle.textContent = "Retry show more";
+        feed.toggle.title = error.message || "Failed to load all memes.";
+    } finally {
+        feed.toggle.disabled = false;
+    }
+}
+
+function renderMemberFeed(feed, expanded) {
+    renderMemes(
+        feed.container,
+        expanded ? feed.memes : feed.memes.slice(0, 2)
+    );
+
+    if (!feed.toggle) {
+        return;
+    }
+
+    const canExpand = feed.memes.length > 2;
+    feed.toggle.hidden = !canExpand;
+    feed.toggle.classList.toggle("hidden", !canExpand);
+    feed.toggle.disabled = false;
+    feed.toggle.title = "";
+    feed.toggle.setAttribute("aria-expanded", String(expanded && canExpand));
+    feed.toggle.innerHTML = expanded
+        ? 'Show less <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>'
+        : 'Show more <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>';
 }
 
 
@@ -881,7 +971,7 @@ function createMemeCard(meme) {
                                 )}
                             </p>
                         `
-                        : ""
+                        : '<p class="meme-card-caption meme-card-caption-empty" aria-hidden="true"></p>'
                 }
 
 
@@ -905,7 +995,7 @@ function createMemeCard(meme) {
 
                             </div>
                         `
-                        : ""
+                        : '<div class="meme-categories meme-categories-empty" aria-hidden="true"></div>'
                 }
 
 
@@ -923,7 +1013,7 @@ function createMemeCard(meme) {
                             this
                         )"
                     >
-                        ❤️
+                        <span class="meme-action-icon" aria-hidden="true">❤️</span>
 
                         <span>
                             ${meme.like_count || 0}
@@ -938,7 +1028,7 @@ function createMemeCard(meme) {
                             ${meme.id}
                         )"
                     >
-                        💬
+                        <span class="meme-action-icon" aria-hidden="true">💬</span>
 
                         <span>
                             ${meme.comment_count || 0}
