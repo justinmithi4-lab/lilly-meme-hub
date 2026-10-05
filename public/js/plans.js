@@ -174,11 +174,8 @@ function renderPlans(plans) {
     plansContainer.innerHTML =
         plans
             .map(
-                (plan, index) =>
-                    createPlanCard(
-                        plan,
-                        index
-                    )
+                (plan) =>
+                    createPlanCard(plan)
             )
             .join("");
 }
@@ -187,17 +184,40 @@ function renderPlans(plans) {
 /*
     Create a single plan card
 */
-function createPlanCard(plan, index) {
+function createPlanCard(plan) {
 
     const featured =
-        plan.duration_days === 7;
+        Number(plan.duration_days) === 90;
 
     const badge =
         featured
-            ? "Popular"
-            : index === 0
-                ? "Flexible"
-                : "Best Access";
+            ? "Best value"
+            : Number(plan.duration_days) === 7
+                ? "Most popular"
+                : "Member access";
+
+    const durationDays =
+        Number(plan.duration_days);
+
+    const durationLabel =
+        durationDays === 90
+            ? "3 months"
+            : durationDays === 30
+                ? "1 month"
+                : durationDays === 7
+                    ? "1 week"
+                    : `${durationDays} ${durationDays === 1 ? "day" : "days"}`;
+
+    const dailyPrice =
+        durationDays > 0
+            ? (Number(plan.price) / durationDays).toLocaleString(
+                "en-MW",
+                {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 2
+                }
+            )
+            : null;
 
     return `
         <article
@@ -208,9 +228,21 @@ function createPlanCard(plan, index) {
             }"
         >
 
-            <span class="plan-badge">
-                ${badge}
-            </span>
+            <div class="plan-card-header">
+                <span class="plan-icon" aria-hidden="true">
+                    <i class="fa-solid ${
+                        featured
+                            ? "fa-crown"
+                            : durationDays === 7
+                                ? "fa-bolt"
+                                : "fa-star"
+                    }"></i>
+                </span>
+
+                <span class="plan-badge">
+                    ${badge}
+                </span>
+            </div>
 
             <h2 class="plan-name">
                 ${escapeHtml(plan.name)}
@@ -225,29 +257,40 @@ function createPlanCard(plan, index) {
                 }
             </p>
 
-            <div class="plan-price">
-                ${formatMoney(plan.price)}
+            <div class="plan-price-block">
+                <div class="plan-price">
+                    <span class="plan-currency">${escapeHtml(plan.currency)}</span>
+                    <strong>${formatMoney(plan.price)}</strong>
+                </div>
 
-                <small>
-                    ${escapeHtml(plan.currency)}
-                </small>
+                <span class="plan-price-period">
+                    for ${escapeHtml(durationLabel)}
+                </span>
             </div>
 
-            <div class="plan-duration">
-                ${plan.duration_days}
-                ${
-                    plan.duration_days === 1
-                        ? "day"
-                        : "days"
-                }
+            <div class="plan-value">
+                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                <span>
+                    ${dailyPrice === null
+                        ? "Membership access included"
+                        : `About ${escapeHtml(plan.currency)} ${dailyPrice} per day`}
+                </span>
             </div>
+
+            <ul class="plan-features">
+                <li><i class="fa-solid fa-check" aria-hidden="true"></i> Browse the full meme collection</li>
+                <li><i class="fa-solid fa-check" aria-hidden="true"></i> Like, comment and join discussions</li>
+                <li><i class="fa-solid fa-check" aria-hidden="true"></i> Download your favourite memes</li>
+                <li><i class="fa-solid fa-check" aria-hidden="true"></i> Access for ${escapeHtml(durationLabel)}</li>
+            </ul>
 
             <button
                 type="button"
                 class="plan-button"
-                onclick="selectPlan(${plan.id})"
+                onclick="selectPlan(${Number(plan.id)})"
             >
-                Subscribe
+                Choose this plan
+                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </button>
 
         </article>
