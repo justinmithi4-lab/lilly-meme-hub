@@ -11,6 +11,8 @@ const {
     submitPayment,
     getPaymentHistory,
     getSubscriptionPaymentStatus,
+    handlePaychanguCallback,
+    handlePaychanguWebhook,
     getAdminPayments,
     getAdminPaymentById,
     approvePayment,
@@ -43,6 +45,21 @@ router.get(
     "/subscription/:subscriptionId/status",
     requireLogin,
     getSubscriptionPaymentStatus
+);
+
+router.get(
+    "/paychangu/callback",
+    handlePaychanguCallback
+);
+
+router.post(
+    "/paychangu/callback",
+    handlePaychanguCallback
+);
+
+router.post(
+    "/paychangu/webhook",
+    handlePaychanguWebhook
 );
 
 /*

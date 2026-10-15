@@ -49,7 +49,6 @@ const paymentRecipients = {
     }
 };
 
-
 /*
     Start page
 */
@@ -80,25 +79,29 @@ function setupPaymentMethodSelection() {
     const recipient = document.getElementById("paymentRecipient");
     const recipientNumber = document.getElementById("paymentRecipientNumber");
     const recipientMethod = document.getElementById("paymentRecipientMethod");
+    const manualDetails =
+        document.getElementById("manualPaymentDetails");
 
     document
         .querySelectorAll('input[name="payment_method"]')
         .forEach((input) => {
             input.addEventListener("change", () => {
                 const paymentDetails = paymentRecipients[input.value];
-                if (!paymentDetails) {
-                    recipient.hidden = true;
-                    return;
-                }
+                const isManual = Boolean(paymentDetails);
+                manualDetails.hidden = !isManual;
+                recipient.hidden = !isManual;
+                submitButton.textContent = isManual
+                    ? "Submit Payment"
+                    : "Pay with PayChangu";
 
-                recipientNumber.textContent = paymentDetails.number;
-                recipientMethod.textContent =
-                    `Send the subscription payment using ${paymentDetails.label}.`;
-                recipient.hidden = false;
+                if (paymentDetails) {
+                    recipientNumber.textContent = paymentDetails.number;
+                    recipientMethod.textContent =
+                        `Send the subscription payment using ${paymentDetails.label}.`;
+                }
             });
         });
 }
-
 
 /*
     Load subscription details
@@ -207,12 +210,9 @@ function renderSubscription() {
 paymentForm.addEventListener(
     "submit",
     async function (event) {
-
         event.preventDefault();
 
-
         if (!subscriptionId) {
-
             showMessage(
                 "Subscription not found.",
                 "error"
@@ -221,66 +221,31 @@ paymentForm.addEventListener(
             return;
         }
 
-
         const selectedMethod =
             document.querySelector(
                 'input[name="payment_method"]:checked'
             );
-
-
-        if (!selectedMethod) {
-
-            showMessage(
-                "Please select a payment method.",
-                "error"
-            );
-
-            return;
-        }
-
-
-        const phoneNumber =
-            document.getElementById(
-                "phoneNumber"
-            ).value.trim();
-
-
+        const paymentMethod = selectedMethod?.value || "paychangu";
+        const isManualPayment = paymentMethod !== "paychangu";
+        const phoneNumber = document.getElementById("phoneNumber").value.trim();
         const transactionReference =
-            document.getElementById(
-                "transactionReference"
-            ).value.trim();
+            document.getElementById("transactionReference").value.trim();
 
-
-        /*
-            Mobile money payments need a transaction reference.
-        */
-        if (
-            (
-                selectedMethod.value ===
-                    "airtel_money" ||
-                selectedMethod.value ===
-                    "tnm_mpamba"
-            ) &&
-            !transactionReference
-        ) {
-
+        if (isManualPayment && !transactionReference) {
             showMessage(
                 "Please enter your transaction reference.",
                 "error"
             );
-
             return;
         }
 
-
         submitButton.disabled = true;
-
         submitButton.textContent =
-            "Submitting payment...";
-
+            isManualPayment
+                ? "Submitting payment..."
+                : "Connecting to PayChangu...";
 
         try {
-
             const response =
                 await fetch(
                     "/api/payments",
@@ -293,62 +258,48 @@ paymentForm.addEventListener(
                         },
 
                         body: JSON.stringify({
-
-                            subscription_id:
-                                subscriptionId,
-
-                            payment_method:
-                                selectedMethod.value,
-
+                            subscription_id: subscriptionId,
+                            payment_method: paymentMethod,
                             transaction_reference:
-                                transactionReference ||
-                                null,
-
+                                isManualPayment
+                                    ? transactionReference
+                                    : null,
                             phone_number:
-                                phoneNumber ||
-                                null
-
+                                isManualPayment
+                                    ? phoneNumber || null
+                                    : null
                         })
                     }
                 );
 
-
             const data =
                 await response.json();
 
-
             if (response.status === 401) {
-
                 window.location.href =
                     "/login.html";
-
                 return;
             }
-
 
             if (
                 !response.ok ||
                 !data.success
             ) {
-
                 throw new Error(
                     data.message ||
                     "Unable to submit payment."
                 );
             }
 
+            if (data.checkout_url) {
+                window.location.assign(data.checkout_url);
+                return;
+            }
 
             showPendingMessage();
             startPaymentStatusChecking();
-
-
         } catch (error) {
-
-            console.error(
-                "Payment submission error:",
-                error
-            );
-
+            console.error("Payment submission error:", error);
 
             showMessage(
                 error.message ||
@@ -356,30 +307,26 @@ paymentForm.addEventListener(
                 "error"
             );
 
-
-            submitButton.disabled =
-                false;
-
-            submitButton.textContent =
-                "Submit Payment";
+            submitButton.disabled = false;
+            submitButton.textContent = isManualPayment
+                ? "Submit Payment"
+                : "Pay with PayChangu";
         }
     }
 );
 
 function showPendingMessage() {
     showMessage(
-        "Payment submitted successfully. Waiting for administrator approval...",
+        "Payment submitted successfully. Waiting for administrator verification...",
         "success"
     );
 
     paymentForm.classList.add("payment-awaiting-approval");
-
     paymentForm.querySelectorAll(
         "input, select, textarea, button"
     ).forEach((field) => {
         field.disabled = true;
     });
-
     submitButton.textContent = "Waiting for Verification";
 }
 
@@ -389,8 +336,20 @@ function startPaymentStatusChecking() {
     void checkPaymentStatus();
     paymentStatusInterval = window.setInterval(
         checkPaymentStatus,
-        5000
+        15000
     );
+}
+
+function setPaymentFormDisabled(disabled) {
+    paymentForm.classList.toggle(
+        "payment-awaiting-approval",
+        disabled
+    );
+    paymentForm.querySelectorAll(
+        "input, select, textarea, button"
+    ).forEach((field) => {
+        field.disabled = disabled;
+    });
 }
 
 
@@ -451,19 +410,44 @@ async function checkPaymentStatus() {
         }
 
         if (paymentStatus === "pending") {
-            showPendingMessage();
+            setPaymentFormDisabled(true);
+
+            if (data.payment.payment_method === "paychangu") {
+                showMessage(
+                    "Payment is still pending. Continue to PayChangu to finish checkout.",
+                    "success"
+                );
+                submitButton.disabled = false;
+                submitButton.textContent = "Continue to PayChangu";
+            } else {
+                showMessage(
+                    "Your payment is awaiting administrator verification.",
+                    "success"
+                );
+                submitButton.disabled = true;
+                submitButton.textContent = "Waiting for Verification";
+            }
 
             if (paymentStatusInterval === null) {
                 paymentStatusInterval = window.setInterval(
                     checkPaymentStatus,
-                    5000
+                    15000
                 );
             }
 
             return;
         }
 
-        if (
+        if (paymentStatus === "failed") {
+            stopPaymentStatusChecking();
+            showMessage(
+                "The payment did not complete. You can try again.",
+                "error"
+            );
+            setPaymentFormDisabled(false);
+            submitButton.disabled = false;
+            submitButton.textContent = "Try PayChangu Again";
+        } else if (
             paymentStatus === "rejected" ||
             subscriptionStatus === "rejected"
         ) {
@@ -472,10 +456,27 @@ async function checkPaymentStatus() {
                 "Your payment was not approved. Please contact the administrator.",
                 "error"
             );
+            setPaymentFormDisabled(true);
+            submitButton.disabled = true;
             submitButton.textContent = "Payment Not Approved";
+        } else if (!data.payment) {
+            setPaymentFormDisabled(false);
+            submitButton.disabled = false;
+            submitButton.textContent =
+                document.querySelector(
+                    'input[name="payment_method"]:checked'
+                )?.value === "paychangu"
+                    ? "Pay with PayChangu"
+                    : "Submit Payment";
         }
     } catch (error) {
         console.error("Check payment status error:", error);
+        if (paymentStatusInterval === null) {
+            paymentStatusInterval = window.setInterval(
+                checkPaymentStatus,
+                15000
+            );
+        }
     } finally {
         checkingPaymentStatus = false;
     }

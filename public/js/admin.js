@@ -400,7 +400,9 @@ function formatPaymentMethod(method) {
 
         cash: "Cash",
 
-        manual: "Manual Payment"
+        manual: "Manual Payment",
+
+        paychangu: "PayChangu"
 
     };
 
@@ -1021,7 +1023,8 @@ async function openPayment(paymentId) {
 function renderPaymentDetails(payment) {
 
     const isPending =
-        payment.status === "pending";
+        payment.status === "pending" &&
+        payment.payment_method !== "paychangu";
 
 
     paymentDetails.innerHTML = `

@@ -57,8 +57,8 @@
             </h1>
 
             <p>
-                Choose your preferred payment method
-                and submit your payment details.
+                Pay securely using PayChangu, with the available mobile money
+                and card options.
             </p>
 
         </section>
@@ -112,76 +112,59 @@
 
                     <div class="form-section">
 
-                        <h2>
-                            Payment method
-                        </h2>
+                        <h2>Secure checkout</h2>
 
                         <p class="section-description">
-                            Select how you paid for your membership.
+                            Choose PayChangu secure checkout or submit an
+                            Airtel Money or TNM Mpamba payment for verification.
                         </p>
 
-
                         <div class="payment-methods">
-
+                            <label class="payment-option">
+                                <input
+                                    type="radio"
+                                    name="payment_method"
+                                    value="paychangu"
+                                    checked
+                                >
+                                <span class="payment-option-content">
+                                    <span class="payment-icon">🔒</span>
+                                    <span>
+                                        <strong>PayChangu secure checkout</strong>
+                                        <small>Mobile money and cards, where available</small>
+                                    </span>
+                                </span>
+                            </label>
 
                             <label class="payment-option">
-
                                 <input
                                     type="radio"
                                     name="payment_method"
                                     value="airtel_money"
                                 >
-
                                 <span class="payment-option-content">
-
-                                    <span class="payment-icon">
-                                        📱
-                                    </span>
-
+                                    <span class="payment-icon">📱</span>
                                     <span>
-                                        <strong>
-                                            Airtel Money
-                                        </strong>
-
-                                        <small>
-                                            Send using Airtel Money
-                                        </small>
+                                        <strong>Airtel Money</strong>
+                                        <small>Submit a manual payment reference</small>
                                     </span>
-
                                 </span>
-
                             </label>
 
-
                             <label class="payment-option">
-
                                 <input
                                     type="radio"
                                     name="payment_method"
                                     value="tnm_mpamba"
                                 >
-
                                 <span class="payment-option-content">
-
-                                    <span class="payment-icon">
-                                        📱
-                                    </span>
-
+                                    <span class="payment-icon">📱</span>
                                     <span>
-                                        <strong>
-                                            TNM Mpamba
-                                        </strong>
-
-                                        <small>
-                                            Send using TNM Mpamba
-                                        </small>
+                                        <strong>TNM Mpamba</strong>
+                                        <small>Submit a manual payment reference</small>
                                     </span>
-
                                 </span>
-
                             </label>
-
-
                         </div>
 
                         <div
@@ -194,62 +177,40 @@
                             <strong id="paymentRecipientNumber"></strong>
                             <small id="paymentRecipientMethod"></small>
                         </div>
-
                     </div>
 
-
-                    <div class="form-section">
-
-                        <h2>
-                            Payment details
-                        </h2>
-
+                    <div
+                        class="form-section"
+                        id="manualPaymentDetails"
+                        hidden
+                    >
+                        <h2>Payment details</h2>
                         <p class="section-description">
-                            Enter the details that will help the
-                            administrator verify your payment.
+                            Enter the details that will help the administrator
+                            verify your payment.
                         </p>
 
-
                         <div class="form-group">
-
-                            <label for="phoneNumber">
-                                Phone number
-                            </label>
-
+                            <label for="phoneNumber">Phone number</label>
                             <input
                                 type="tel"
                                 id="phoneNumber"
                                 name="phone_number"
                                 placeholder="e.g. 0999123456"
                             >
-
-                            <small>
-                                Enter the number used to make the payment.
-                            </small>
-
+                            <small>Enter the number used to make the payment.</small>
                         </div>
 
-
                         <div class="form-group">
-
-                            <label for="transactionReference">
-                                Transaction reference
-                            </label>
-
+                            <label for="transactionReference">Transaction reference</label>
                             <input
                                 type="text"
                                 id="transactionReference"
                                 name="transaction_reference"
                                 placeholder="e.g. transaction ID"
                             >
-
-                            <small>
-                                Enter the transaction ID/reference from
-                                your payment.
-                            </small>
-
+                            <small>Enter the transaction ID/reference from your payment.</small>
                         </div>
-
                     </div>
 
 
@@ -264,13 +225,13 @@
                         id="submitPaymentButton"
                         class="submit-button"
                     >
-                        Submit Payment
+                        Pay with PayChangu
                     </button>
 
 
                     <p class="verification-note">
-                        Your membership will remain pending until
-                        your payment has been verified by Lilly Memes.
+                        PayChangu payments are verified automatically. Manual
+                        mobile money payments remain pending until reviewed.
                     </p>
 
                 </form>
@@ -287,7 +248,7 @@
     </footer>
 
 
-    <script src="/js/subscribe.js?v=account-plan-payment-flow"></script>
+    <script src="/js/subscribe.js?v=paychangu-checkout"></script>
 
 </body>
 

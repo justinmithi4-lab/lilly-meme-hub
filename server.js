@@ -100,7 +100,13 @@ if (IS_PRODUCTION) {
 // --------------------------------------------------
 
 app.use(
-    express.json()
+    express.json({
+        verify: (req, res, buffer) => {
+            if (req.originalUrl.startsWith("/api/payments/paychangu/webhook")) {
+                req.rawBody = Buffer.from(buffer);
+            }
+        }
+    })
 );
 
 app.use(
