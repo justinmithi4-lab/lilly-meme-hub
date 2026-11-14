@@ -6,6 +6,7 @@ const path = require("path");
 require("dotenv").config();
 
 const {
+    pool,
     testDatabaseConnection
 } = require("./config/database");
 
@@ -23,22 +24,14 @@ const searchRoutes = require("./routes/searchRoutes");
 const storyRoutes = require("./routes/storyRoutes");
 const memberMessageRoutes = require("./routes/memberMessageRoutes");
 
-const sessionStore = new MySQLStore({
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT || 3306),
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-
-    ssl: {
-        minVersion: "TLSv1.2",
-        rejectUnauthorized: false
+const sessionStore = new MySQLStore(
+    {
+        clearExpired: true,
+        checkExpirationInterval: 15 * 60 * 1000,
+        expiration: 24 * 60 * 60 * 1000
     },
-
-    waitForConnections: true,
-    connectionLimit: 5,
-    queueLimit: 0
-});
+    pool
+);
 
 
 const app = express();
