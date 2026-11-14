@@ -31,8 +31,13 @@ const sessionStore = new MySQLStore({
     database: process.env.DB_NAME,
 
     ssl: {
+        minVersion: "TLSv1.2",
         rejectUnauthorized: false
-    }
+    },
+
+    waitForConnections: true,
+    connectionLimit: 5,
+    queueLimit: 0
 });
 
 
