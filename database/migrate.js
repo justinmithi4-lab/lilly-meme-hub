@@ -1,8 +1,64 @@
+
 const fs = require("fs");
 const path = require("path");
 
 const { pool } = require("../config/database");
 
+const SCHEMA_MIGRATIONS_INCLUDED = [
+    "20261004_cloudinary_memes.sql",
+    "20261004_member_messages.sql",
+    "20261005_add_three_month_plan.sql",
+    "20261005_cloudinary_stories.sql",
+    "20261005_notification_comment_targets.sql",
+    "20261005_story_likes.sql"
+];
+
+async function tableExists(connection, tableName) {
+    const [rows] = await connection.execute(
+        `
+        SELECT TABLE_NAME
+        FROM information_schema.TABLES
+        WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = ?
+        `,
+        [tableName]
+    );
+
+    return rows.length > 0;
+}
+
+async function initializeDatabase(connection) {
+    const schemaPath = path.join(__dirname, "schema.sql");
+
+    if (!fs.existsSync(schemaPath)) {
+        throw new Error("database/schema.sql was not found.");
+    }
+
+    // Check whether the main schema has already been initialized.
+    if (await tableExists(connection, "users")) {
+        console.log("Initial database schema already exists.");
+        return;
+    }
+
+    console.log("----------------------------------------");
+    console.log("Initializing fresh Lilly Memes database...");
+    console.log("----------------------------------------");
+
+    const schema = fs.readFileSync(schemaPath, "utf8");
+
+    // The supplied schema contains ordinary SQL statements
+    // separated by semicolons.
+    const statements = schema
+        .split(";")
+        .map(statement => statement.trim())
+        .filter(statement => statement.length > 0);
+
+    for (const statement of statements) {
+        await connection.query(statement);
+    }
+
+    console.log("Initial database schema created successfully.");
+}
 
 async function runMigrations() {
     let connection;
@@ -14,17 +70,28 @@ async function runMigrations() {
         console.log("Checking database migrations...");
         console.log("----------------------------------------");
 
-        // --------------------------------------------------
         // Migration tracking table
-        // --------------------------------------------------
-
-        await connection.execute(`
+        await connection.query(`
             CREATE TABLE IF NOT EXISTS schema_migrations (
                 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 migration_name VARCHAR(255) NOT NULL UNIQUE,
                 applied_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             )
         `);
+
+        // Create the original tables before applying later changes.
+        await initializeDatabase(connection);
+
+        // Record migrations already included in schema.sql.
+        for (const migration of SCHEMA_MIGRATIONS_INCLUDED) {
+            await connection.execute(
+                `
+                INSERT IGNORE INTO schema_migrations (migration_name)
+                VALUES (?)
+                `,
+                [migration]
+            );
+        }
 
         const migrationsDirectory = path.join(
             __dirname,
@@ -36,38 +103,22 @@ async function runMigrations() {
             return;
         }
 
-        // --------------------------------------------------
-        // Find migration files
-        // --------------------------------------------------
-
-        const migrationFiles = fs
-            .readdirSync(migrationsDirectory)
-            .filter((file) => file.endsWith(".sql"))
+        const migrationFiles = fs.readdirSync(migrationsDirectory)
+            .filter(file => file.endsWith(".sql"))
             .sort();
 
-        if (migrationFiles.length === 0) {
-            console.log("No migration files found.");
-            return;
-        }
-
-        // --------------------------------------------------
-        // Apply migrations
-        // --------------------------------------------------
-
         for (const file of migrationFiles) {
+            const [existing] = await connection.execute(
+                `
+                SELECT id
+                FROM schema_migrations
+                WHERE migration_name = ?
+                LIMIT 1
+                `,
+                [file]
+            );
 
-            const [existingMigration] =
-                await connection.execute(
-                    `
-                    SELECT id
-                    FROM schema_migrations
-                    WHERE migration_name = ?
-                    LIMIT 1
-                    `,
-                    [file]
-                );
-
-            if (existingMigration.length > 0) {
+            if (existing.length > 0) {
                 console.log(`Already applied: ${file}`);
                 continue;
             }
@@ -83,7 +134,6 @@ async function runMigrations() {
             ).trim();
 
             if (!sql) {
-                console.log(`Skipping empty migration: ${file}`);
                 continue;
             }
 
@@ -93,17 +143,13 @@ async function runMigrations() {
 
             await connection.execute(
                 `
-                INSERT INTO schema_migrations (
-                    migration_name
-                )
+                INSERT INTO schema_migrations (migration_name)
                 VALUES (?)
                 `,
                 [file]
             );
 
-            console.log(
-                `Migration applied successfully: ${file}`
-            );
+            console.log(`Migration applied successfully: ${file}`);
         }
 
         console.log("----------------------------------------");
@@ -111,7 +157,6 @@ async function runMigrations() {
         console.log("----------------------------------------");
 
     } catch (error) {
-
         console.error("----------------------------------------");
         console.error("DATABASE MIGRATION FAILED");
         console.error("----------------------------------------");
@@ -120,36 +165,23 @@ async function runMigrations() {
         throw error;
 
     } finally {
-
         if (connection) {
             connection.release();
         }
     }
 }
 
-
-// --------------------------------------------------
-// Run directly from command line
-// --------------------------------------------------
-
 if (require.main === module) {
-
     runMigrations()
         .then(async () => {
-
             await pool.end();
-
             process.exit(0);
-
         })
         .catch(async () => {
-
             await pool.end();
-
             process.exit(1);
         });
 }
-
 
 module.exports = {
     runMigrations
