@@ -1269,6 +1269,7 @@ async function getHomepageCategorySections(userId) {
                 meme.image,
                 meme.created_at,
                 user.username,
+                user.profile_image,
                 (
                     SELECT COUNT(DISTINCT meme_view.user_id)
                     FROM meme_views meme_view
@@ -1313,7 +1314,8 @@ async function getHomepageCategorySections(userId) {
                 category.id,
                 category.name,
                 meme.id,
-                user.username
+                user.username,
+                user.profile_image
         )
         SELECT
             category_id,
@@ -1324,6 +1326,7 @@ async function getHomepageCategorySections(userId) {
             image,
             created_at,
             username,
+            profile_image,
             view_count,
             like_count,
             comment_count,
@@ -1415,6 +1418,8 @@ async function getFeedSection(
 
                 m.is_featured,
                 m.created_at,
+                u.username,
+                u.profile_image,
 
                 COUNT(
                     DISTINCT l.id
@@ -1445,6 +1450,9 @@ async function getFeedSection(
             LEFT JOIN likes l
                 ON l.meme_id = m.id
 
+            INNER JOIN users u
+                ON u.id = m.user_id
+
             LEFT JOIN comments c
                 ON c.meme_id = m.id
                 AND c.is_deleted = 0
@@ -1457,7 +1465,7 @@ async function getFeedSection(
 
             WHERE m.is_active = 1
 
-            GROUP BY m.id
+            GROUP BY m.id, u.username, u.profile_image
 
             ORDER BY ${orderBy}
 

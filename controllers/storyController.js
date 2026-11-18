@@ -16,6 +16,7 @@ async function getActiveStories(req, res) {
                 s.expires_at,
                 s.created_at,
                 u.username,
+                u.profile_image,
                 (
                     SELECT COUNT(DISTINCT sv.user_id)
                     FROM story_views sv
@@ -179,6 +180,7 @@ async function getAdminStories(req, res) {
                 s.is_active,
                 s.created_at,
                 u.username,
+                u.profile_image,
                 (
                     SELECT COUNT(DISTINCT sv.user_id)
                     FROM story_views sv

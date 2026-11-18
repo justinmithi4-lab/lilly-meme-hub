@@ -586,16 +586,7 @@ function updateUserInterface() {
 
     profileImages.forEach(
         image => {
-
-            if (
-                currentUser.profile_image
-            ) {
-
-                image.src =
-                    getUploadedMediaUrl(currentUser.profile_image, "profiles");
-
-            }
-
+            setProfileImageSource(image, currentUser.profile_image);
         }
     );
 
@@ -611,18 +602,11 @@ function updateUserInterface() {
             "profileAvatar"
         );
 
-    if (
-        profileAvatar &&
-        currentUser.profile_image
-    ) {
-
-        profileAvatar.innerHTML = `
-            <img
-                src="${getUploadedMediaUrl(currentUser.profile_image, "profiles")}"
-                alt="Profile"
-            >
-        `;
-
+    if (profileAvatar) {
+        const image = profileAvatar.querySelector("img");
+        if (image) {
+            setProfileImageSource(image, currentUser.profile_image);
+        }
     }
 
 }
@@ -849,11 +833,15 @@ async function loadStories() {
 
                 const overlay = document.createElement("span");
                 overlay.className = "member-story-overlay";
+                const avatar = document.createElement("img");
+                avatar.className = "member-story-avatar";
+                avatar.alt = "";
+                setProfileImageSource(avatar, group.profile_image);
                 const name = document.createElement("strong");
                 name.textContent = group.username;
                 const caption = document.createElement("small");
                 caption.textContent = story.caption || "View story";
-                overlay.append(name, caption);
+                overlay.append(avatar, name, caption);
                 card.append(preview, overlay);
                 card.addEventListener("click", () =>
                     openMemberStoryViewer(groupIndex, storyIndex)
@@ -882,6 +870,7 @@ function groupMemberStories(stories) {
         if (!groups.has(key)) {
             groups.set(key, {
                 username: story.username || "Member",
+                profile_image: story.profile_image || null,
                 stories: []
             });
         }
@@ -970,9 +959,8 @@ function renderMemberStory() {
         memberStoryProgress.appendChild(track);
     });
 
-    const mediaUrl = getUploadedMediaUrl(story.media, "stories");
     const avatar = document.getElementById("memberStoryAvatar");
-    avatar.src = mediaUrl;
+    setProfileImageSource(avatar, group.profile_image);
     document.getElementById("memberStoryUsername").textContent = group.username;
     document.getElementById("memberStoryTime").textContent = formatMemberStoryTime(story.created_at);
     const caption = document.getElementById("memberStoryCaption");
@@ -1169,6 +1157,13 @@ function renderMemes(
             )
             .join("");
 
+    container.querySelectorAll(".meme-card-author img").forEach(image => {
+        image.onerror = () => {
+            image.onerror = null;
+            image.src = DEFAULT_PROFILE_IMAGE;
+        };
+    });
+
 }
 
 
@@ -1234,6 +1229,13 @@ function createMemeCard(meme) {
                         : '<p class="meme-card-caption meme-card-caption-empty" aria-hidden="true"></p>'
                 }
 
+                <div class="meme-card-author">
+                    <img
+                        src="${escapeHtml(getProfileImageUrl(meme.profile_image))}"
+                        alt=""
+                    >
+                    <span>@${escapeHtml(meme.username || "user")}</span>
+                </div>
 
                 ${
                     meme.categories

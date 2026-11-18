@@ -60,6 +60,7 @@ async function getMemberMessages(req, res) {
                 u.id AS user_id,
                 u.username,
                 u.full_name,
+                u.profile_image,
                 u.email
             FROM member_messages m
             INNER JOIN users u

@@ -669,6 +669,13 @@ img {
 
 }
 
+.profile-button img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
 
 /* =========================================================
    NOTIFICATION PANEL
@@ -1083,6 +1090,13 @@ img {
 
     border-radius: 50%;
 
+}
+
+.mobile-nav-icon img {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 
@@ -2100,6 +2114,15 @@ img {
 
 }
 
+.member-story-avatar {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    object-fit: cover;
+}
+
 
 .member-story-card > img,
 .member-story-card > video {
@@ -2331,6 +2354,23 @@ img {
 
     padding: 9px;
 
+}
+
+.meme-card-author {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 8px 0 10px;
+    color: var(--text-muted);
+    font-size: 9px;
+}
+
+.meme-card-author img {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 

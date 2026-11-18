@@ -630,35 +630,10 @@ document.addEventListener("DOMContentLoaded", () => {
         profileImage.className =
             "comment-avatar";
 
-        if (comment.profile_image) {
-            const image =
-                document.createElement("img");
-
-            image.src =
-                getUploadedMediaUrl(comment.profile_image, "profiles");
-
-            image.alt =
-                comment.username || "User";
-
-            image.onerror = () => {
-                profileImage.innerHTML = "";
-
-                profileImage.textContent =
-                    getInitials(
-                        comment.full_name ||
-                        comment.username
-                    );
-            };
-
-            profileImage.appendChild(image);
-
-        } else {
-            profileImage.textContent =
-                getInitials(
-                    comment.full_name ||
-                    comment.username
-                );
-        }
+        const image = document.createElement("img");
+        image.alt = `${comment.username || "Member"} profile picture`;
+        setProfileImageSource(image, comment.profile_image);
+        profileImage.appendChild(image);
 
         // -------------------------------------
         // CONTENT

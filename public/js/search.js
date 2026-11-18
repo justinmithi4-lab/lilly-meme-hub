@@ -450,29 +450,10 @@ function createMemeCard(meme) {
         "meme-avatar";
 
 
-    if (meme.profile_image) {
-
-        const avatarImage =
-            document.createElement("img");
-
-        avatarImage.src =
-            getUploadedMediaUrl(meme.profile_image, "profiles");
-
-        avatarImage.alt =
-            meme.username || "User";
-
-        avatar.appendChild(
-            avatarImage
-        );
-
-    } else {
-
-        avatar.textContent =
-            getInitials(
-                meme.full_name ||
-                meme.username
-            );
-    }
+    const avatarImage = document.createElement("img");
+    avatarImage.alt = `${meme.username || "Member"} profile picture`;
+    setProfileImageSource(avatarImage, meme.profile_image);
+    avatar.appendChild(avatarImage);
 
 
     const username =

@@ -1213,6 +1213,9 @@ button {
 }
 
 .homepage-meme-user {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
     color: #7d8ca3;
 
     font-size: 10px;
@@ -1236,6 +1239,14 @@ button {
     font-size: 10px;
 
     white-space: nowrap;
+}
+
+.homepage-meme-user img {
+    width: 25px;
+    height: 25px;
+    flex: 0 0 25px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .homepage-meme-stats span {

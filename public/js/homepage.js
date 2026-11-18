@@ -447,8 +447,13 @@ function createMemeCard(meme) {
     user.className =
         "homepage-meme-user";
 
-    user.textContent =
-        `@${meme.username || "user"}`;
+    const avatar = document.createElement("img");
+    avatar.alt = "";
+    setProfileImageSource(avatar, meme.profile_image);
+
+    const username = document.createElement("span");
+    username.textContent = `@${meme.username || "user"}`;
+    user.append(avatar, username);
 
 
     const stats =

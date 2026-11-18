@@ -37,7 +37,7 @@ async function initializeDatabase(connection) {
     // Check whether the main schema has already been initialized.
     if (await tableExists(connection, "users")) {
         console.log("Initial database schema already exists.");
-        return;
+        return false;
     }
 
     console.log("----------------------------------------");
@@ -58,6 +58,7 @@ async function initializeDatabase(connection) {
     }
 
     console.log("Initial database schema created successfully.");
+    return true;
 }
 
 async function runMigrations() {
@@ -80,17 +81,19 @@ async function runMigrations() {
         `);
 
         // Create the original tables before applying later changes.
-        await initializeDatabase(connection);
+        const initializedDatabase = await initializeDatabase(connection);
 
         // Record migrations already included in schema.sql.
-        for (const migration of SCHEMA_MIGRATIONS_INCLUDED) {
-            await connection.execute(
-                `
-                INSERT IGNORE INTO schema_migrations (migration_name)
-                VALUES (?)
-                `,
-                [migration]
-            );
+        if (initializedDatabase) {
+            for (const migration of SCHEMA_MIGRATIONS_INCLUDED) {
+                await connection.execute(
+                    `
+                    INSERT IGNORE INTO schema_migrations (migration_name)
+                    VALUES (?)
+                    `,
+                    [migration]
+                );
+            }
         }
 
         const migrationsDirectory = path.join(

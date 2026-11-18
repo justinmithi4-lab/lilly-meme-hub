@@ -37,13 +37,52 @@
         <div class="profile-content" id="profileContent" hidden>
             <section class="profile-card" aria-labelledby="memberInfoHeading">
                 <div class="card-heading">
-                    <div class="profile-avatar" id="profileAvatar" aria-hidden="true">
-                        <i class="fa-solid fa-user"></i>
+                    <div class="profile-avatar-wrap">
+                        <div class="profile-avatar" id="profileAvatar">
+                            <img src="/images/default-avatar.svg" data-profile-image alt="Profile picture">
+                        </div>
+                        <button
+                            class="profile-avatar-edit"
+                            id="profileImageCamera"
+                            type="button"
+                            aria-label="Choose a profile picture"
+                        >
+                            <i class="fa-solid fa-camera" aria-hidden="true"></i>
+                        </button>
                     </div>
                     <div>
                         <h2 id="memberDisplayName">Member</h2>
                         <p id="memberUsername"></p>
                     </div>
+                </div>
+
+                <div class="profile-picture-controls">
+                    <input
+                        id="profileImageInput"
+                        class="visually-hidden"
+                        type="file"
+                        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                        aria-label="Choose a JPG, PNG, or WEBP profile picture"
+                    >
+                    <div class="profile-picture-actions">
+                        <button class="profile-action primary" id="profileImageChoose" type="button">
+                            <i class="fa-solid fa-upload" aria-hidden="true"></i>
+                            <span>Change picture</span>
+                        </button>
+                        <button class="profile-action primary" id="profileImageSave" type="button" hidden>
+                            <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
+                            <span>Save picture</span>
+                        </button>
+                        <button class="profile-action secondary" id="profileImageCancel" type="button" hidden>
+                            Cancel
+                        </button>
+                        <button class="profile-action remove" id="profileImageRemove" type="button" hidden>
+                            <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                            <span>Remove picture</span>
+                        </button>
+                    </div>
+                    <p class="profile-picture-hint">JPG, PNG, or WEBP · Maximum 5 MB</p>
+                    <p class="profile-picture-message" id="profileImageMessage" role="status" aria-live="polite" hidden></p>
                 </div>
 
                 <h3 id="memberInfoHeading">Member information</h3>

@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", loadProfile);
 
+let currentProfileImage = null;
+let selectedProfileImage = null;
+let profileImagePreviewUrl = null;
+
 async function loadProfile() {
     const message = document.getElementById("profileMessage");
     const content = document.getElementById("profileContent");
@@ -42,6 +46,7 @@ async function loadProfile() {
 
         renderMemberInfo(userData.user);
         renderSubscription(subscriptionData.subscription);
+        setupProfileImageControls();
         message.hidden = true;
         content.hidden = false;
     } catch (error) {
@@ -56,6 +61,7 @@ async function loadProfile() {
 function renderMemberInfo(user) {
     const fullName = user.full_name || "Not provided";
     const username = user.username || "—";
+    currentProfileImage = user.profile_image || null;
 
     document.getElementById("memberDisplayName").textContent =
         user.full_name || username;
@@ -70,15 +76,196 @@ function renderMemberInfo(user) {
     );
 
     const avatar = document.getElementById("profileAvatar");
-    if (user.profile_image) {
-        const image = document.createElement("img");
-        image.src = getUploadedMediaUrl(user.profile_image, "profiles");
-        image.alt = `${user.full_name || username} profile`;
-        image.addEventListener("error", () => {
-            avatar.innerHTML = '<i class="fa-solid fa-user"></i>';
-        }, { once: true });
-        avatar.replaceChildren(image);
+    const image = avatar.querySelector("img");
+    if (image) {
+        image.alt = `${user.full_name || username} profile picture`;
+        setProfileImageSource(image, user.profile_image);
     }
+
+    document.getElementById("profileImageRemove").hidden =
+        !currentProfileImage;
+}
+
+function setupProfileImageControls() {
+    const input = document.getElementById("profileImageInput");
+    const chooseButton = document.getElementById("profileImageChoose");
+    const cameraButton = document.getElementById("profileImageCamera");
+    const saveButton = document.getElementById("profileImageSave");
+    const cancelButton = document.getElementById("profileImageCancel");
+    const removeButton = document.getElementById("profileImageRemove");
+    const message = document.getElementById("profileImageMessage");
+    const avatarImage = document.querySelector("#profileAvatar img");
+    const controls = [
+        chooseButton,
+        cameraButton,
+        saveButton,
+        cancelButton,
+        removeButton
+    ];
+
+    const openFilePicker = () => input.click();
+    chooseButton.addEventListener("click", openFilePicker);
+    cameraButton.addEventListener("click", openFilePicker);
+
+    input.addEventListener("change", () => {
+        const file = input.files && input.files[0];
+        input.value = "";
+
+        if (!file) {
+            return;
+        }
+
+        const allowedTypes = new Set([
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ]);
+        if (!allowedTypes.has(file.type)) {
+            showProfileImageMessage(
+                message,
+                "Choose a JPG, JPEG, PNG, or WEBP image.",
+                "error"
+            );
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            showProfileImageMessage(
+                message,
+                "Profile pictures must be 5 MB or smaller.",
+                "error"
+            );
+            return;
+        }
+
+        clearProfileImagePreview();
+        selectedProfileImage = file;
+        profileImagePreviewUrl = URL.createObjectURL(file);
+        avatarImage.src = profileImagePreviewUrl;
+        saveButton.hidden = false;
+        cancelButton.hidden = false;
+        removeButton.hidden = true;
+        showProfileImageMessage(
+            message,
+            "Preview your picture, then save to apply it.",
+            ""
+        );
+    });
+
+    saveButton.addEventListener("click", async () => {
+        if (!selectedProfileImage) {
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("profileImage", selectedProfileImage);
+        setProfileImageControlsDisabled(controls, true);
+        saveButton.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i><span>Uploading...</span>';
+
+        try {
+            const response = await fetch("/api/auth/profile-image", {
+                method: "PUT",
+                body: formData
+            });
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "Unable to upload your picture.");
+            }
+
+            currentProfileImage = data.profile_image;
+            clearProfileImagePreview();
+            selectedProfileImage = null;
+            setProfileImageSource(avatarImage, currentProfileImage);
+            saveButton.hidden = true;
+            cancelButton.hidden = true;
+            removeButton.hidden = false;
+            showProfileImageMessage(message, data.message, "success");
+        } catch (error) {
+            showProfileImageMessage(
+                message,
+                error.message || "Unable to upload your picture.",
+                "error"
+            );
+        } finally {
+            saveButton.innerHTML =
+                '<i class="fa-solid fa-floppy-disk" aria-hidden="true"></i><span>Save picture</span>';
+            setProfileImageControlsDisabled(controls, false);
+        }
+    });
+
+    cancelButton.addEventListener("click", () => {
+        clearProfileImagePreview();
+        selectedProfileImage = null;
+        setProfileImageSource(avatarImage, currentProfileImage);
+        saveButton.hidden = true;
+        cancelButton.hidden = true;
+        removeButton.hidden = !currentProfileImage;
+        message.hidden = true;
+    });
+
+    removeButton.addEventListener("click", async () => {
+        if (!currentProfileImage) {
+            return;
+        }
+
+        if (!window.confirm("Remove your profile picture?")) {
+            return;
+        }
+
+        setProfileImageControlsDisabled(controls, true);
+        removeButton.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i><span>Removing...</span>';
+
+        try {
+            const response = await fetch("/api/auth/profile-image", {
+                method: "DELETE"
+            });
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "Unable to remove your picture.");
+            }
+
+            currentProfileImage = null;
+            setProfileImageSource(avatarImage, null);
+            removeButton.hidden = true;
+            showProfileImageMessage(message, data.message, "success");
+        } catch (error) {
+            showProfileImageMessage(
+                message,
+                error.message || "Unable to remove your picture.",
+                "error"
+            );
+        } finally {
+            removeButton.innerHTML =
+                '<i class="fa-solid fa-trash-can" aria-hidden="true"></i><span>Remove picture</span>';
+            setProfileImageControlsDisabled(controls, false);
+        }
+    });
+}
+
+function clearProfileImagePreview() {
+    if (profileImagePreviewUrl) {
+        URL.revokeObjectURL(profileImagePreviewUrl);
+        profileImagePreviewUrl = null;
+    }
+}
+
+function setProfileImageControlsDisabled(controls, disabled) {
+    controls.forEach(button => {
+        button.disabled = disabled;
+    });
+}
+
+function showProfileImageMessage(element, text, type) {
+    element.textContent = text;
+    element.classList.remove("success", "error");
+    if (type) {
+        element.classList.add(type);
+    }
+    element.hidden = false;
 }
 
 function renderSubscription(subscription) {

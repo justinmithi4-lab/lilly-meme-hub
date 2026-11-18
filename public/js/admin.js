@@ -1411,15 +1411,12 @@ function renderMembers() {
             const memberName =
                 String(member.full_name || username || "Member");
 
-            const initials =
-                getMemberInitials(memberName);
-
             return `
                 <tr>
                     <td>
                         <div class="member-name-cell">
                             <div class="member-avatar">
-                                ${escapeHtml(initials)}
+                                <img src="${escapeHtml(getProfileImageUrl(member.profile_image))}" alt="">
                             </div>
                             <div>
                                 <strong>${escapeHtml(memberName)}</strong>
@@ -1480,6 +1477,15 @@ function renderMembers() {
 
         }).join("");
 
+    membersTableBody
+        .querySelectorAll(".member-avatar img")
+        .forEach(image => {
+            image.onerror = () => {
+                image.onerror = null;
+                image.src = DEFAULT_PROFILE_IMAGE;
+            };
+        });
+
 }
 
 
@@ -1501,8 +1507,7 @@ function openMemberModal(memberId) {
         member.username ||
         "Member";
 
-    memberModalAvatar.textContent =
-        getMemberInitials(memberName);
+    setProfileImageSource(memberModalAvatar.querySelector("img"), member.profile_image);
 
     memberModalName.textContent =
         memberName;
@@ -2325,7 +2330,10 @@ function renderMemberMessages(messages) {
     memberMessagesTableBody.innerHTML = messages.map((message) => `
         <tr>
             <td>
-                <strong>${escapeHtml(message.full_name || message.username || "Member")}</strong>
+                <div class="message-member-name">
+                    <img src="${escapeHtml(getProfileImageUrl(message.profile_image))}" alt="">
+                    <strong>${escapeHtml(message.full_name || message.username || "Member")}</strong>
+                </div>
                 <small class="message-member-meta">
                     @${escapeHtml(message.username || "member")}<br>
                     ${escapeHtml(message.email || "")}
@@ -2336,6 +2344,15 @@ function renderMemberMessages(messages) {
             <td>${escapeHtml(formatDateTime(message.created_at))}</td>
         </tr>
     `).join("");
+
+    memberMessagesTableBody
+        .querySelectorAll(".message-member-name img")
+        .forEach(image => {
+            image.onerror = () => {
+                image.onerror = null;
+                image.src = DEFAULT_PROFILE_IMAGE;
+            };
+        });
 }
 
 function formatDateTime(value) {
@@ -2448,7 +2465,12 @@ function renderAdminStories(stories) {
             <tr>
                 <td>${preview}</td>
                 <td>${escapeHtml(story.caption || "-")}</td>
-                <td>${escapeHtml(story.username || "-")}</td>
+                <td>
+                    <div class="story-member-name">
+                        <img src="${escapeHtml(getProfileImageUrl(story.profile_image))}" alt="">
+                        <span>${escapeHtml(story.username || "-")}</span>
+                    </div>
+                </td>
                 <td>${formatDate(story.expires_at)}</td>
                 <td>
                     <span class="story-status ${active ? "story-status-active" : "story-status-expired"}">
@@ -2469,6 +2491,15 @@ function renderAdminStories(stories) {
             </tr>
         `;
     }).join("");
+
+    storiesTableBody
+        .querySelectorAll(".story-member-name img")
+        .forEach(image => {
+            image.onerror = () => {
+                image.onerror = null;
+                image.src = DEFAULT_PROFILE_IMAGE;
+            };
+        });
 }
 
 
