@@ -575,6 +575,128 @@ button {
         #050d1a;
 }
 
+.hero-slideshow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background: #050d1a;
+}
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 900ms ease;
+}
+
+.hero-slide.is-active {
+    opacity: 1;
+}
+
+.hero-slide-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+}
+
+.hero-slideshow::after {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    content: "";
+    pointer-events: none;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(3, 8, 18, 0.78) 0%,
+            rgba(3, 8, 18, 0.46) 48%,
+            rgba(3, 8, 18, 0.72) 100%
+        ),
+        linear-gradient(
+            0deg,
+            rgba(3, 8, 18, 0.68) 0%,
+            rgba(3, 8, 18, 0.08) 55%,
+            rgba(3, 8, 18, 0.34) 100%
+        );
+}
+
+.hero-slideshow-controls {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.hero-slide-arrow {
+    position: absolute;
+    top: 22px;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    border-radius: 50%;
+    background: rgba(5, 11, 22, 0.38);
+    color: #fff;
+    cursor: pointer;
+    pointer-events: auto;
+    backdrop-filter: blur(10px);
+    transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.hero-slide-arrow:hover {
+    transform: scale(1.06);
+    border-color: rgba(255, 255, 255, 0.7);
+    background: rgba(49, 94, 251, 0.75);
+}
+
+.hero-slide-previous {
+    left: clamp(14px, 3vw, 42px);
+}
+
+.hero-slide-next {
+    right: clamp(14px, 3vw, 42px);
+}
+
+.hero-slide-indicators {
+    position: absolute;
+    right: 0;
+    bottom: 23px;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    pointer-events: auto;
+}
+
+.hero-slide-dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.34);
+    cursor: pointer;
+    transition: width 180ms ease, border-radius 180ms ease, background 180ms ease;
+}
+
+.hero-slide-dot[aria-current="true"] {
+    width: 24px;
+    border-radius: 8px;
+    border-color: #fff;
+    background: #fff;
+}
+
+.hero-slide-arrow:focus-visible,
+.hero-slide-dot:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+}
 
 /* Glowing background */
 
@@ -603,6 +725,8 @@ button {
     filter: blur(20px);
 
     animation: heroPulse 6s ease-in-out infinite;
+    z-index: 2;
+    pointer-events: none;
 }
 
 @keyframes heroPulse {
@@ -814,6 +938,7 @@ button {
 .hero-decoration {
     position: absolute;
     inset: 0;
+    z-index: 3;
 
     pointer-events: none;
 
@@ -882,6 +1007,19 @@ button {
     }
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .hero-slide {
+        transition: none;
+    }
+
+    .hero::before,
+    .hero-content,
+    .hero h1 span,
+    .hero-decoration span {
+        animation: none;
+    }
+}
+
 
 /* =========================================================
    SECTION CONTAINER
@@ -928,90 +1066,6 @@ button {
 
 
 /* =========================================================
-   CATEGORIES
-========================================================= */
-
-.categories-section {
-    padding: 31px 0;
-
-    background:
-        linear-gradient(
-            180deg,
-            #081426,
-            #071223
-        );
-
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-}
-
-.categories-list {
-    margin-top: 19px;
-
-    display: flex;
-
-    gap: 9px;
-
-    overflow-x: auto;
-
-    scrollbar-width: none;
-
-    padding-bottom: 2px;
-}
-
-.categories-list::-webkit-scrollbar {
-    display: none;
-}
-
-.category-chip {
-    position: relative;
-
-    flex: 0 0 auto;
-
-    padding: 10px 15px;
-
-    border: 1px solid rgba(255,255,255,.07);
-
-    border-radius: 30px;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255,255,255,.045),
-            rgba(255,255,255,.02)
-        );
-
-    color: #aeb9ca;
-
-    text-decoration: none;
-
-    font-size: 12px;
-    font-weight: 700;
-
-    transition:
-        transform .2s ease,
-        background .2s ease,
-        border-color .2s ease,
-        color .2s ease;
-}
-
-.category-chip:hover {
-    transform: translateY(-2px);
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(71,119,255,.16),
-            rgba(71,119,255,.05)
-        );
-
-    border-color: rgba(71,119,255,.35);
-
-    color: #fff;
-}
-
-
-/* =========================================================
    MEMES SECTION
 ========================================================= */
 
@@ -1024,14 +1078,6 @@ button {
             rgba(49,94,251,.035),
             transparent 35%
         );
-}
-
-.meme-section {
-    margin-bottom: 65px;
-}
-
-.meme-section:last-child {
-    margin-bottom: 0;
 }
 
 .view-all {
@@ -1384,136 +1430,6 @@ button {
 
 
 /* =========================================================
-   MEMBERSHIP CTA
-========================================================= */
-
-.membership-cta {
-    position: relative;
-
-    overflow: hidden;
-
-    padding: 55px 20px;
-
-    background:
-        radial-gradient(
-            circle at 20% 50%,
-            rgba(71,119,255,.12),
-            transparent 35%
-        ),
-        radial-gradient(
-            circle at 80% 50%,
-            rgba(71,119,255,.08),
-            transparent 35%
-        ),
-        #081426;
-
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-}
-
-.membership-cta::before {
-    content: "";
-
-    position: absolute;
-
-    width: 300px;
-    height: 300px;
-
-    top: -150px;
-    right: 10%;
-
-    border-radius: 50%;
-
-    border: 1px solid rgba(71,119,255,.08);
-
-    box-shadow:
-        0 0 0 40px rgba(71,119,255,.025),
-        0 0 0 80px rgba(71,119,255,.018);
-
-    pointer-events: none;
-}
-
-.cta-inner {
-    position: relative;
-
-    z-index: 2;
-
-    width: min(950px, 100%);
-
-    margin: auto;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 20px;
-}
-
-.cta-icon {
-    flex: 0 0 56px;
-
-    width: 56px;
-    height: 56px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 16px;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(71,119,255,.18),
-            rgba(71,119,255,.06)
-        );
-
-    border: 1px solid rgba(71,119,255,.16);
-
-    color: #7897ff;
-
-    font-size: 22px;
-}
-
-.cta-content {
-    flex: 1;
-}
-
-.cta-content > span {
-    color: #6488ff;
-
-    font-size: 9px;
-
-    font-weight: 900;
-
-    text-transform: uppercase;
-
-    letter-spacing: 1.3px;
-}
-
-.cta-content h2 {
-    margin: 5px 0;
-
-    color: #fff;
-
-    font-size: 23px;
-
-    letter-spacing: -.5px;
-}
-
-.cta-content p {
-    margin: 0;
-
-    color: #7e8ca2;
-
-    font-size: 12px;
-
-    line-height: 1.5;
-}
-
-
-/* =========================================================
    FOOTER
 ========================================================= */
 
@@ -1757,16 +1673,8 @@ button {
         width: calc(100% - 20px);
     }
 
-    .categories-section {
-        padding: 24px 0;
-    }
-
     .memes-section {
         padding: 38px 0 55px;
-    }
-
-    .meme-section {
-        margin-bottom: 45px;
     }
 
     .section-heading {
@@ -1783,21 +1691,6 @@ button {
 
     .view-all {
         font-size: 10px;
-    }
-
-
-    /* Categories */
-
-    .categories-list {
-        margin-top: 15px;
-
-        gap: 7px;
-    }
-
-    .category-chip {
-        padding: 9px 12px;
-
-        font-size: 11px;
     }
 
 
@@ -1850,38 +1743,6 @@ button {
         font-size: 8px;
 
         gap: 7px;
-    }
-
-
-    /* CTA */
-
-    .membership-cta {
-        padding: 40px 15px;
-    }
-
-    .cta-inner {
-        flex-direction: column;
-
-        text-align: center;
-
-        gap: 15px;
-    }
-
-    .cta-icon {
-        width: 52px;
-        height: 52px;
-    }
-
-    .cta-content h2 {
-        font-size: 20px;
-    }
-
-    .cta-content p {
-        font-size: 11px;
-    }
-
-    .cta-inner .primary-button {
-        width: min(300px, 100%);
     }
 
 

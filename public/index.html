@@ -20,7 +20,8 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
-    <link rel="stylesheet" href="/css/homepage.css?v=database-category-feeds">
+    <!-- HOMEPAGE_HERO_PRELOAD -->
+    <link rel="stylesheet" href="/css/homepage.css?v=homepage-hero-slideshow-v2">
     <link rel="stylesheet" href="/css/brand.css">
 </head>
 
@@ -200,6 +201,35 @@
 
         <section class="hero">
 
+            <div class="hero-slideshow" id="heroSlideshow" aria-hidden="true">
+                <!-- HOMEPAGE_HERO_INITIAL_SLIDE -->
+            </div>
+
+            <div class="hero-slideshow-controls hidden" id="heroSlideshowControls">
+                <button
+                    class="hero-slide-arrow hero-slide-previous"
+                    id="heroSlidePrevious"
+                    type="button"
+                    aria-label="Previous hero image"
+                >
+                    <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                <div
+                    class="hero-slide-indicators"
+                    id="heroSlideIndicators"
+                    role="group"
+                    aria-label="Choose a hero image"
+                ></div>
+                <button
+                    class="hero-slide-arrow hero-slide-next"
+                    id="heroSlideNext"
+                    type="button"
+                    aria-label="Next hero image"
+                >
+                    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                </button>
+            </div>
+
             <div class="hero-glow hero-glow-one"></div>
             <div class="hero-glow hero-glow-two"></div>
 
@@ -208,19 +238,18 @@
 
                 <div class="hero-badge">
                     <i class="fa-solid fa-face-laugh"></i>
-                    Welcome to Lilly Memes
+                    Lilly Memes
                 </div>
 
 
                 <h1>
-                    Your Daily Dose
-                    <span>of Memes.</span>
+                    The meme
+                    <span>community</span>
                 </h1>
 
 
                 <p>
-                    Fresh laughs, relatable moments and
-                    Malawi's favourite memes — all in one place.
+                    Your daily dose of memes.
                 </p>
 
 
@@ -261,44 +290,7 @@
         </section>
 
         <!-- =========================
-             CATEGORIES
-        ========================== -->
-
-        <section class="categories-section">
-
-            <div class="section-container">
-
-                <div class="section-heading">
-
-                    <div>
-
-                        <span class="section-eyebrow">
-                            Explore
-                        </span>
-
-                        <h2>
-                            Browse Categories
-                        </h2>
-
-                    </div>
-
-                </div>
-
-
-                <div
-                    class="categories-list"
-                    id="categoriesList"
-                >
-                    <span class="category-chip">Loading categories...</span>
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             MEME SECTIONS
+             POPULAR MEMES
         ========================== -->
 
         <section
@@ -309,64 +301,35 @@
             <div class="section-container">
 
 
-                <!-- POPULAR -->
+                <div class="section-heading">
 
-                <div class="meme-section">
+                    <div>
 
-                    <div class="section-heading">
+                        <span class="section-eyebrow">
+                            Trending now
+                        </span>
 
-                        <div>
-
-                            <span class="section-eyebrow">
-                                What's hot
-                            </span>
-
-                            <h2>
-                                🔥 Popular Memes
-                            </h2>
-
-                        </div>
+                        <h2>
+                            Popular Memes
+                        </h2>
 
                     </div>
 
-
-                    <div
-                        class="meme-grid"
-                        id="popularMemes"
-                    ></div>
+                    <a
+                        href="/search.html?sort=popular"
+                        class="view-all"
+                    >
+                        Explore more
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
 
                 </div>
 
 
-                <!-- LATEST -->
-
-                <div class="meme-section">
-
-                    <div class="section-heading">
-
-                        <div>
-
-                            <span class="section-eyebrow">
-                                Fresh from the community
-                            </span>
-
-                            <h2>
-                                🆕 Latest Memes
-                            </h2>
-
-                        </div>
-
-                    </div>
-
-
-                    <div
-                        class="meme-grid"
-                        id="latestMemes"
-                    ></div>
-
-                </div>
-
-                <div id="categoryMemeSections"></div>
+                <div
+                    class="meme-grid"
+                    id="popularMemes"
+                ></div>
 
 
                 <!-- LOADING -->
@@ -379,7 +342,7 @@
                     <div class="spinner"></div>
 
                     <p>
-                        Loading memes...
+                        Loading popular memes...
                     </p>
 
                 </div>
@@ -414,51 +377,6 @@
             </div>
 
         </section>
-
-
-        <!-- =========================
-             MEMBERSHIP CTA
-        ========================== -->
-
-        <section class="membership-cta">
-
-            <div class="cta-inner">
-
-                <div class="cta-icon">
-                    <i class="fa-solid fa-crown"></i>
-                </div>
-
-
-                <div class="cta-content">
-
-                    <span>
-                        Become a member
-                    </span>
-
-                    <h2>
-                        More memes. More laughs.
-                    </h2>
-
-                    <p>
-                        Join Lilly Memes and unlock the full
-                        meme experience.
-                    </p>
-
-                </div>
-
-
-                <a
-                    href="/plans.html"
-                    class="primary-button"
-                >
-                    View Membership
-                    <i class="fa-solid fa-arrow-right"></i>
-                </a>
-
-            </div>
-
-        </section>
-
     </main>
 
     <!-- =========================
@@ -516,9 +434,10 @@
 
     </footer>
 
+    <script type="application/json" id="homepageHeroSlideData"><!-- HOMEPAGE_HERO_SLIDE_DATA --></script>
 
     <script src="/js/media.js?v=cloudinary"></script>
-    <script src="/js/homepage.js?v=database-category-feeds"></script>
+    <script src="/js/homepage.js?v=homepage-hero-slideshow"></script>
 
 </body>
 </html>

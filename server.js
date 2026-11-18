@@ -1,6 +1,7 @@
 const express = require("express");
 const session = require("express-session");
 const MySQLStore = require("express-mysql-session")(session);
+const fs = require("fs");
 const path = require("path");
 
 require("dotenv").config();
@@ -42,6 +43,55 @@ const PORT = Number(
 
 const IS_PRODUCTION =
     process.env.NODE_ENV === "production";
+
+const HOMEPAGE_IMAGES_DIRECTORY = path.join(
+    __dirname,
+    "public",
+    "images",
+    "homepage"
+);
+const HOMEPAGE_IMAGE_EXTENSIONS = new Set([
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".webp",
+    ".gif"
+]);
+
+async function getHomepageSlideImages() {
+    let entries;
+
+    try {
+        entries = await fs.promises.readdir(
+            HOMEPAGE_IMAGES_DIRECTORY,
+            { withFileTypes: true }
+        );
+    } catch (error) {
+        if (error.code === "ENOENT") {
+            return [];
+        }
+
+        throw error;
+    }
+
+    return entries
+        .filter(entry =>
+            entry.isFile() &&
+            HOMEPAGE_IMAGE_EXTENSIONS.has(
+                path.extname(entry.name).toLowerCase()
+            )
+        )
+        .sort((first, second) =>
+            first.name.localeCompare(
+                second.name,
+                undefined,
+                { numeric: true, sensitivity: "base" }
+            )
+        )
+        .map(entry =>
+            `/images/homepage/${encodeURIComponent(entry.name)}`
+        );
+}
 
 
 // --------------------------------------------------
@@ -196,6 +246,54 @@ app.use(
     memberMessageRoutes
 );
 
+// --------------------------------------------------
+// Homepage with discovered slideshow images
+// --------------------------------------------------
+
+app.get(
+    "/",
+    async (req, res, next) => {
+        try {
+            const [slideImages, homepage] = await Promise.all([
+                getHomepageSlideImages(),
+                fs.promises.readFile(
+                    path.join(__dirname, "public", "index.html"),
+                    "utf8"
+                )
+            ]);
+
+            const firstImage = slideImages[0];
+            const preloadMarkup = firstImage
+                ? `<link rel="preload" href="${firstImage}" as="image" fetchpriority="high">`
+                : "";
+            const initialSlideMarkup = firstImage
+                ? `
+                    <div class="hero-slide is-active" data-image-url="${firstImage}">
+                        <img
+                            class="hero-slide-image"
+                            src="${firstImage}"
+                            alt=""
+                            fetchpriority="high"
+                            decoding="async"
+                        >
+                    </div>
+                `
+                : "";
+            const slideData = JSON.stringify(slideImages)
+                .replace(/</g, "\\u003c");
+
+            const renderedHomepage = homepage
+                .replace("<!-- HOMEPAGE_HERO_PRELOAD -->", preloadMarkup)
+                .replace("<!-- HOMEPAGE_HERO_INITIAL_SLIDE -->", initialSlideMarkup)
+                .replace("<!-- HOMEPAGE_HERO_SLIDE_DATA -->", slideData);
+
+            return res.type("html").send(renderedHomepage);
+        } catch (error) {
+            return next(error);
+        }
+    }
+);
+
 
 // --------------------------------------------------
 // Static website files
@@ -246,26 +344,6 @@ app.get(
                 "development"
 
         });
-
-    }
-);
-
-
-// --------------------------------------------------
-// Homepage
-// --------------------------------------------------
-
-app.get(
-    "/",
-    (req, res) => {
-
-        res.sendFile(
-            path.join(
-                __dirname,
-                "public",
-                "index.html"
-            )
-        );
 
     }
 );
