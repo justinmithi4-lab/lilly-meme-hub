@@ -19,14 +19,27 @@ const clearHomepageSearch =
 const homepageSearchSuggestions =
     document.getElementById("homepageSearchSuggestions");
 
+const homepageMemeCarousel =
+    document.getElementById("popularMemes");
+
+const homepageMemeCarouselRegion =
+    document.querySelector(".hero-meme-showcase");
+
+const homepageMemeControls =
+    document.getElementById("homepageMemeControls");
+
+const homepageMemeDots =
+    document.getElementById("homepageMemeDots");
+
+const homepageMemeProgress =
+    document.getElementById("homepageMemeProgress");
+
 function initializeHomepageHeroSlideshow() {
     const hero = document.querySelector(".hero");
     const slideshow = document.getElementById("heroSlideshow");
     const slideData = document.getElementById("homepageHeroSlideData");
     const controls = document.getElementById("heroSlideshowControls");
     const indicators = document.getElementById("heroSlideIndicators");
-    const previousButton = document.getElementById("heroSlidePrevious");
-    const nextButton = document.getElementById("heroSlideNext");
 
     if (!hero || !slideshow || !slideData || !controls || !indicators) {
         return;
@@ -43,6 +56,7 @@ function initializeHomepageHeroSlideshow() {
 
     if (!Array.isArray(imageUrls)) {
         slideshow.replaceChildren();
+        controls.classList.add("hidden");
         return;
     }
 
@@ -58,7 +72,6 @@ function initializeHomepageHeroSlideshow() {
         return;
     }
 
-    const firstSlide = slideshow.querySelector(".hero-slide");
     const slides = [];
     let currentIndex = 0;
     let autoplayTimer;
@@ -69,7 +82,9 @@ function initializeHomepageHeroSlideshow() {
     );
 
     imageUrls.forEach((imageUrl, index) => {
-        let slide = index === 0 ? firstSlide : null;
+        let slide = index === 0
+            ? slideshow.querySelector(".hero-slide")
+            : null;
 
         if (!slide) {
             slide = document.createElement("div");
@@ -106,24 +121,20 @@ function initializeHomepageHeroSlideshow() {
         slides.push(slide);
     });
 
-    if (slides.length === 0) {
-        slideshow.replaceChildren();
-        controls.classList.add("hidden");
-        return;
-    }
-
     function renderIndicators() {
         indicators.replaceChildren();
         slides.forEach((slide, index) => {
             const dot = document.createElement("button");
             dot.className = "hero-slide-dot";
             dot.type = "button";
-            dot.setAttribute("aria-label", `Show image ${index + 1} of ${slides.length}`);
+            dot.setAttribute(
+                "aria-label",
+                `Show background image ${index + 1} of ${slides.length}`
+            );
             dot.setAttribute("aria-current", String(index === currentIndex));
             dot.addEventListener("click", () => showSlide(index));
             indicators.appendChild(dot);
         });
-
         controls.classList.toggle("hidden", slides.length < 2);
     }
 
@@ -219,17 +230,10 @@ function initializeHomepageHeroSlideshow() {
         }
     }
 
-    previousButton.addEventListener("click", () => {
-        showSlide((currentIndex - 1 + slides.length) % slides.length);
-    });
-    nextButton.addEventListener("click", () => {
-        showSlide((currentIndex + 1) % slides.length);
-    });
+    renderIndicators();
+    scheduleAutoplay();
 
-    const hoverSupported = window.matchMedia(
-        "(hover: hover) and (pointer: fine)"
-    );
-    if (hoverSupported.matches) {
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
         hero.addEventListener("mouseenter", () => {
             paused = true;
             window.clearTimeout(autoplayTimer);
@@ -264,11 +268,7 @@ function initializeHomepageHeroSlideshow() {
     } else {
         reducedMotion.addListener(handleMotionChange);
     }
-
-    renderIndicators();
-    scheduleAutoplay();
 }
-
 
 /* =========================
    SEARCH
@@ -457,6 +457,7 @@ async function loadHomepageMemes() {
     homepageLoading.classList.remove("hidden");
 
     homepageError.classList.add("hidden");
+    homepageMemeControls.classList.add("hidden");
 
 
     try {
@@ -480,7 +481,7 @@ async function loadHomepageMemes() {
 
         renderSection(
             popularMemes,
-            (data.popular || []).slice(0, 2)
+            (data.popular || []).slice(0, 8)
         );
 
     } catch (error) {
@@ -513,30 +514,332 @@ function renderSection(
     memes
 ) {
 
-    container.innerHTML = "";
+    stopMemeAutoplay();
+    container.replaceChildren();
+    homepageMemeDots.replaceChildren();
+    homepageMemeSlides = [];
+    homepageMemeIndex = 0;
 
 
     if (!memes.length) {
 
         container.innerHTML = `
             <div class="homepage-empty">
-                No memes available yet.
+                No popular memes yet. Check back soon.
             </div>
         `;
 
+        homepageMemeControls.classList.add("hidden");
         return;
     }
 
+    memes.forEach((meme, index) => {
+        const card = createMemeCard(meme);
+        card.classList.add("meme-carousel-slide");
+        card.setAttribute("role", "group");
+        card.setAttribute("aria-roledescription", "slide");
+        card.setAttribute("aria-label", `${index + 1} of ${memes.length}`);
+        card.setAttribute("aria-hidden", String(index !== 0));
+        if (index === 0) {
+            card.classList.add("is-active");
+        }
 
-    memes.forEach((meme) => {
+        const image = card.querySelector(".homepage-meme-image");
+        if (image) {
+            image.loading = index === 0 ? "eager" : "lazy";
+        }
 
-        container.appendChild(
-            createMemeCard(meme)
-        );
-
+        container.appendChild(card);
+        homepageMemeSlides.push(card);
     });
+
+    if (memes.length > 1) {
+        memes.forEach((meme, index) => {
+            const dot = document.createElement("button");
+            dot.className = "meme-carousel-dot";
+            dot.type = "button";
+            dot.setAttribute(
+                "aria-label",
+                `Show meme ${index + 1} of ${memes.length}`
+            );
+            dot.setAttribute("aria-current", String(index === 0));
+            dot.addEventListener("click", () => {
+                showMeme(index, index > homepageMemeIndex ? 1 : -1, true);
+                resumeMemeAutoplay();
+            });
+            homepageMemeDots.appendChild(dot);
+        });
+
+        homepageMemeControls.classList.remove("hidden");
+        preloadNextMemeImage();
+        scheduleMemeAutoplay();
+    } else {
+        homepageMemeControls.classList.add("hidden");
+    }
+
+    updateMemeCarouselPauseState();
 }
 
+let homepageMemeSlides = [];
+let homepageMemeIndex = 0;
+let homepageMemeAutoplayTimer;
+let homepageMemeResumeTimer;
+let homepageMemeTransitionTimer;
+let suppressMemeClick = false;
+let memePointerId = null;
+let memePointerStartX = 0;
+let memePointerDeltaX = 0;
+let memePointerCard = null;
+let isMemeDragging = false;
+
+const homepageMemePauseReasons = {
+    hover: false,
+    focus: false,
+    drag: false,
+    hidden: document.hidden
+};
+
+function isMemeCarouselPaused() {
+    return Object.values(homepageMemePauseReasons).some(Boolean);
+}
+
+function updateMemeCarouselPauseState() {
+    if (isMemeCarouselPaused()) {
+        stopMemeAutoplay();
+    }
+}
+
+function stopMemeAutoplay() {
+    window.clearTimeout(homepageMemeAutoplayTimer);
+    window.clearTimeout(homepageMemeResumeTimer);
+    homepageMemeProgress.classList.remove("is-running");
+}
+
+function scheduleMemeAutoplay() {
+    stopMemeAutoplay();
+    if (homepageMemeSlides.length < 2 || isMemeCarouselPaused()) {
+        return;
+    }
+
+    void homepageMemeProgress.offsetWidth;
+    homepageMemeProgress.classList.add("is-running");
+    homepageMemeAutoplayTimer = window.setTimeout(() => {
+        showMeme((homepageMemeIndex + 1) % homepageMemeSlides.length, 1);
+    }, 4000);
+}
+
+function resumeMemeAutoplay() {
+    window.clearTimeout(homepageMemeResumeTimer);
+    if (homepageMemeSlides.length < 2 || isMemeCarouselPaused()) {
+        return;
+    }
+
+    stopMemeAutoplay();
+    homepageMemeResumeTimer = window.setTimeout(
+        scheduleMemeAutoplay,
+        2000
+    );
+}
+
+function preloadNextMemeImage() {
+    if (homepageMemeSlides.length < 2) {
+        return;
+    }
+
+    const nextIndex = (homepageMemeIndex + 1) % homepageMemeSlides.length;
+    const nextImage = homepageMemeSlides[nextIndex].querySelector(
+        ".homepage-meme-image"
+    );
+
+    if (!nextImage || !nextImage.src) {
+        return;
+    }
+
+    nextImage.loading = "eager";
+    const preloadedImage = new Image();
+    preloadedImage.src = nextImage.currentSrc || nextImage.src;
+}
+
+function showMeme(index, direction, isManual = false) {
+    if (
+        index < 0 ||
+        index >= homepageMemeSlides.length ||
+        index === homepageMemeIndex
+    ) {
+        if (isManual) {
+            resumeMemeAutoplay();
+        }
+        return;
+    }
+
+    window.clearTimeout(homepageMemeTransitionTimer);
+    const currentSlide = homepageMemeSlides[homepageMemeIndex];
+    const nextSlide = homepageMemeSlides[index];
+    const enteringClass = direction > 0
+        ? "is-entering-from-right"
+        : "is-entering-from-left";
+    const exitingClass = direction > 0
+        ? "is-exiting-left"
+        : "is-exiting-right";
+
+    homepageMemeSlides.forEach(slide => {
+        slide.classList.remove(
+            "is-active",
+            "is-entering-from-right",
+            "is-entering-from-left",
+            "is-exiting-left",
+            "is-exiting-right"
+        );
+        slide.setAttribute("aria-hidden", "true");
+    });
+
+    currentSlide.classList.add(exitingClass);
+    nextSlide.classList.add(enteringClass);
+    nextSlide.setAttribute("aria-hidden", "false");
+    void nextSlide.offsetWidth;
+    requestAnimationFrame(() => {
+        currentSlide.classList.remove("is-active");
+        nextSlide.classList.remove(enteringClass);
+        nextSlide.classList.add("is-active");
+    });
+
+    homepageMemeIndex = index;
+    homepageMemeDots.querySelectorAll(".meme-carousel-dot").forEach(
+        (dot, dotIndex) => {
+            dot.setAttribute("aria-current", String(dotIndex === index));
+        }
+    );
+    preloadNextMemeImage();
+    homepageMemeTransitionTimer = window.setTimeout(() => {
+        currentSlide.classList.remove(exitingClass);
+    }, 550);
+
+    if (isManual) {
+        stopMemeAutoplay();
+        resumeMemeAutoplay();
+    } else {
+        scheduleMemeAutoplay();
+    }
+}
+
+homepageMemeCarouselRegion.addEventListener("mouseenter", () => {
+    homepageMemePauseReasons.hover = true;
+    updateMemeCarouselPauseState();
+});
+
+homepageMemeCarouselRegion.addEventListener("mouseleave", () => {
+    homepageMemePauseReasons.hover = false;
+    resumeMemeAutoplay();
+});
+
+homepageMemeCarouselRegion.addEventListener("focusin", () => {
+    homepageMemePauseReasons.focus = true;
+    updateMemeCarouselPauseState();
+});
+
+homepageMemeCarouselRegion.addEventListener("focusout", event => {
+    if (!homepageMemeCarouselRegion.contains(event.relatedTarget)) {
+        homepageMemePauseReasons.focus = false;
+        resumeMemeAutoplay();
+    }
+});
+
+homepageMemeCarousel.addEventListener("keydown", event => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
+        return;
+    }
+
+    event.preventDefault();
+    const direction = event.key === "ArrowRight" ? 1 : -1;
+    const nextIndex =
+        (homepageMemeIndex + direction + homepageMemeSlides.length) %
+        homepageMemeSlides.length;
+    showMeme(nextIndex, direction, true);
+});
+
+homepageMemeCarousel.addEventListener("pointerdown", event => {
+    if (
+        !event.isPrimary ||
+        event.button !== 0 ||
+        !event.target.closest(".meme-carousel-slide")
+    ) {
+        return;
+    }
+
+    memePointerId = event.pointerId;
+    memePointerStartX = event.clientX;
+    memePointerDeltaX = 0;
+    memePointerCard = homepageMemeSlides[homepageMemeIndex];
+    isMemeDragging = true;
+    homepageMemePauseReasons.drag = true;
+    updateMemeCarouselPauseState();
+    memePointerCard.style.transition = "none";
+    homepageMemeCarousel.setPointerCapture(event.pointerId);
+});
+
+homepageMemeCarousel.addEventListener("pointermove", event => {
+    if (!isMemeDragging || event.pointerId !== memePointerId) {
+        return;
+    }
+
+    memePointerDeltaX = event.clientX - memePointerStartX;
+    memePointerCard.style.transform =
+        `translate3d(${memePointerDeltaX}px, 0, 0)`;
+});
+
+function finishMemePointer(event, allowSwipe) {
+    if (!isMemeDragging || event.pointerId !== memePointerId) {
+        return;
+    }
+
+    const delta = memePointerDeltaX;
+    const dragged = Math.abs(delta) >= 8;
+    const swiped = allowSwipe && Math.abs(delta) >= 40;
+    isMemeDragging = false;
+    memePointerId = null;
+    memePointerCard.style.transition = "";
+    memePointerCard.style.transform = "";
+
+    if (homepageMemeCarousel.hasPointerCapture(event.pointerId)) {
+        homepageMemeCarousel.releasePointerCapture(event.pointerId);
+    }
+
+    if (dragged) {
+        suppressMemeClick = true;
+        window.setTimeout(() => {
+            suppressMemeClick = false;
+        }, 400);
+    }
+
+    if (swiped && homepageMemeSlides.length > 1) {
+        const direction = delta < 0 ? 1 : -1;
+        const nextIndex =
+            (homepageMemeIndex + direction + homepageMemeSlides.length) %
+            homepageMemeSlides.length;
+        showMeme(nextIndex, direction, true);
+    }
+
+    memePointerCard = null;
+    homepageMemePauseReasons.drag = false;
+    resumeMemeAutoplay();
+}
+
+homepageMemeCarousel.addEventListener(
+    "pointerup",
+    event => finishMemePointer(event, true)
+);
+homepageMemeCarousel.addEventListener(
+    "pointercancel",
+    event => finishMemePointer(event, false)
+);
+
+document.addEventListener("visibilitychange", () => {
+    homepageMemePauseReasons.hidden = document.hidden;
+    updateMemeCarouselPauseState();
+    if (!document.hidden) {
+        resumeMemeAutoplay();
+    }
+});
 
 /* =========================
    MEME CARD
@@ -553,7 +856,12 @@ function createMemeCard(meme) {
 
     card.addEventListener(
         "click",
-        () => {
+        event => {
+            if (suppressMemeClick) {
+                event.preventDefault();
+                event.stopPropagation();
+                return;
+            }
 
             window.location.href =
                 `/meme.html?id=${encodeURIComponent(

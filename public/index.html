@@ -21,7 +21,7 @@
     >
 
     <!-- HOMEPAGE_HERO_PRELOAD -->
-    <link rel="stylesheet" href="/css/homepage.css?v=homepage-hero-slideshow-v2">
+    <link rel="stylesheet" href="/css/homepage.css?v=homepage-carousel-v4">
     <link rel="stylesheet" href="/css/brand.css">
 </head>
 
@@ -205,178 +205,95 @@
                 <!-- HOMEPAGE_HERO_INITIAL_SLIDE -->
             </div>
 
-            <div class="hero-slideshow-controls hidden" id="heroSlideshowControls">
-                <button
-                    class="hero-slide-arrow hero-slide-previous"
-                    id="heroSlidePrevious"
-                    type="button"
-                    aria-label="Previous hero image"
-                >
-                    <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
-                </button>
+            <div class="hero-slideshow-controls" id="heroSlideshowControls">
                 <div
                     class="hero-slide-indicators"
                     id="heroSlideIndicators"
                     role="group"
                     aria-label="Choose a hero image"
                 ></div>
-                <button
-                    class="hero-slide-arrow hero-slide-next"
-                    id="heroSlideNext"
-                    type="button"
-                    aria-label="Next hero image"
-                >
-                    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-                </button>
             </div>
 
-            <div class="hero-glow hero-glow-one"></div>
-            <div class="hero-glow hero-glow-two"></div>
-
-
-            <div class="hero-content">
-
-                <div class="hero-badge">
-                    <i class="fa-solid fa-face-laugh"></i>
-                    Lilly Memes
-                </div>
-
-
-                <h1>
-                    The meme
-                    <span>community</span>
-                </h1>
-
-
-                <p>
-                    Your daily dose of memes.
-                </p>
-
-
-                <div class="hero-buttons">
-
-                    <a
-                        href="/plans.html"
-                        class="primary-button"
-                    >
-                        <i class="fa-solid fa-crown"></i>
-                        Join Lilly Memes
-                    </a>
-
-
-                    <a
-                        href="#memes"
-                        class="secondary-button"
-                    >
-                        <i class="fa-solid fa-images"></i>
-                        Explore Memes
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            <div class="hero-decoration">
-
-                <span>😂</span>
-                <span>🤣</span>
-                <span>😭</span>
-                <span>🔥</span>
-                <span>💀</span>
-
-            </div>
-
-        </section>
-
-        <!-- =========================
-             POPULAR MEMES
-        ========================== -->
-
-        <section
-            class="memes-section"
-            id="memes"
-        >
-
-            <div class="section-container">
-
-
-                <div class="section-heading">
-
-                    <div>
-
-                        <span class="section-eyebrow">
-                            Trending now
-                        </span>
-
-                        <h2>
-                            Popular Memes
-                        </h2>
-
+            <div class="hero-inner">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <i class="fa-solid fa-face-laugh"></i>
+                        Lilly Memes
                     </div>
 
-                    <a
-                        href="/search.html?sort=popular"
-                        class="view-all"
-                    >
-                        Explore more
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-
-                </div>
-
-
-                <div
-                    class="meme-grid"
-                    id="popularMemes"
-                ></div>
-
-
-                <!-- LOADING -->
-
-                <div
-                    class="homepage-loading"
-                    id="homepageLoading"
-                >
-
-                    <div class="spinner"></div>
+                    <h1>The meme <span>community</span></h1>
 
                     <p>
-                        Loading popular memes...
+                        Your daily dose of memes.
                     </p>
 
+                    <div class="hero-buttons">
+                        <a href="/plans.html" class="primary-button">
+                            Join the community
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+
+                        <a href="#memes" class="secondary-button">
+                            <i class="fa-solid fa-images"></i>
+                            Explore Memes
+                        </a>
+                    </div>
                 </div>
 
-
-                <!-- ERROR -->
-
-                <div
-                    class="homepage-error hidden"
-                    id="homepageError"
+                <section
+                    class="hero-meme-showcase"
+                    id="memes"
+                    role="region"
+                    aria-roledescription="carousel"
+                    aria-labelledby="popularMemesHeading"
                 >
+                    <div class="showcase-heading">
+                        <div>
+                            <span class="section-eyebrow">Trending now</span>
+                            <h2 id="popularMemesHeading">Popular Memes</h2>
+                        </div>
 
-                    <i class="fa-solid fa-triangle-exclamation"></i>
+                        <a href="/search.html?sort=popular" class="view-all">
+                            Explore more <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
 
-                    <h3>
-                        Couldn't load the memes
-                    </h3>
+                    <div
+                        class="meme-carousel-track"
+                        id="popularMemes"
+                        tabindex="0"
+                        aria-label="Popular memes"
+                        aria-live="polite"
+                    ></div>
 
-                    <p>
-                        Please try again.
-                    </p>
+                    <div class="meme-carousel-controls hidden" id="homepageMemeControls">
+                        <div
+                            class="meme-carousel-dots"
+                            id="homepageMemeDots"
+                            role="group"
+                            aria-label="Choose a popular meme"
+                        ></div>
+                        <div class="meme-carousel-progress" aria-hidden="true">
+                            <span id="homepageMemeProgress"></span>
+                        </div>
+                    </div>
 
-                    <button
-                        type="button"
-                        id="retryHomepage"
-                    >
-                        Try again
-                    </button>
+                    <div class="homepage-loading" id="homepageLoading">
+                        <div class="spinner"></div>
+                        <p>Loading popular memes...</p>
+                    </div>
 
-                </div>
-
+                    <div class="homepage-error hidden" id="homepageError">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <h3>Couldn't load the memes</h3>
+                        <p>Please try again.</p>
+                        <button type="button" id="retryHomepage">Try again</button>
+                    </div>
+                </section>
             </div>
 
         </section>
+
     </main>
 
     <!-- =========================
@@ -434,10 +351,10 @@
 
     </footer>
 
+    <script src="/js/media.js?v=cloudinary"></script>
     <script type="application/json" id="homepageHeroSlideData"><!-- HOMEPAGE_HERO_SLIDE_DATA --></script>
 
-    <script src="/js/media.js?v=cloudinary"></script>
-    <script src="/js/homepage.js?v=homepage-hero-slideshow"></script>
+    <script src="/js/homepage.js?v=homepage-carousel-v4"></script>
 
 </body>
 </html>
